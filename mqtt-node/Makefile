@@ -1,5 +1,6 @@
-CONTIKI_PROJECT = Mqtt-node
+CONTIKI_PROJECT = mqtt-node
 all: $(CONTIKI_PROJECT)
 
 CONTIKI = ../..
+
 include $(CONTIKI)/Makefile.include

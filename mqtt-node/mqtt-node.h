@@ -66,4 +66,3 @@ struct node_str{
 
 /*------------------------------------*/
 
-bool led_status;

@@ -1,7 +1,8 @@
 
 -- COMMAND TO INSTALL A MYSQL SERVER ON DOCKER
 -- > docker run --name mysql -p 3306:3306 -v mysql_volume:/var/lib/mysql/ -d -e "MYSQL_ROOT_PASSWORD=password" mysql
-
+-- INSTALL MYSQL CONNECTOP
+-- > python3 -m pip install mysql-connector-python
 
 CREATE DATABASE IF NOT EXISTS iot_project_db;
 
@@ -22,10 +23,18 @@ CREATE TABLE IF NOT EXISTS configuration (
     PRIMARY KEY (land_id, node_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+INSERT INTO configuration (land_id, node_id, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer) VALUES
+(1, 0, true, 22, 20, 720, 720, 30, 60),
+(2, 0, true, 25, 25, 720, 1440, 60, 120),
+(3, 0, true, 20, 20, 1440, 1440, 120, 120),
+(4, 0, true, 20, 15, 1440, 720, 60, 60),
+(5, 0, true, 15, 20, 720, 2880, 60, 120);
+
 CREATE TABLE IF NOT EXISTS land (
-    land_id int(11) NOT NULL AUTO_INCREMENT,
+    id int(11) NOT NULL,
     area float NOT NULL,
     locality varchar(100) NOT NULL,
+    name varchar(100) NOT NULL, 
     crop varchar(100) NOT NULL,
     soil_type varchar(100) NOT NULL,
     mst_trashold int(11) NOT NULL,
@@ -35,8 +44,15 @@ CREATE TABLE IF NOT EXISTS land (
     max_light int(11) NOT NULL,
     min_tmp int(11) NOT NULL,
     max_tmp int(11) NOT NULL,
-    PRIMARY KEY(land_id)
+    PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO land (id, area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_light, max_light, min_tmp, max_tmp) VALUES
+(1, 0.1, 'pag 5, part 4, Carbognano (VT)', 'Fondi', 'lettuce', 'loam', 14, 6, 7, 8, 20, 4, 22),
+(2, 0.5, 'pag 2 part 1 Carbognano (VT)', 'Crafeno', 'tomato', 'silt loam', 11, 6, 7, 0, 22, 10, 25),
+(3, 1, 'pag 4 part 5 Carbognano (VT)', 'Filaro', 'olive', 'clay loam', 22, 5, 7, 2, 55, 16, 33),
+(4, 2, 'pag 3 part 2 Carbognano (VT)', 'Galli', 'olive', 'sandy loam', 8, 6, 8, 4, 18, 18, 36),
+(5, 1, 'pag 8 part 3 Carbognano (VT)', 'Corpiè', 'apple', 'slity clay', 27, 6, 8, 1, 22, 20, 38); 
 
 CREATE TABLE IF NOT EXISTS measurement (
     land_id int(11) NOT NULL,

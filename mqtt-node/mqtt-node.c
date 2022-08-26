@@ -141,15 +141,23 @@ bool elaborate_cmd(char msg[], char topic[]){
             printf("[-] this message is not for this board (%s, %s)\n", arguments[0], arguments[1]);
             return false;
         }
-
-        if(strcmp(arguments[2], "moisture") == 0 && isNumber(arguments[3]))
+        
+        if(strcmp(arguments[2], "moisture") == 0 && isNumber(arguments[3])){
             node_memory.configuration.mst_timer = atoi(arguments[3]);
-        else if(strcmp(arguments[2], "ph") == 0 && isNumber(arguments[3]))
+            ctimer_set(&node_timers.mst_ctimer, node_memory.configuration.mst_timer * CLOCK_MINUTE, get_soil_moisture, NULL);
+        }
+        else if(strcmp(arguments[2], "ph") == 0 && isNumber(arguments[3])){
             node_memory.configuration.ph_timer = atoi(arguments[3]);
-        else if(strcmp(arguments[2], "light") == 0 && isNumber(arguments[3]))
+            ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
+        }
+        else if(strcmp(arguments[2], "light") == 0 && isNumber(arguments[3])){
             node_memory.configuration.light_timer = atoi(arguments[3]);
-        else if(strcmp(arguments[2], "tmp") == 0 && isNumber(arguments[3]))
+            ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_raw, NULL);
+        }
+        else if(strcmp(arguments[2], "tmp") == 0 && isNumber(arguments[3])){
             node_memory.configuration.tmp_timer = atoi(arguments[3]);
+            ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, get_soil_tmp, NULL);
+        }
 
         status_sim();
         printf("[+] TIMER_CMD command elaborated with success\n");

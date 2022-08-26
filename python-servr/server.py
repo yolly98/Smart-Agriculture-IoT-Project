@@ -14,81 +14,83 @@ command.get_config(True)
 def server_console():
     while True:
 
-        cmd = input("$ Type a command: ")
+        cmd = input("$ Type a number or help: ")
         if cmd == "help":
             print("[!] command list:")
-            print(". view_lands")
-            print(". view_configurations")
-            print(". view_last_measurements")
-            print(". view_last_violations")
-            print(". view_last_irrigations")
-            print(". irr_cmd")
-            print(". get_config")
-            print(". assign_config")
-            print(". timer_cmd")
-            print(". get_sensor")
-            print(". is_alive")
-            print(". test")
-            print(". exit")
-            print(". cancel")
+            print("----------- SHOW DATA -------------")
+            print(".[1]     view lands")
+            print(".[2]     view configurations")
+            print(".[3]     view last measurements")
+            print(".[4]     view last violations")
+            print(".[5]     view last irrigations")
+            print("------- COMMAND TO NODES-----------")
+            print(".[6]     irr_cmd")
+            print(".[7]     get_config")
+            print(".[8]     assign_config")
+            print(".[9]     timer_cmd")
+            print(".[10]    get_sensor")
+            print(".[11]    is_alive")
+            print("--------- OTHERS ------------------")
+            print(".[12]    test received messages")
+            print(".[13]    cancel")
             continue
-        elif cmd == "cancel":
-            continue
-        elif cmd == "view_lands":
+        elif cmd.isdigit() and int(cmd) == 1:
             view_db.view_lands()
-        elif cmd == "view_configurations":
+        elif cmd.isdigit() and int(cmd) == 2:
             view_db.view_configurations()
-        elif cmd == "view_last_measurements":
+        elif cmd.isdigit() and int(cmd) == 3:
             view_db.view_last_measurements()
-        elif cmd == "view_last_violations":
+        elif cmd.isdigit() and int(cmd) == 4:
             view_db.view_last_violations()
-        elif cmd == "view_last_irrigations":
+        elif cmd.isdigit() and int(cmd) == 5:
             view_db.view_last_irrigations()
-        elif cmd == "irr_cmd":
+        elif cmd.isdigit() and int(cmd) == 6:
             command.irr_cmd()
-        elif cmd == "get_config":
+        elif cmd.isdigit() and int(cmd) == 7:
             command.get_config(False)
-        elif cmd == "assign_config":
+        elif cmd.isdigit() and int(cmd) == 8:
             command.assign_config(0, 0)
-        elif cmd == "timer_cmd":
+        elif cmd.isdigit() and int(cmd) == 9:
             command.timer_cmd()
-        elif cmd == "get_sensor":
+        elif cmd.isdigit() and int(cmd) == 10:
             command.get_sensor()
-        elif cmd == "is_alive":
+        elif cmd.isdigit() and int(cmd) == 11:
             command.is_alive(False)
-        elif cmd == "test":
-            cmd = input("[!] Type the TOPIC: ")
+        elif cmd.isdigit() and int(cmd) == 12:
+            cmd = input("[!] Type the TOPIC or help: ")
         
             if cmd == "help":
-                print(". CONFIG_RQST")
-                print(". STATUS")
-                print(". IRRIGATION")
-                print(". MOISTURE")
-                print(". PH")
-                print(". LIGHT")
-                print(". TMP")
-                print(". IS_ALIVE_ACK")
-                print(". cancel")
-            elif cmd == "cancel":
+                print(".[1]     CONFIG_RQST")
+                print(".[2]     STATUS")
+                print(".[3]     IRRIGATION")
+                print(".[4]     MOISTURE")
+                print(".[5]     PH")
+                print(".[6]     LIGHT")
+                print(".[7]     TMP")
+                print(".[8]     IS_ALIVE_ACK")
+                print(".[9]     cancel")
+            elif cmd.isdigit() and int(cmd) == 9:
                 continue
-            elif cmd == "CONFIG_RQST":
+            elif cmd.isdigit() and int(cmd) == 1:
                 from_node.config_request()
-            elif cmd == "STATUS":
+            elif cmd.isdigit() and int(cmd) == 2:
                 from_node.status()
-            elif cmd == "IRRIGATION":
+            elif cmd.isdigit() and int(cmd) == 3:
                 from_node.irrigation()
-            elif cmd == "MOISTURE":
+            elif cmd.isdigit() and int(cmd) == 4:
                 from_node.moisture()
-            elif cmd == "PH":
+            elif cmd.isdigit() and int(cmd) == 5:
                 from_node.ph()
-            elif cmd == "LIGHT":
+            elif cmd.isdigit() and int(cmd) == 6:
                 from_node.light()
-            elif cmd == "TMP":
+            elif cmd.isdigit() and int(cmd) == 7:
                 from_node.tmp()
-            elif cmd == "IS_ALIVE_ACK":
+            elif cmd.isdigit() and int(cmd) == 8:
                 from_node.is_alive_ack()
             else:
                 printf("[-] topic non valid!")
+        elif cmd.isdigit() and int(cmd) == 13:
+            continue
         else:
             print("[-] command not valid!")
 

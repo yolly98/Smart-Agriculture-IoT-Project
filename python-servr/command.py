@@ -44,7 +44,7 @@ def irr_cmd():
         irr_duration = 0
 
     
-    msg = { 'land_id': land_id, 'node_id': node_id, 'enable': enable, 'status': status, 'limit': limit, 'irr_duration': irr_duration }
+    msg = { 'land_id': int(land_id), 'node_id': int(node_id), 'enable': enable, 'status': status, 'limit': int(limit), 'irr_duration': int(irr_duration) }
     json_msg = json.dumps(msg)
     topic = "IRR_CMD"
     print(" >  [", topic, "] ", json_msg)
@@ -69,7 +69,7 @@ def get_config(broadcast):
         land_id = 0
         node_id = 0
     
-    msg = { 'land_id': land_id, 'node_id': node_id }
+    msg = { 'land_id': int(land_id), 'node_id': int(node_id) }
     json_msg = json.dumps(msg)
     topic = "GET_CONFIG"
     print(" >  [", topic, "] ", json_msg)
@@ -111,7 +111,7 @@ def timer_cmd():
     elif len(timer) == 0:
         timer = 0
 
-    msg = { 'land_id': land_id, 'node_id': node_id, 'sensor': sensor, 'timer': timer }
+    msg = { 'land_id': int(land_id), 'node_id': int(node_id), 'sensor': sensor, 'timer': int(timer) }
     json_msg = json.dumps(msg)
     topic = "TIMER_CMD"
     print(" >  [", topic, "] ", json_msg)
@@ -136,7 +136,7 @@ def get_sensor():
         print("[-] sensor is not valid [", sensor, "]")
         return
 
-    msg = { 'land_id': land_id, 'node_id': node_id, 'type': sensor }
+    msg = { 'land_id': int(land_id), 'node_id': int(node_id), 'type': sensor }
     json_msg = json.dumps(msg)
     topic = "GET_SENSOR"
     print(" >  [", topic, "] ", json_msg)
@@ -161,7 +161,7 @@ def is_alive(broadcast):
         land_id = 0
         node_id = 0
 
-    msg = { 'land_id': land_id, 'node_id': node_id }
+    msg = { 'land_id': int(land_id), 'node_id': int(node_id) }
     json_msg = json.dumps(msg)
     topic = "GET_SENSOR"
     print(" >  [", topic, "] ", json_msg)

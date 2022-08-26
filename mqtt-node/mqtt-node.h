@@ -28,6 +28,15 @@
 /*------------------------------------*/
 //DATA STRUCTURES
 
+static struct timers{
+    struct etimer btn_etimer;
+    struct etimer led_etimer;
+    struct ctimer mst_ctimer;
+    struct ctimer ph_ctimer;
+    struct ctimer light_ctimer;
+    struct ctimer tmp_ctimer;
+    bool areSetted;
+}node_timers;
 
 struct irr_config_str{
     bool enabled;
@@ -54,7 +63,7 @@ struct configuration_str{
     unsigned int tmp_timer;
 };
 
-struct node_str{
+static struct node_str{
 
     struct configuration_str configuration;
     bool irr_status;

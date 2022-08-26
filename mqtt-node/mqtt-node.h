@@ -11,18 +11,21 @@
 /*------------------------------------*/
 //TOPICS
 
-#define CONFIG_RQST     "config_rqst"
-#define STATUS          "status"
-#define IRRIGATION      "irrigation"
-#define MOISTURE        "moisture"
-#define PH              "ph"
-#define LIGHT           "light"
-#define TEMPERATURE     "tmp"
+#define CONFIG_RQST     "CONFIG_RQST"
+#define STATUS          "STATUS"
+#define IRRIGATION      "IRRIGATION"
+#define MOISTURE        "MOISTURE"
+#define PH              "PH"
+#define LIGHT           "LIGHT"
+#define TMP             "TMP"
+#define IS_ALIVE_ACK    "IS_ALIVE_ACK"
 
-#define IRR_CMD         "irr_cmd"
-#define GET_CONFIG      "get_config"
-#define ASSIGN_CONFIG   "assign_config"
-#define TIMER_CMD       "timer_cmd"
+#define IRR_CMD         "IRR_CMD"
+#define GET_CONFIG      "GET_CONFIG"
+#define ASSIGN_CONFIG   "ASSIGN_CONFIG"
+#define TIMER_CMD       "TIMER_CMD"
+#define GET_SENSOR      "GET_SENSOR"
+#define IS_ALIVE        "IS_ALIVE"
 #define CLOCK_MINUTE    CLOCK_SECOND * 60
 
 /*------------------------------------*/
@@ -35,7 +38,9 @@ static struct timers{
     struct ctimer ph_ctimer;
     struct ctimer light_ctimer;
     struct ctimer tmp_ctimer;
-    bool areSetted;
+    struct ctimer irr_duration_ctimer;
+    bool sensor_timer_are_setted;
+    bool irr_timer_is_setted;
 }node_timers;
 
 struct irr_config_str{
@@ -70,5 +75,34 @@ static struct node_str{
     struct measurements_str measurements;
 } node_memory;
 
-/*------------------------------------*/
+//UTILITY
+bool isNumber(char *text);
+void print_config();
+void parse_json(char json[], int n_arguments, char arguments[][100]);
+
+//COMMAND ELABORATOR
+bool elaborate_cmd(char msg[], char topic[]);
+
+//COMMAND RECEIVED (SIMULATED)
+void irr_cmd_received_sim(char msg[], char topic[]);
+void get_config_received_sim(char msg[], char topic[]);
+void assign_config_received_sim(char msg[], char topic[]);
+void timer_cmd_received_sim(char msg[], char topic[]);
+void get_sensor_received_sim(char msg[], char topic[]);
+void is_alive_received_sim(char msg[], char topic[]);
+
+//SENDING TO SERVER (SIMULATED)
+void config_request_sim();
+void status_sim();
+void irrigation_sim();
+void is_alive_ack_sim();
+
+//SENSORS READINGS (SIMULATED)
+void irr_stopping();
+void get_soil_moisture();
+void get_ph_level();
+void get_lihght_raw();
+void get_soil_tmp();
+
+void receive_configuration();
 

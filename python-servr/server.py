@@ -38,7 +38,7 @@ def server_console():
         elif cmd == "get_sensor":
             command.get_sensor()
         elif cmd == "is_alive":
-            command.is_alive()
+            command.is_alive(False)
         elif cmd == "test":
             cmd = input("[!] Type the TOPIC: ")
         
@@ -79,15 +79,20 @@ def server_console():
 #functino for thread 2 (daemon)
 def server_listener():
 
+    end_timer =  60 * 60 * 3    # 3 hours
     start_timer = time.time()
     while True:
+        
         #TODO check if there is a message from nodes
-        time.sleep(0.1)
-        day = 60 * 60 * 24
-        timer = math.floor((time.time()-start_timer)/day)
-        if timer >= 1:
+        
+        #check if nodes are online
+        if (time.time() - start_timer) >= end_timer:
+            #TODO put offline all node in mysql db (the is_alive_ack will put them online)
             start_timer = timer.time()
-            #TODO put offline the node that the last message is older than 12 hours
+
+        time.sleep(0.1)
+            
+            
             
 
 t1 = threading.Thread(target = server_console, args = (), daemon = False)

@@ -143,19 +143,23 @@ def get_sensor():
 
 #-------
 
-def is_alive():
+def is_alive(broadcast):
 
-    print("[!] Type the arguments ...")
-    land_id = input("$ land_id: ")
-    node_id = input("$ node_id: ")
-    
-    if not land_id.isdigit():
-        print("[-] land_id has to be a number [", land_id, "]")
-        return
+    if(not broadcast):
+        print("[!] Type the arguments ...")
+        land_id = input("$ land_id: ")
+        node_id = input("$ node_id: ")
+        
+        if not land_id.isdigit():
+            print("[-] land_id has to be a number [", land_id, "]")
+            return
 
-    if not node_id.isdigit():
-        print("[-] node_id has to be a number [", node_id, "]")
-        return
+        if not node_id.isdigit():
+            print("[-] node_id has to be a number [", node_id, "]")
+            return
+    else:
+        land_id = 0
+        node_id = 0
 
     msg = { 'land_id': land_id, 'node_id': node_id }
     json_msg = json.dumps(msg)

@@ -23,6 +23,7 @@
 #define GET_CONFIG      "get_config"
 #define ASSIGN_CONFIG   "assign_config"
 #define TIMER_CMD       "timer_cmd"
+#define CLOCK_MINUTE    CLOCK_SECOND * 60
 
 /*------------------------------------*/
 //DATA STRUCTURES
@@ -34,7 +35,7 @@ struct irr_config_str{
     unsigned int irr_duration;
 };
 
-struct measurments_str{
+struct measurements_str{
 
     unsigned short soil_moisture;
     short soil_temperature;
@@ -57,7 +58,7 @@ struct node_str{
 
     struct configuration_str configuration;
     bool irr_status;
-    struct measurments_str measurments;
+    struct measurements_str measurements;
 } node_memory;
 
 /*------------------------------------*/

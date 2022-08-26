@@ -17,7 +17,7 @@
     </events>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype787998784</identifier>
+      <identifier>mtype403082712</identifier>
       <description>Cooja Mote Type #1</description>
       <source>[CONTIKI_DIR]/smart_agricolture_IoT_project/mqtt-node/mqtt-node.c</source>
       <commands>make -j$(CPUS) mqtt-node.cooja TARGET=cooja</commands>
@@ -55,13 +55,13 @@
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype787998784</motetype_identifier>
+      <motetype_identifier>mtype403082712</motetype_identifier>
     </mote>
   </simulation>
   <plugin>
     org.contikios.cooja.plugins.SimControl
     <width>280</width>
-    <z>0</z>
+    <z>4</z>
     <height>160</height>
     <location_x>400</location_x>
     <location_y>0</location_y>
@@ -77,7 +77,7 @@
       <viewport>0.9090909090909091 0.0 0.0 0.9090909090909091 128.7045250997658 106.15813040957295</viewport>
     </plugin_config>
     <width>400</width>
-    <z>2</z>
+    <z>5</z>
     <height>400</height>
     <location_x>1</location_x>
     <location_y>1</location_y>
@@ -90,10 +90,10 @@
       <coloring />
     </plugin_config>
     <width>773</width>
-    <z>7</z>
-    <height>240</height>
-    <location_x>400</location_x>
-    <location_y>160</location_y>
+    <z>0</z>
+    <height>456</height>
+    <location_x>399</location_x>
+    <location_y>191</location_y>
   </plugin>
   <plugin>
     org.contikios.cooja.plugins.TimeLine
@@ -105,7 +105,7 @@
       <zoomfactor>500.0</zoomfactor>
     </plugin_config>
     <width>1173</width>
-    <z>6</z>
+    <z>7</z>
     <height>166</height>
     <location_x>0</location_x>
     <location_y>656</location_y>
@@ -117,7 +117,7 @@
       <decorations>true</decorations>
     </plugin_config>
     <width>493</width>
-    <z>5</z>
+    <z>6</z>
     <height>160</height>
     <location_x>680</location_x>
     <location_y>0</location_y>
@@ -130,10 +130,10 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>350</width>
-    <z>4</z>
-    <height>150</height>
-    <location_x>54</location_x>
-    <location_y>420</location_y>
+    <z>2</z>
+    <height>122</height>
+    <location_x>33</location_x>
+    <location_y>402</location_y>
   </plugin>
   <plugin>
     org.contikios.cooja.plugins.MoteInterfaceViewer
@@ -143,10 +143,10 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>350</width>
-    <z>3</z>
-    <height>255</height>
-    <location_x>804</location_x>
-    <location_y>391</location_y>
+    <z>1</z>
+    <height>185</height>
+    <location_x>751</location_x>
+    <location_y>0</location_y>
   </plugin>
   <plugin>
     org.contikios.cooja.plugins.MoteInterfaceViewer
@@ -156,10 +156,10 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>350</width>
-    <z>1</z>
+    <z>3</z>
     <height>107</height>
-    <location_x>437</location_x>
-    <location_y>424</location_y>
+    <location_x>38</location_x>
+    <location_y>540</location_y>
   </plugin>
 </simconf>
 

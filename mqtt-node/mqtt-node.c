@@ -38,44 +38,161 @@ void print_config(){
 
 /*----------------------------------------------*/
 
-void get_config_sim(){
+void parse_json(char json[], int n_arguments, char arguments[][100]){
 
-    
-    char response[500];
-    sprintf(response, "[ASSIGN_CONFIG] { 'land_id': %d, 'node_id': %d, 'irr_config': { 'enabled': 'true', 'irr_limit': 22, 'irr_duration': 20 }, 'irr_timer': 720, 'ph_timer': 720, 'light_timer': 60, 'tmp_timer': 60 } ",
+    int value_parsed = 0;
+    int len = 0;
+    bool value_detected = false;
+
+    for(int i = 0; i< 500; i++){
+        
+        if(json[i] == ':'){
+            i++; //there is the space after ':'
+            value_detected = true;
+            len = 0;
+        }
+        else if(value_detected && (json[i] == ',' || json[i] == ' ' || json[i] == '}')){
+            value_detected = false;
+            arguments[value_parsed][len + 1] = '\0';
+            value_parsed++;
+        }
+        else if(value_detected && json[i] == '{'){
+            value_detected = false;
+        }
+        else if(value_detected){
+            if(json[i] =='\'')
+                continue;
+            arguments[value_parsed][len] = json[i];
+            len++;
+        }
+        else if(json[i] == '\0')
+            break;
+
+    }
+
+}
+
+/*----------------------------------------------------------*/
+
+void received_config_sim(char response[], char topic[]){ //is a simulation of a message received from server
+
+    sprintf(response, "{ 'land_id': %d, 'node_id': %d, 'irr_config': { 'enabled': 'true', 'irr_limit': 22, 'irr_duration': 20 }, 'irr_timer': 720, 'ph_timer': 720, 'light_timer': 60, 'tmp_timer': 60 } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id
         );
+    
+    sprintf(topic, "ASSIGN_CONFIG");
+}
 
-    printf(" <  %s \n", response);
+bool get_config(){
 
-    //TODO parsing json received
+    char response[500];
+    char topic[100];
+    received_config_sim(response, topic);
+    printf(" <  [%s] %s \n", topic, response);
 
-    node_memory.configuration.irr_config.enabled = true;
-    node_memory.configuration.irr_config.irr_limit = 22;
-    node_memory.configuration.irr_config.irr_duration = 10;
 
-    node_memory.configuration.mst_timer = 720;
-    node_memory.configuration.ph_timer = 720;
-    node_memory.configuration.light_timer = 60;
-    node_memory.configuration.tmp_timer = 60;
+    if(strcmp(topic, "ASSIGN_CONFIG")!=0){
+        printf("[-] topic received not correct (%s)\n", topic);
+        return false;
+    }
+
+    int n_arguments = 9; 
+    char arguments[n_arguments][100];
+
+    parse_json(response, n_arguments, arguments );
+
+    if(node_memory.configuration.land_id != atoi(arguments[0]) && node_memory.configuration.node_id != atoi(arguments[1])){
+        printf("[-] this configuration is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+        return false;
+    }
+
+    node_memory.configuration.irr_config.enabled = arguments[2];
+    node_memory.configuration.irr_config.irr_limit = atoi(arguments[3]);
+    node_memory.configuration.irr_config.irr_duration = atoi(arguments[4]);
+
+    node_memory.configuration.mst_timer = atoi(arguments[5]);
+    node_memory.configuration.ph_timer = atoi(arguments[6]);
+    node_memory.configuration.light_timer = atoi(arguments[7]);
+    node_memory.configuration.tmp_timer = atoi(arguments[8]);
+
+    return true;
 }
 
 /*-----------------COMMAND ELABORATOR----------------------------*/
 
 //TODO parsing of the json received message
-void elaborate_IRR_CMD(){ printf("[+] IRR_CMD elaborated\n");}
+bool elaborate_cmd(char msg[], char topic[]){ 
+    
+    if(strcmp(topic, "IRR_CMD") == 0){
+        printf("IRR_CMD command elaboration ...\n");
 
-void elaborate_GET_CONFIG(){ printf("[+] GET_CONFIG elaborated\n");}
+        int n_arguments = 6;
+        char arguments[n_arguments][100];
+        parse_json(msg, n_arguments, arguments);
+        if(node_memory.configuration.land_id != atoi(arguments[0]) && node_memory.configuration.node_id != atoi(arguments[1])){
+            printf("[-] this configuration is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+            return false;
+        }
 
-void elaborate_TIMER_CMD(){ printf("[+] TIMER_CMD elaborated\n");}
+        printf("------------\n");
+
+    }
+    else if(strcmp(topic, "GET_CONFIG") == 0){
+        printf("GET_CONFIG command elaboration ...\n");
+        
+        int n_arguments = 2;
+        char arguments[n_arguments][100];
+        parse_json(msg, n_arguments, arguments);
+        if(node_memory.configuration.land_id != atoi(arguments[0]) && node_memory.configuration.node_id != atoi(arguments[1])){
+            printf("[-] this configuration is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+            return false;
+        }
+        
+        printf("------------\n");
+    }
+    else if(strcmp(topic, "TIMER_CMD") == 0){
+        printf("TIMER_CMD command elaboration ...\n");
+        
+        int n_arguments = 4;
+        char arguments[n_arguments][100];
+        parse_json(msg, n_arguments, arguments);
+        if(node_memory.configuration.land_id != atoi(arguments[0]) && node_memory.configuration.node_id != atoi(arguments[1])){
+            printf("[-] this configuration is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+            return false;
+        }
+        
+        printf("------------\n");
+    }
+    else if(strcmp(topic, "ASSIGN_CONFIG") == 0){
+        printf("ASSIGN_CONFIG command elaboration ...\n");
+        
+        int n_arguments = 9;
+        char arguments[n_arguments][100];
+        parse_json(msg, n_arguments, arguments);
+        if(node_memory.configuration.land_id != atoi(arguments[0]) && node_memory.configuration.node_id != atoi(arguments[1])){
+            printf("[-] this configuration is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+            return false;
+        }
+        
+        printf("------------\n");
+    }
+    else{
+        printf("[-] topic received not correct (%s)\n", topic);
+        return false;
+    }
+
+
+    return true;
+
+}
 
 /*-----------------COMMAND SIMULATED-----------------------------*/
 
-void irr_cmd_received_sim(char *msg){
+void irr_cmd_received_sim(char msg[], char topic[]){
 
-    char buffer[200];
-    sprintf(buffer, "[IRR_CMD] { 'land_id': %d, 'node_id': %d, 'enable': '%s', 'status': '%s', 'limit': %d, 'irr_duration': %d } ",
+    sprintf(topic, "IRR_CMD");
+    sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'enable': '%s', 'status': '%s', 'limit': %d, 'irr_duration': %d } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
         ((random_rand()%2)!=0)?(((random_rand()%2)!=0)?"true":"false"):"null",
@@ -84,24 +201,18 @@ void irr_cmd_received_sim(char *msg){
         ((random_rand()%2)!=0)?(5+ random_rand()%30):0
         );
 
-    strcpy(msg, buffer);
-
 }
 
-void get_config_received_sim(char *msg){
+void get_config_received_sim(char msg[], char topic[]){
 
-    char buffer[200];
-    sprintf(buffer, "[GET_CONFIG] { 'land_id': %d, 'node_id': %d } ",
+    sprintf(topic, "GET_CONFIG");
+    sprintf(msg, "{ 'land_id': %d, 'node_id': %d } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id);
-
-    strcpy(msg, buffer);
-
 }
 
-void timer_cmd_received_sim(char *msg){
+void timer_cmd_received_sim(char msg[], char topic[]){
 
-    char buffer[200];
     char sensor[10];
     int rand = random_rand()%3;
     if(rand == 0)
@@ -113,15 +224,13 @@ void timer_cmd_received_sim(char *msg){
     else
         sprintf(sensor, "tmp");
 
-    sprintf(buffer, "[TIMER_CMD] { 'land_id': %d, 'node_id': %d, 'sensor': '%s', 'timer': %d } ",
+    sprintf(topic, "TIMER_CMD");
+    sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'sensor': '%s', 'timer': %d } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
         sensor,
         20 + random_rand()%690
         );
-
-    strcpy(msg, buffer);
-
 }
 
 
@@ -220,7 +329,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     //set land_id
 
-    printf("[!] manual led_id setting\n");
+    printf("[!] manual land_id setting\n");
 
     etimer_set(&node_timers.led_etimer,0.5 * CLOCK_SECOND);
     btn_count = 0;
@@ -312,7 +421,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
         );
     printf(" >  %s \n", request);
 
-    get_config_sim();
+    get_config();
     print_config();
 
     printf("[+] configuration ended\n");
@@ -345,34 +454,22 @@ PROCESS_THREAD(mqtt_node, ev, data){
         //simulation of received command by server
         if(ev == PROCESS_EVENT_TIMER){
             if(etimer_expired(&cmd_sim_etimer)){
-                char* msg = malloc(200);
-                
-                int cmd = random_rand()%3;
-                if(cmd == 0)
-                    irr_cmd_received_sim(msg);
-                else if(cmd == 1)
-                    get_config_received_sim(msg);
-                else if(cmd == 2)
-                    timer_cmd_received_sim(msg);
-            
-                printf(" <  %s \n",msg);
-
+                char msg[200];
                 char topic[50];
-                for(int i = 1; i < 200 - 1 ; i++){
-                    if(msg[i] == ']'){
-                        topic[i-1] = '\0';
-                        break;
-                    }
-                    topic[i - 1] = msg[i];
-                }
-                if(strcmp(topic, "IRR_CMD") == 0)
-                    elaborate_IRR_CMD();
-                else if(strcmp(topic, "GET_CONFIG") == 0)
-                    elaborate_GET_CONFIG();
-                else if(strcmp(topic, "TIMER_CMD") == 0)
-                    elaborate_TIMER_CMD();
+                
+                int cmd = random_rand()%4;
+                if(cmd == 0)
+                    irr_cmd_received_sim(msg, topic);
+                else if(cmd == 1)
+                    get_config_received_sim(msg, topic);
+                else if(cmd == 2)
+                    timer_cmd_received_sim(msg, topic);
                 else
-                    printf("[-] invalid topic received (%s)\n", topic);
+                    received_config_sim(msg, topic);
+            
+                printf(" <  [%s] %s \n",topic, msg);
+
+                elaborate_cmd(msg, topic);
 
                 etimer_restart(&cmd_sim_etimer);
             }

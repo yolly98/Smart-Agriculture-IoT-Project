@@ -130,8 +130,13 @@ bool elaborate_cmd(char msg[], char topic[]){
         int n_arguments = 6;
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments);
-        if(node_memory.configuration.land_id != atoi(arguments[0]) && node_memory.configuration.node_id != atoi(arguments[1])){
-            printf("[-] this configuration is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+        
+        int land_id = node_memory.configuration.land_id;
+        int node_id = node_memory.configuration.node_id;
+        int dest_land_id = atoi(arguments[0]);
+        int dest_node_id = atoi(arguments[1]);
+        if( (dest_land_id != 0 && dest_land_id != land_id) || ( dest_node_id != 0 && dest_node_id != node_id)){
+            printf("[-] this message is not for this board (%s, %s)\n", arguments[0], arguments[1]);
             return false;
         }
 
@@ -144,8 +149,13 @@ bool elaborate_cmd(char msg[], char topic[]){
         int n_arguments = 2;
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments);
-        if(node_memory.configuration.land_id != atoi(arguments[0]) && node_memory.configuration.node_id != atoi(arguments[1])){
-            printf("[-] this configuration is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+        
+        int land_id = node_memory.configuration.land_id;
+        int node_id = node_memory.configuration.node_id;
+        int dest_land_id = atoi(arguments[0]);
+        int dest_node_id = atoi(arguments[1]);
+        if( (dest_land_id != 0 && dest_land_id != land_id) || ( dest_node_id != 0 && dest_node_id != node_id)){
+            printf("[-] this message is not for this board (%s, %s)\n", arguments[0], arguments[1]);
             return false;
         }
         
@@ -156,9 +166,13 @@ bool elaborate_cmd(char msg[], char topic[]){
         
         int n_arguments = 4;
         char arguments[n_arguments][100];
-        parse_json(msg, n_arguments, arguments);
-        if(node_memory.configuration.land_id != atoi(arguments[0]) && node_memory.configuration.node_id != atoi(arguments[1])){
-            printf("[-] this configuration is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+        
+        int land_id = node_memory.configuration.land_id;
+        int node_id = node_memory.configuration.node_id;
+        int dest_land_id = atoi(arguments[0]);
+        int dest_node_id = atoi(arguments[1]);
+        if( (dest_land_id != 0 && dest_land_id != land_id) || ( dest_node_id != 0 && dest_node_id != node_id)){
+            printf("[-] this message is not for this board (%s, %s)\n", arguments[0], arguments[1]);
             return false;
         }
         
@@ -170,11 +184,52 @@ bool elaborate_cmd(char msg[], char topic[]){
         int n_arguments = 9;
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments);
-        if(node_memory.configuration.land_id != atoi(arguments[0]) && node_memory.configuration.node_id != atoi(arguments[1])){
-            printf("[-] this configuration is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+        
+        int land_id = node_memory.configuration.land_id;
+        int node_id = node_memory.configuration.node_id;
+        int dest_land_id = atoi(arguments[0]);
+        int dest_node_id = atoi(arguments[1]);
+        if( (dest_land_id != 0 && dest_land_id != land_id) || ( dest_node_id != 0 && dest_node_id != node_id)){
+            printf("[-] this message is not for this board (%s, %s)\n", arguments[0], arguments[1]);
             return false;
         }
         
+        printf("------------\n");
+    }
+    else if(strcmp(topic, "GET_SENSOR") == 0){
+        printf("GET_SENSOR command elaboration ...\n");
+
+        int n_arguments = 3;
+        char arguments[n_arguments][100];
+        parse_json(msg, n_arguments, arguments);
+
+        int land_id = node_memory.configuration.land_id;
+        int node_id = node_memory.configuration.node_id;
+        int dest_land_id = atoi(arguments[0]);
+        int dest_node_id = atoi(arguments[1]);
+        if( (dest_land_id != 0 && dest_land_id != land_id) || ( dest_node_id != 0 && dest_node_id != node_id)){
+            printf("[-] this message is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+            return false;
+        }
+
+        printf("------------\n");
+    }
+    else if(strcmp(topic, "IS_ALIVE") == 0){
+        printf("IS_ALIVE command elaboration ...\n");
+
+        int n_arguments = 2;
+        char arguments[n_arguments][100];
+        parse_json(msg, n_arguments, arguments);
+
+        int land_id = node_memory.configuration.land_id;
+        int node_id = node_memory.configuration.node_id;
+        int dest_land_id = atoi(arguments[0]);
+        int dest_node_id = atoi(arguments[1]);
+        if( (dest_land_id != 0 && dest_land_id != land_id) || ( dest_node_id != 0 && dest_node_id != node_id)){
+            printf("[-] this message is not for this board (%s, %s)\n", arguments[0], arguments[1]);
+            return false;
+        }
+
         printf("------------\n");
     }
     else{
@@ -191,7 +246,7 @@ bool elaborate_cmd(char msg[], char topic[]){
 
 void irr_cmd_received_sim(char msg[], char topic[]){
 
-    sprintf(topic, "IRR_CMD");
+    sprintf(topic, "%s", "IRR_CMD");
     sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'enable': '%s', 'status': '%s', 'limit': %d, 'irr_duration': %d } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -205,7 +260,7 @@ void irr_cmd_received_sim(char msg[], char topic[]){
 
 void get_config_received_sim(char msg[], char topic[]){
 
-    sprintf(topic, "GET_CONFIG");
+    sprintf(topic, "%s", "GET_CONFIG");
     sprintf(msg, "{ 'land_id': %d, 'node_id': %d } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id);
@@ -224,12 +279,42 @@ void timer_cmd_received_sim(char msg[], char topic[]){
     else
         sprintf(sensor, "tmp");
 
-    sprintf(topic, "TIMER_CMD");
+    sprintf(topic, "%s", "TIMER_CMD");
     sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'sensor': '%s', 'timer': %d } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
         sensor,
         20 + random_rand()%690
+        );
+}
+
+void get_sensor_received_sim(char msg[], char topic[]){
+
+    char sensor[10];
+    int rand = random_rand()%3;
+    if(rand == 0)
+        sprintf(sensor, "%s", "moisture");
+    else if(rand == 1)
+        sprintf(sensor, "%s", "ph");
+    else if(rand == 2)
+        sprintf(sensor, "%s", "light");
+    else
+        sprintf(sensor, "%s", "tmp");
+
+    sprintf(topic, "%s", "GET_SENSOR");
+    sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'tyoe': '%s' } ",
+        node_memory.configuration.land_id,
+        node_memory.configuration.node_id,
+        sensor
+        );
+}
+
+void is_alive_received_sim(char msg[], char topic[]){
+
+    sprintf(topic, "%s", "IS_ALIVE");
+    sprintf(msg, "{ 'land_id': %d, 'node_id': %d }", 
+        node_memory.configuration.land_id,
+        node_memory.configuration.node_id
         );
 }
 
@@ -246,12 +331,15 @@ void get_soil_moisture(){
     printf("[+] soil moisture detected: %d\n", moisture);
 
     char msg[100];
-    sprintf(msg,"[MOISTURE] { 'land_id': %d, 'node_id: %d, 'type': 'moisture', 'value': %d, 'timer': %d }",
+    char topic[50];
+    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'moisture', 'value': %d, 'timer': %d }",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
         moisture,
         node_memory.configuration.mst_timer);
-    printf(" >  %s\n", msg);
+    sprintf(topic, "MOISTURE");
+
+    printf(" >  [%s] %s\n", topic, msg);
 
 }
 
@@ -265,12 +353,14 @@ void get_ph_level(){
     printf("[+] ph level detected: %d\n", ph_level);
 
     char msg[100];
-    sprintf(msg,"[PH] { 'land_id': %d, 'node_id: %d, 'type': 'ph', 'value': %d, 'timer': %d }",
+    char topic[50];
+    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'ph', 'value': %d, 'timer': %d }",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
         ph_level,
         node_memory.configuration.ph_timer);
-    printf(" >  %s\n", msg);
+    sprintf(topic, "PH");
+    printf(" >  [%s] %s\n", topic, msg);
 
 }
 
@@ -284,12 +374,14 @@ void get_lihght_raw(){
     printf("[+] light raw detected: %d\n", light);
 
     char msg[100];
-    sprintf(msg,"[LIGHT] { 'land_id': %d, 'node_id: %d, 'type': 'light', 'value': %d, 'timer': %d }",
+    char topic[50];
+    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'light', 'value': %d, 'timer': %d }",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
         light,
         node_memory.configuration.light_timer);
-    printf(" >  %s\n", msg);
+    sprintf(topic, "LIGHT");
+    printf(" >  [%s] %s\n", topic, msg);
 } 
 
 void get_soil_tmp(){
@@ -302,12 +394,14 @@ void get_soil_tmp(){
     printf("[+] soil temperature detected: %d\n", tmp);
 
     char msg[100];
-    sprintf(msg,"[TMP] { 'land_id': %d, 'node_id: %d, 'type': 'tmp', 'value': %d, 'timer': %d }",
+    char topic[50];
+    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'tmp', 'value': %d, 'timer': %d }",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
         tmp,
         node_memory.configuration.mst_timer);
-    printf(" >  %s\n", msg);
+    sprintf(topic, "TMP");
+    printf(" >  [%s] %s\n", topic, msg);
 }
 /*-------------------------------------------------------------------*/
 
@@ -315,11 +409,12 @@ PROCESS(mqtt_node, "Mqtt node");
 AUTOSTART_PROCESSES(&mqtt_node);
 
 PROCESS_THREAD(mqtt_node, ev, data){
-
-    static struct etimer cmd_sim_etimer;
+    
     static unsigned int btn_count;
     static bool led_status;
     static bool land_id_setted;
+    char request[100];
+    char topic[50];
 
     PROCESS_BEGIN();
 
@@ -414,12 +509,12 @@ PROCESS_THREAD(mqtt_node, ev, data){
     
     printf("[!] configuration ... \n");
 
-    char request[100];
-    sprintf(request, "[CONFIG_RQST] { 'land_id': %d, 'node_id': %d } ",
+    sprintf(request, "{ 'land_id': %d, 'node_id': %d } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id
         );
-    printf(" >  %s \n", request);
+    sprintf(topic, "CONFIG_RQST");
+    printf(" >  [%s] %s \n", topic, request);
 
     get_config();
     print_config();
@@ -446,33 +541,49 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     /*---------------NORMAL WORKLOAD----------------*/
 
-    etimer_set(&cmd_sim_etimer, 5*CLOCK_SECOND);
     while(1){
 
         PROCESS_YIELD();
 
         //simulation of received command by server
-        if(ev == PROCESS_EVENT_TIMER){
-            if(etimer_expired(&cmd_sim_etimer)){
-                char msg[200];
-                char topic[50];
-                
-                int cmd = random_rand()%4;
-                if(cmd == 0)
-                    irr_cmd_received_sim(msg, topic);
-                else if(cmd == 1)
-                    get_config_received_sim(msg, topic);
-                else if(cmd == 2)
-                    timer_cmd_received_sim(msg, topic);
-                else
-                    received_config_sim(msg, topic);
-            
-                printf(" <  [%s] %s \n",topic, msg);
+        if(ev == serial_line_event_message){
+            char * msg = (char*)data;
 
-                elaborate_cmd(msg, topic);
-
-                etimer_restart(&cmd_sim_etimer);
+            if(strcmp(msg, "help") == 0){
+                printf("[!] command list:\n");
+                printf("    . irr_cmd\n");
+                printf("    . get_config\n");
+                printf("    . timer_cmd\n");
+                printf("    . assign_config\n");
+                printf("    . get_sensor\n");
+                printf("    . is_alive\n");
+                printf("---------------\n");
+                continue;
             }
+            else if(strcmp(msg, "irr_cmd") == 0){
+                irr_cmd_received_sim(msg, topic);
+            }
+            else if(strcmp(msg, "get_config") == 0){
+                get_config_received_sim(msg, topic);
+            }
+            else if(strcmp(msg, "timer_cmd") == 0){
+                timer_cmd_received_sim(msg, topic);
+            }
+            else if(strcmp(msg, "assign_config") == 0){
+                received_config_sim(msg, topic);
+            }
+            else if(strcmp(msg, "get_sensor") == 0){
+                get_sensor_received_sim(msg, topic);
+            }
+            else if(strcmp(msg, "is_alive") == 0){
+                is_alive_received_sim(msg, topic);
+            }
+
+            printf(" <  [%s] %s \n",topic, msg);
+
+            elaborate_cmd(msg, topic);
+
+            
         }
     }
 

@@ -1,6 +1,7 @@
 import json
 import command
 import random
+import mysql.connector
 
 #--------------
 
@@ -49,22 +50,46 @@ def status():
 
     print(" <  [", topic, "] ", msg)
 
-    #TODO: save configuration to mysql db
+
+    land_id = msg['land_id']
+    node_id = msg['node_id']
+    irr_enabled = msg['irr_config']['irr_enabled']
+    irr_limit = msg['irr_config']['irr_limit']
+    irr_duration = msg['irr_config']['irr_duration']
+    mst_timer = msg['mst_timer']
+    ph_timer = msg['ph_timer']
+    light_timer = msg['light_timer']
+    tmp_timer = msg['tmp_timer']
+
+
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "password",
+        database = "iot_project_db"
+    )
+    mycursor = mydb.cursor(prepared=True)
+
+    sql = "UPDATE configuration \
+        SET status = 'online', irr_enabled = %s, \
+        irr_limit = %s, irr_duration = %s, \
+        mst_timer = %s, ph_timer = %s, \
+        light_timer = %s, tmp_timer = %s \
+        WHERE land_id = %s AND node_id = %s "
+    mycursor.execute(sql, (irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer, land_id, node_id))
+    mydb.commit()
 
 #------------
 
 def irrigation_sim():
     land_id = random.randint(1,10)
     node_id = random.randint(1,10)
-    enable = "true"
     status = ""
     if random.randint(1,2) == 1:
         enable = "on"
     else:
         enable = "off"
-    irr_limit = random.randint(20,50)
-    irr_duration = random.randint(5,20)
-    msg = { 'land_id': land_id, 'node_id': node_id, "enabled": enable, "status": status, "irr_lmit":  irr_limit, "irr_duration": irr_duration }
+    msg = { 'land_id': land_id, 'node_id': node_id, "status": status}
     return json.dumps(msg)
 
 def irrigation():
@@ -75,7 +100,21 @@ def irrigation():
 
     print(" < [", topic, "] ", msg)
 
-    #TODO: save event to mysql db 
+    land_id = msg['land_id']
+    node_id = msg['node_id']
+    status = msg['status'] 
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "password",
+        database = "iot_project_db"
+    )
+    mycursor = mydb.cursor(prepared=True)
+
+    sql = "INSERT INTO irrigation (land_id, node_id, irr_status) \
+        VALUES (%s, %s, %s)"
+    mycursor.execute(sql, (land_id, node_id, status))
+    mydb.commit()
 
 #-----------
 
@@ -83,8 +122,7 @@ def moisture_sim():
     land_id = random.randint(1,10)
     node_id = random.randint(1,10)
     value = random.randint(10,50)
-    mst_timer = random.randint(6,24) * 60
-    msg = { 'land_id': land_id, 'node_id': node_id, 'type': "moisture", 'value': value, 'timer': mst_timer }
+    msg = { 'land_id': land_id, 'node_id': node_id, 'type': "moisture", 'value': value }
     return json.dumps(msg)
 
 def moisture():
@@ -95,10 +133,36 @@ def moisture():
     
     print(" < [", topic, "] ", msg)
 
-    #TODO: save event to mysql db
+    land_id = msg['land_id']
+    node_id = msg['node_id']
+    sensor = msg['type']
+    value = msg['value'] 
 
-    #TODO: get max and min from mysql and check if is a violation
-    #TODO: save the violation to mysql db
+    #save the measuremt
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "password",
+        database = "iot_project_db"
+    )
+    mycursor = mydb.cursor(prepared=True)
+
+    sql = "INSERT INTO measurement (land_id, node_id, sensor, m_value) \
+        VALUES (%s, %s, %s, %s)"
+    mycursor.execute(sql, (land_id, node_id, sensor, value))
+    mydb.commit()
+
+    #check if the measure is out of range
+    sql = "SELECT * FROM land WHERE id = %s" 
+    mycursor.execute(sql, (land_id,))
+    myresult = mycursor.fetchone()
+
+    mst_trashold = myresult[6]
+    if value < mst_trashold:
+        sql = "INSERT INTO violation (land_id, node_id, sensor, v_value) \
+            VALUES(%s, %s, %s, %s)"
+        mycursor.execute(sql, (land_id, node_id, sensor, value))
+        mydb.commit()
 
 #-----------
 
@@ -106,9 +170,7 @@ def ph_sim():
     land_id = random.randint(1,10)
     node_id = random.randint(1,10)
     value = random.randint(5,8)
-    ph_timer = random.randint(24,72) * 60
-
-    msg = { 'land_id': land_id, 'node_id': node_id, 'type': "ph", 'value': value, 'timer': ph_timer }
+    msg = { 'land_id': land_id, 'node_id': node_id, 'type': "ph", 'value': value }
     return json.dumps(msg)
 
 def ph():
@@ -119,10 +181,37 @@ def ph():
     
     print(" < [", topic, "] ", msg)
     
-    #TODO: save event to mysql db
+    land_id = msg['land_id']
+    node_id = msg['node_id']
+    sensor = msg['type']
+    value = msg['value'] 
 
-    #TODO: get max and min from mysql and check if is a violation
-    #TODO: save the violation to mysql db
+    #save the measuremt
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "password",
+        database = "iot_project_db"
+    )
+    mycursor = mydb.cursor(prepared=True)
+
+    sql = "INSERT INTO measurement (land_id, node_id, sensor, m_value) \
+        VALUES (%s, %s, %s, %s)"
+    mycursor.execute(sql, (land_id, node_id, sensor, value))
+    mydb.commit()
+
+    #check if the measure is out of range
+    sql = "SELECT * FROM land WHERE id = %s" 
+    mycursor.execute(sql, (land_id,))
+    myresult = mycursor.fetchone()
+
+    ph_min = myresult[7]
+    ph_max = myresult[8]
+    if value < ph_min or value > ph_max:
+        sql = "INSERT INTO violation (land_id, node_id, sensor, v_value) \
+            VALUES(%s, %s, %s, %s)"
+        mycursor.execute(sql, (land_id, node_id, sensor, value))
+        mydb.commit()
 
 #-----------
 
@@ -130,8 +219,7 @@ def light_sim():
     land_id = random.randint(1,10)
     node_id = random.randint(1,10)
     value = random.randint(0, 1800)
-    light_timer = random.randint(1,4)*60
-    msg = { 'land_id': land_id, 'node_id': node_id, 'type': "light", 'value': value, 'timer': light_timer }
+    msg = { 'land_id': land_id, 'node_id': node_id, 'type': "light", 'value': value }
     return json.dumps(msg)
 
 def light():
@@ -142,10 +230,37 @@ def light():
     
     print(" < [", topic, "] ", msg)
     
-    #TODO: save event to mysql db
+    land_id = msg['land_id']
+    node_id = msg['node_id']
+    sensor = msg['type']
+    value = msg['value'] 
 
-    #TODO: get max and min from mysql and check if is a violation
-    #TODO: save the violation to mysql db
+    #save the measuremt
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "password",
+        database = "iot_project_db"
+    )
+    mycursor = mydb.cursor(prepared=True)
+
+    sql = "INSERT INTO measurement (land_id, node_id, sensor, m_value) \
+        VALUES (%s, %s, %s, %s)"
+    mycursor.execute(sql, (land_id, node_id, sensor, value))
+    mydb.commit()
+
+    #check if the measure is out of range
+    sql = "SELECT * FROM land WHERE id = %s" 
+    mycursor.execute(sql, (land_id,))
+    myresult = mycursor.fetchone()
+
+    light_min = myresult[9]
+    light_max = myresult[10]
+    if value < light_min or value > light_max:
+        sql = "INSERT INTO violation (land_id, node_id, sensor, v_value) \
+            VALUES(%s, %s, %s, %s)"
+        mycursor.execute(sql, (land_id, node_id, sensor, value))
+        mydb.commit()
 
 #-----------
 
@@ -153,8 +268,7 @@ def tmp_sim():
     land_id = random.randint(1,10)
     node_id = random.randint(1,10)
     value = random.randint(5, 35)
-    tmp_timer = random.randint(1,4)*60
-    msg = { 'land_id': land_id, 'node_id': node_id, 'type': "tmp", 'value': value, 'timer': tmp_timer }
+    msg = { 'land_id': land_id, 'node_id': node_id, 'type': "tmp", 'value': value }
     return json.dumps(msg)
 
 def tmp():
@@ -165,10 +279,37 @@ def tmp():
     
     print(" < [", topic, "] ", msg)
     
-    #TODO: save event to mysql db
+    land_id = msg['land_id']
+    node_id = msg['node_id']
+    sensor = msg['type']
+    value = msg['value'] 
 
-    #TODO: get max and min from mysql and check if is a violation
-    #TODO: save the violation to mysql db
+    #save the measuremt
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "password",
+        database = "iot_project_db"
+    )
+    mycursor = mydb.cursor(prepared=True)
+
+    sql = "INSERT INTO measurement (land_id, node_id, sensor, m_value) \
+        VALUES (%s, %s, %s, %s)"
+    mycursor.execute(sql, (land_id, node_id, sensor, value))
+    mydb.commit()
+
+    #check if the measure is out of range
+    sql = "SELECT * FROM land WHERE id = %s" 
+    mycursor.execute(sql, (land_id,))
+    myresult = mycursor.fetchone()
+
+    tmp_min = myresult[11]
+    tmp_max = myresult[12]
+    if value < tmp_min or value > tmp_max:
+        sql = "INSERT INTO violation (land_id, node_id, sensor, v_value) \
+            VALUES(%s, %s, %s, %s)"
+        mycursor.execute(sql, (land_id, node_id, sensor, value))
+        mydb.commit()
 
 #-----------
 
@@ -186,4 +327,19 @@ def is_alive_ack():
     
     print(" < [", topic, "] ", msg)
     
-    #TODO: update the node status online on mysql db
+    land_id = msg['land_id']
+    node_id = msg['node_id']
+
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "password",
+        database = "iot_project_db"
+    )
+    mycursor = mydb.cursor(prepared=True)
+
+    sql = "UPDATE configuration \
+        SET status = 'online' \
+        WHERE land_id = %s AND node_id = %s "
+    mycursor.execute(sql, (land_id, node_id))
+    mydb.commit()

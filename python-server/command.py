@@ -1,4 +1,5 @@
 import json
+import mysql.connector
 
 #--------------------COMMAND TO NODE--------------
 
@@ -78,11 +79,43 @@ def get_config(broadcast):
 
 def assign_config(land_id, node_id):
 
-    #TODO get configuration from mysql
-    msg = { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': 'true', 'irr_limit': 37, 'irr_duration': 20}, 'mst_timer': 720, 'ph_timer': 720, 'light_timer': 60, 'tmp_timer':60 }
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "password",
+        database = "iot_project_db"
+    )
+    mycursor = mydb.cursor(prepared=True)
+
+    sql = "SELECT * FROM configuration WHERE (land_id = %s) AND (node_id = %s)"
+    mycursor.execute(sql, (land_id, node_id))
+    myresult = mycursor.fetchone()
+
+    #if is a new node, send the default configuration
+    if not myresult:
+        print("[!] (", land_id, ", ", node_id, ") is a new node")
+        sql = "SELECT * FROM configuration WHERE (land_id = %s) AND (node_id = 0)"
+        mycursor.execute(sql, (land_id,))
+        myresult = mycursor.fetchone()
+
+    if not myresult:
+        print("[-] mysqldb: the land ", land_id, " doesn't exist or return too many result")
+        return
+
+    msg = { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': myresult[4], 'irr_limit':  myresult[5], 'irr_duration': myresult[6]}, 'mst_timer': myresult[7], 'ph_timer': myresult[8], 'light_timer': myresult[9], 'tmp_timer': myresult[10] }
     json_msg = json.dumps(msg)
     topic = "ASSIGN_CONFIG"
     print(" >  [", topic, "] ", json_msg)
+
+    #save the new configuration
+    if myresult[1] == 0:
+        sql = "INSERT INTO configuration ( \
+            land_id, node_id, status, \
+            irr_enabled, irr_limit, irr_duration, \
+            mst_timer, ph_timer, light_timer, tmp_timer) \
+            VALUES( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        mycursor.execute(sql, (land_id, node_id, "online", myresult[4], myresult[5], myresult[6], myresult[7], myresult[8], myresult[9], myresult[10]))
+        mydb.commit()
 
 #--------
 

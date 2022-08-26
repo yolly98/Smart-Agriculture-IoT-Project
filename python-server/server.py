@@ -4,6 +4,7 @@ import time
 import math
 import threading
 import view_db
+import mysql.connector
 
 # ------------MAIN-----------
 
@@ -33,8 +34,9 @@ def server_console():
             print("--------- OTHERS ------------------")
             print(".[12]    test received messages")
             print(".[13]    cancel")
-            continue
-        elif cmd.isdigit() and int(cmd) == 1:
+            cmd = input("$ Type a number or help: ")
+
+        if cmd.isdigit() and int(cmd) == 1:
             view_db.view_lands()
         elif cmd.isdigit() and int(cmd) == 2:
             view_db.view_configurations()
@@ -69,7 +71,9 @@ def server_console():
                 print(".[7]     TMP")
                 print(".[8]     IS_ALIVE_ACK")
                 print(".[9]     cancel")
-            elif cmd.isdigit() and int(cmd) == 9:
+                cmd = input("[!] Type the TOPIC or help: ")
+
+            if cmd.isdigit() and int(cmd) == 9:
                 continue
             elif cmd.isdigit() and int(cmd) == 1:
                 from_node.config_request()
@@ -88,7 +92,7 @@ def server_console():
             elif cmd.isdigit() and int(cmd) == 8:
                 from_node.is_alive_ack()
             else:
-                printf("[-] topic non valid!")
+                print("[-] topic non valid!")
         elif cmd.isdigit() and int(cmd) == 13:
             continue
         else:
@@ -105,8 +109,19 @@ def server_listener():
         
         #check if nodes are online
         if (time.time() - start_timer) >= end_timer:
-            #TODO put offline all node in mysql db (the is_alive_ack will put them online)
-            start_timer = timer.time()
+            command.is_alive(True)
+            mydb = mysql.connector.connect(
+                host = "localhost",
+                user = "root",
+                password = "password",
+                database = "iot_project_db"
+            )
+            mycursor = mydb.cursor(prepared=True)
+
+            sql = "UPDATE configuration SET status = 'offline' WHERE node_id <> 0"
+            mycursor.execute(sql)
+            mydb.commit()
+            start_timer = time.time()
 
         time.sleep(0.1)
             

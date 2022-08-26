@@ -50,11 +50,12 @@ def print_configurations(config_list):
         print("status:          ", config[2])
         print("timestamp:       ", config[3])
         print("irr_enabled:     ", config[4])
-        print("irr_duration:    ", config[5])
-        print("mst_timer:       ", config[6])
-        print("ph_timer:        ", config[7])
-        print("light_timer:     ", config[8])
-        print("tmp_timer:       ", config[9])
+        print("irr_limit        ", config[5])
+        print("irr_duration:    ", config[6])
+        print("mst_timer:       ", config[7])
+        print("ph_timer:        ", config[8])
+        print("light_timer:     ", config[9])
+        print("tmp_timer:       ", config[10])
 
     print("-----------------")
 
@@ -91,11 +92,11 @@ def print_measurements(measurement_list):
 
     for measurement in measurement_list:
         print("-----------------")
-        print("land_id:     ", measure[0])
-        print("node_id:     ", measure[1])
-        print("timestamp:   ", measure[2])
-        print("sensor:      ", measure[3])
-        print("value:       ", measure[4])
+        print("land_id:     ", measurement[0])
+        print("node_id:     ", measurement[1])
+        print("timestamp:   ", measurement[2])
+        print("sensor:      ", measurement[3])
+        print("value:       ", measurement[4])
     
     print("-----------------")
 
@@ -146,7 +147,7 @@ def view_last_measurements():
     mycursor = mydb.cursor(prepared=True)
 
     if int(older) != 0 and int(recent) != 0:
-        sql = "SELECT * FROM measurement WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') AND (m_timestamp BEETWEEN date_sub(now(), interval %s day) and date_add(now(), interval %s day))"
+        sql = "SELECT * FROM measurement WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') AND (m_timestamp BEETWEEN date_sub(now(), interval %s day) and date_sub(now(), interval %s day))"
         mycursor.execute(sql, (land_id, land_id, node_id, node_id, sensor, sensor, older, recent))
     else:
         sql = "SELECT * FROM measurement WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') "
@@ -215,7 +216,7 @@ def view_last_violations():
     mycursor = mydb.cursor(prepared=True)
 
     if int(older) != 0 and int(recent) != 0:
-        sql = "SELECT * FROM violation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') AND (v_timestamp BEETWEEN date_sub(now(), interval %s day) and date_add(now(), interval %s day))"
+        sql = "SELECT * FROM violation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') AND (v_timestamp BEETWEEN date_sub(now(), interval %s day) and date_sub(now(), interval %s day))"
         mycursor.execute(sql, (land_id, land_id, node_id, node_id, sensor, sensor, older, recent))
     else:
         sql = "SELECT * FROM violation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') "
@@ -276,7 +277,7 @@ def view_last_irrigations():
     mycursor = mydb.cursor(prepared=True)
 
     if int(older) != 0 and int(recent) != 0:
-        sql = "SELECT * FROM irrigation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (i_timestamp BEETWEEN date_sub(now(), interval %s day) and date_add(now(), interval %s day))"
+        sql = "SELECT * FROM irrigation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (i_timestamp BEETWEEN date_sub(now(), interval %s day) and date_sub(now(), interval %s day))"
         mycursor.execute(sql, (land_id, land_id, node_id, node_id, older, recent))
     else:
         sql = "SELECT * FROM irrigation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0)"

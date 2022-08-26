@@ -388,13 +388,10 @@ void irrigation_sim(){
     char msg[100];
     char topic[50];
 
-    sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'enabled': '%s', 'status': '%s', 'irr_limit': %d, 'irr_duration': %d }",
+    sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'status': '%s'}",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
-        node_memory.configuration.irr_config.enabled?"true":"false",
-        node_memory.irr_status?"on":"off",
-        node_memory.configuration.irr_config.irr_limit,
-        node_memory.configuration.irr_config.irr_duration
+        node_memory.irr_status?"on":"off"
         );
     sprintf(topic, IRRIGATION);
     printf(" >  [%s] %s \n", topic, msg);
@@ -432,11 +429,10 @@ void get_soil_moisture(){
 
     char msg[100];
     char topic[50];
-    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'moisture', 'value': %d, 'timer': %d }",
+    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'moisture', 'value': %d }",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
-        moisture,
-        node_memory.configuration.mst_timer);
+        moisture);
     sprintf(topic, MOISTURE);
 
     printf(" >  [%s] %s\n", topic, msg);
@@ -470,11 +466,11 @@ void get_ph_level(){
 
     char msg[100];
     char topic[50];
-    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'ph', 'value': %d, 'timer': %d }",
+    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'ph', 'value': %d }",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
-        ph_level,
-        node_memory.configuration.ph_timer);
+        ph_level
+        );
     sprintf(topic, PH);
     printf(" >  [%s] %s\n", topic, msg);
 
@@ -493,11 +489,11 @@ void get_lihght_raw(){
 
     char msg[100];
     char topic[50];
-    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'light', 'value': %d, 'timer': %d }",
+    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'light', 'value': %d }",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
-        light,
-        node_memory.configuration.light_timer);
+        light
+        );
     sprintf(topic, LIGHT);
     printf(" >  [%s] %s\n", topic, msg);
 } 
@@ -515,11 +511,11 @@ void get_soil_tmp(){
 
     char msg[100];
     char topic[50];
-    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'tmp', 'value': %d, 'timer': %d }",
+    sprintf(msg,"{ 'land_id': %d, 'node_id: %d, 'type': 'tmp', 'value': %d }",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
-        tmp,
-        node_memory.configuration.mst_timer);
+        tmp
+        );
     sprintf(topic, TMP);
     printf(" >  [%s] %s\n", topic, msg);
 }

@@ -11,9 +11,9 @@ USE iot_project_db;
 CREATE TABLE IF NOT EXISTS configuration (
     land_id int(11) NOT NULL,
     node_id int(11) NOT NULL,
-    status boolean NOT NULL DEFAULT true,
+    status varchar(100) NOT NULL DEFAULT true,
     last_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    irr_enabled boolean NOT NULL,
+    irr_enabled varchar(100) NOT NULL,
     irr_limit int(11) NOT NULL,
     irr_duration int(11) NOT NULL,
     mst_timer int(11) NOT NULL,
@@ -24,11 +24,11 @@ CREATE TABLE IF NOT EXISTS configuration (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO configuration (land_id, node_id, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer) VALUES
-(1, 0, true, 22, 20, 720, 720, 30, 60),
-(2, 0, true, 25, 25, 720, 1440, 60, 120),
-(3, 0, true, 20, 20, 1440, 1440, 120, 120),
-(4, 0, true, 20, 15, 1440, 720, 60, 60),
-(5, 0, true, 15, 20, 720, 2880, 60, 120);
+(1, 0, 'online', 22, 20, 720, 720, 30, 60),
+(2, 0, 'online', 25, 25, 720, 1440, 60, 120),
+(3, 0, 'online', 20, 20, 1440, 1440, 120, 120),
+(4, 0, 'online', 20, 15, 1440, 720, 60, 60),
+(5, 0, 'online', 15, 20, 720, 2880, 60, 120);
 
 CREATE TABLE IF NOT EXISTS land (
     id int(11) NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS irrigation (
     land_id int(11) NOT NULL,
     node_id int(11) NOT NULL,
     i_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    irr_status boolean NOT NULL,
+    irr_status varchar(100) NOT NULL,
     PRIMARY KEY(land_id, node_id, i_timestamp)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

@@ -74,7 +74,7 @@ def get_config():
 
 def assign_config(land_id, node_id):
 
-    #TODO get from mysql
+    #TODO get configuration from mysql
     msg = { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': 'true', 'irr_limit': 37, 'irr_duration': 20}, 'mst_timer': 720, 'ph_timer': 720, 'light_timer': 60, 'tmp_timer':60 }
     json_msg = json.dumps(msg)
     topic = "ASSIGN_CONFIG"

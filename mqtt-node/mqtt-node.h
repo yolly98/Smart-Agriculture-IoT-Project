@@ -6,6 +6,7 @@
 #include <sys/etimer.h>
 #include "os/dev/button-hal.h"
 #include "os/dev/leds.h"
+#include "random.h"
 
 /*------------------------------------*/
 //TOPICS
@@ -26,10 +27,6 @@
 /*------------------------------------*/
 //DATA STRUCTURES
 
-struct coordinate_str{
-    float latitude;
-    float longitude; 
-};
 
 struct irr_config_str{
     bool enabled;
@@ -47,9 +44,8 @@ struct measurments_str{
 
 struct configuration_str{
 
-    unsigned int node_id;
     unsigned int land_id;
-    struct coordinate_str coordinate;
+    unsigned int node_id;
     struct irr_config_str irr_config;
     unsigned int mst_timer;
     unsigned int ph_timer;

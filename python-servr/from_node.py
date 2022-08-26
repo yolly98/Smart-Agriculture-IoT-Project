@@ -97,6 +97,9 @@ def moisture():
 
     #TODO: save event to mysql db
 
+    #TODO: get max and min from mysql and check if is a violation
+    #TODO: save the violation to mysql db
+
 #-----------
 
 def ph_sim():
@@ -118,6 +121,9 @@ def ph():
     
     #TODO: save event to mysql db
 
+    #TODO: get max and min from mysql and check if is a violation
+    #TODO: save the violation to mysql db
+
 #-----------
 
 def light_sim():
@@ -138,6 +144,9 @@ def light():
     
     #TODO: save event to mysql db
 
+    #TODO: get max and min from mysql and check if is a violation
+    #TODO: save the violation to mysql db
+
 #-----------
 
 def tmp_sim():
@@ -157,6 +166,9 @@ def tmp():
     print(" < [", topic, "] ", msg)
     
     #TODO: save event to mysql db
+
+    #TODO: get max and min from mysql and check if is a violation
+    #TODO: save the violation to mysql db
 
 #-----------
 

@@ -60,7 +60,7 @@ void parse_json(char json[], int n_arguments, char arguments[][100]){
             value_detected = false;
         }
         else if(value_detected){
-            if(json[i] =='\'')
+            if(json[i] =='\'' || json[i] == '\"')
                 continue;
             arguments[value_parsed][len] = json[i];
             len++;

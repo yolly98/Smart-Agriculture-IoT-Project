@@ -3,6 +3,7 @@ import from_node
 import time
 import math
 import threading
+import view_db
 
 # ------------MAIN-----------
 
@@ -16,6 +17,11 @@ def server_console():
         cmd = input("$ Type a command: ")
         if cmd == "help":
             print("[!] command list:")
+            print(". view_lands")
+            print(". view_configurations")
+            print(". view_last_measurements")
+            print(". view_last_violations")
+            print(". view_last_irrigations")
             print(". irr_cmd")
             print(". get_config")
             print(". assign_config")
@@ -23,10 +29,21 @@ def server_console():
             print(". get_sensor")
             print(". is_alive")
             print(". test")
+            print(". exit")
             print(". cancel")
             continue
         elif cmd == "cancel":
             continue
+        elif cmd == "view_lands":
+            view_db.view_lands()
+        elif cmd == "view_configurations":
+            view_db.view_configurations()
+        elif cmd == "view_last_measurements":
+            view_db.view_last_measurements()
+        elif cmd == "view_last_violations":
+            view_db.view_last_violations()
+        elif cmd == "view_last_irrigations":
+            view_db.view_last_irrigations()
         elif cmd == "irr_cmd":
             command.irr_cmd()
         elif cmd == "get_config":
@@ -72,7 +89,6 @@ def server_console():
                 from_node.is_alive_ack()
             else:
                 printf("[-] topic non valid!")
-            
         else:
             print("[-] command not valid!")
 

@@ -1,4 +1,4 @@
-import mysql.connector
+import mysql_module
 
 #-----------------------------------
 
@@ -22,20 +22,11 @@ def print_lands(land_list):
 
 def view_lands():
 
-    land_id = input("[!] Select a land or type 'all': ")
+    land_id = input("[!] Type the land_id or 'all': ")
     
     if land_id.isdigit() or land_id == 'all':
-        mydb = mysql.connector.connect(
-            host = "localhost",
-            user = "root",
-            password = "password",
-            database = "iot_project_db"
-        )
-        mycursor = mydb.cursor(prepared=True)
-        sql = "SELECT * FROM land WHERE (id = %s OR %s = 'all' OR %s = 0)" 
-        mycursor.execute(sql, (land_id, land_id, land_id))
-        myresult = mycursor.fetchall()
-        print_lands(myresult)
+        lands = mysql_module.get_land(land_id, False)
+        print_lands(lands)
     else:
         print("[-] not valid command")
 
@@ -61,30 +52,20 @@ def print_configurations(config_list):
 
 def view_configurations():
     
-    cmd = input("[!] Select the land_id (type 0 for all): ")
-    if not cmd.isdigit():
+    cmd = input("[!] Type the land_id or 'all': ")
+    if not cmd.isdigit() and cmd != 'all':
         print("[-] not value land_id")
         return
     land_id = cmd
     
-    cmd = input("[!] Select the node_id (type 0 for all): ")
-    if not cmd.isdigit():
+    cmd = input("[!] Type the node_id or 'all': ")
+    if not cmd.isdigit() and cmd != 'all':
         print("[-] not value node_id")
         return
     node_id = cmd
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
-    mycursor = mydb.cursor(prepared=True)
-
-    sql = "SELECT * FROM configuration WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0)"
-    mycursor.execute(sql, (land_id, land_id, node_id, node_id))
-    myresult = mycursor.fetchall()
-    print_configurations(myresult)
+    configs = mysql_module.get_config(land_id, node_id, False)
+    print_configurations(configs)
 
 
 #---------------------------------------
@@ -103,19 +84,19 @@ def print_measurements(measurement_list):
 
 def view_last_measurements():
 
-    cmd = input("[!] Select the land_id (type 0 for all): ")
-    if not cmd.isdigit():
+    cmd = input("[!] Type the land_id or 'all': ")
+    if not cmd.isdigit() and cmd != 'all':
         print("[-] not value land_id")
         return
     land_id = cmd
     
-    cmd = input("[!] Select the node_id (type 0 for all): ")
-    if not cmd.isdigit():
+    cmd = input("[!] Type the node_id or 'all': ")
+    if not cmd.isdigit() and cmd != 'all':
         print("[-] not value node_id")
         return
     node_id = cmd
 
-    cmd = input("[!] Select the sensor (moisture, ph. light, tmp) or 'all': ")
+    cmd = input("[!] Type the sensor (moisture, ph. light, tmp) or 'all': ")
     if cmd != 'moisture' and cmd != 'ph' and cmd != 'light' and cmd != 'tmp' and cmd != 'all':
         print("[-] sensor not valid")
         return
@@ -138,23 +119,8 @@ def view_last_measurements():
         print("[-] older value has to be greater then the recent one")
         return
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
-    mycursor = mydb.cursor(prepared=True)
-
-    if int(older) != 0 and int(recent) != 0:
-        sql = "SELECT * FROM measurement WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') AND (m_timestamp BEETWEEN date_sub(now(), interval %s day) and date_sub(now(), interval %s day))"
-        mycursor.execute(sql, (land_id, land_id, node_id, node_id, sensor, sensor, older, recent))
-    else:
-        sql = "SELECT * FROM measurement WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') "
-        mycursor.execute(sql, (land_id, land_id, node_id, node_id, sensor, sensor))
-
-    myresult = mycursor.fetchall()
-    print_measurements(myresult)
+    measurements = mysql_module.get_measurement(land_id, node_id, sensor, older, recent)
+    print_measurements(measurements)
 
 #-----------------------------------------
 
@@ -172,19 +138,19 @@ def print_violations(violation_list):
 
 def view_last_violations():
 
-    cmd = input("[!] Select the land_id (type 0 for all): ")
-    if not cmd.isdigit():
+    cmd = input("[!] Type the land_id or 'all': ")
+    if not cmd.isdigit() and cmd != 'all':
         print("[-] not value land_id")
         return
-    land_id = int(cmd)
+    land_id = cmd
     
-    cmd = input("[!] Select the node_id (type 0 for all): ")
-    if not cmd.isdigit():
+    cmd = input("[!] Type the node_id or 'all': ")
+    if not cmd.isdigit() and cmd != 'all':
         print("[-] not value node_id")
         return
-    node_id = int(cmd)
+    node_id = cmd
 
-    cmd = input("[!] Select the sensor (moisture, ph. light, tmp) or 'all': ")
+    cmd = input("[!] Type the sensor (moisture, ph. light, tmp) or 'all': ")
     if cmd != 'moisture' and cmd != 'ph' and cmd != 'light' and cmd != 'tmp' and cmd != 'all':
         print("[-] sensor not valid")
         return
@@ -195,35 +161,20 @@ def view_last_violations():
     if not cmd.isdigit:
         print("[-] older value is not correct")
         return
-    older = int(cmd)
+    older = cmd
 
     cmd = input("more recent value: ")
     if not cmd.isdigit:
         print("[-] recent value is not correct")
         return
-    recent = int(cmd)
+    recent = cmd
 
     if int(older) < int(recent):
         print("[-] older value has to be greater then the recent one")
         return
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
-    mycursor = mydb.cursor(prepared=True)
-
-    if int(older) != 0 and int(recent) != 0:
-        sql = "SELECT * FROM violation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') AND (v_timestamp BEETWEEN date_sub(now(), interval %s day) and date_sub(now(), interval %s day))"
-        mycursor.execute(sql, (land_id, land_id, node_id, node_id, sensor, sensor, older, recent))
-    else:
-        sql = "SELECT * FROM violation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (sensor = %s OR %s = 'all') "
-        mycursor.execute(sql, (land_id, land_id, node_id, node_id, sensor, sensor))
-
-    myresult = mycursor.fetchall()
-    print_violations(myresult)
+    violations = mysql_module.get_violation(land_id, node_id, sensor, older, recent)
+    print_violations(violations)
 
 #---------------------------------------
 def print_irrigations(irrigation_list):
@@ -239,51 +190,36 @@ def print_irrigations(irrigation_list):
 
 def view_last_irrigations():
 
-    cmd = input("[!] Select the land_id (type 0 for all): ")
-    if not cmd.isdigit():
+    cmd = input("[!] Type the land_id or 'all': ")
+    if not cmd.isdigit() and cmd != 'all':
         print("[-] not value land_id")
         return
-    land_id = int(cmd)
+    land_id = cmd
     
-    cmd = input("[!] Select the node_id (type 0 for all): ")
-    if not cmd.isdigit():
+    cmd = input("[!] Type the node_id or 'all': ")
+    if not cmd.isdigit() and cmd != 'all':
         print("[-] not value node_id")
         return
-    node_id = int(cmd)
+    node_id = cmd
 
     print("[!] Insert the time period in days (both 0 for all)")
     cmd = input("older value: ")
     if not cmd.isdigit:
         print("[-] older value is not correct")
         return
-    older = int(cmd)
+    older = cmd
 
     cmd = input("more recent value: ")
     if not cmd.isdigit:
         print("[-] recent value is not correct")
         return
-    recent = int(cmd)
+    recent = cmd
 
     if int(older) < int(recent):
         print("[-] older value has to be greater then the recent one")
         return
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
-    mycursor = mydb.cursor(prepared=True)
-
-    if int(older) != 0 and int(recent) != 0:
-        sql = "SELECT * FROM irrigation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0) AND (i_timestamp BEETWEEN date_sub(now(), interval %s day) and date_sub(now(), interval %s day))"
-        mycursor.execute(sql, (land_id, land_id, node_id, node_id, older, recent))
-    else:
-        sql = "SELECT * FROM irrigation WHERE (land_id = %s OR %s = 0) AND (node_id = %s OR %s = 0)"
-        mycursor.execute(sql, (land_id, land_id, node_id, node_id))
-
-    myresult = mycursor.fetchall()
-    print_irrigations(myresult)
+    irrigations = mysql_module.get_irrigation(land_id, node_id, older, recent)
+    print_irrigations(irrigations)
 
     

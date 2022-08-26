@@ -4,7 +4,7 @@ import time
 import math
 import threading
 import view_db
-import mysql.connector
+import mysql_module
 
 # ------------MAIN-----------
 
@@ -110,17 +110,7 @@ def server_listener():
         #check if nodes are online
         if (time.time() - start_timer) >= end_timer:
             command.is_alive(True)
-            mydb = mysql.connector.connect(
-                host = "localhost",
-                user = "root",
-                password = "password",
-                database = "iot_project_db"
-            )
-            mycursor = mydb.cursor(prepared=True)
-
-            sql = "UPDATE configuration SET status = 'offline' WHERE node_id <> 0"
-            mycursor.execute(sql)
-            mydb.commit()
+            mysql_module.set_all_node_offline()
             start_timer = time.time()
 
         time.sleep(0.1)

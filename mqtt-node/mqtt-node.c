@@ -268,7 +268,7 @@ void get_config_received_sim(char msg[], char topic[]){
 
 void assign_config_received_sim(char msg[], char topic[]){ //is a simulation of a message received from server
 
-    sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'irr_config': { 'enabled': 'true', 'irr_limit': 38, 'irr_duration': 20 }, 'irr_timer': 720, 'ph_timer': 720, 'light_timer': 60, 'tmp_timer': 60 } ",
+    sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'irr_config': { 'enabled': 'true', 'irr_limit': 38, 'irr_duration': 20 }, 'mst_timer': 720, 'ph_timer': 720, 'light_timer': 60, 'tmp_timer': 60 } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id
         );

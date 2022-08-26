@@ -85,10 +85,9 @@ def assign_config(land_id, node_id):
     if not config:
         print("[!] (", land_id, ", ", node_id, ") is a new node")
         config = mysql_module.get_config(land_id, 0, True)
-
-    if not config:
-        print("[-] mysqldb: the land ", land_id, " doesn't exist or return too many result")
-        return
+        if not config:
+            print("[-] mysqldb: the land ", land_id, " doesn't exist or return too many result")
+            return
 
     msg = { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': config[4], 'irr_limit':  config[5], 'irr_duration': config[6]}, 'mst_timer': config[7], 'ph_timer': config[8], 'light_timer': config[9], 'tmp_timer': config[10] }
     json_msg = json.dumps(msg)

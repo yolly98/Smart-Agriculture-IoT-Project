@@ -170,6 +170,10 @@ def add_measurement_event(land_id, node_id, sensor, value):
     mycursor.execute(sql, (land_id,))
     myresult = mycursor.fetchone()
 
+    if not myresult:
+        print("[-] the land ", land_id, " doesn't exist")
+        return
+
     is_violation = False
     
     if sensor == 'moisture':

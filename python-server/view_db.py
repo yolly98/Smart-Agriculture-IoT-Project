@@ -3,6 +3,10 @@ import mysql_module
 #-----------------------------------
 
 def print_lands(land_list):
+
+    if not land_list:
+        print("[-] There are no lands")
+        return
     for land in land_list:
         print("-----------------")
         print("land_id:      ", land[0])
@@ -34,6 +38,9 @@ def view_lands():
 
 def print_configurations(config_list):
 
+    if not config_list:
+        print("[-] There are no configurations saved")
+        return
     for config in config_list:
         print("-----------------")
         print("land_id:         ", config[0])
@@ -71,6 +78,9 @@ def view_configurations():
 #---------------------------------------
 def print_measurements(measurement_list):
 
+    if not measurement_list:
+        print("[-] There are no measurements")
+        return
     for measurement in measurement_list:
         print("-----------------")
         print("land_id:     ", measurement[0])
@@ -126,6 +136,9 @@ def view_last_measurements():
 
 def print_violations(violation_list):
 
+    if not violation_list:
+        print("[-] There are no violations")
+        return
     for violation in violation_list:
         print("-----------------")
         print("land_id:     ", violation[0])
@@ -179,6 +192,9 @@ def view_last_violations():
 #---------------------------------------
 def print_irrigations(irrigation_list):
 
+    if not irrigation_list:
+        print("[-] There are no irrigations")
+        return
     for irrigation in irrigation_list:
         print("-----------------")
         print("land_id:     ", irrigation[0])

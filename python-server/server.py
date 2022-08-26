@@ -33,7 +33,7 @@ def server_console():
             print(".[11]    is_alive")
             print("--------- OTHERS ------------------")
             print(".[12]    test received messages")
-            print(".[13]    cancel")
+            print(".[13]    exit")
             cmd = input("$ Type a number or help: ")
 
         if cmd.isdigit() and int(cmd) == 1:
@@ -94,7 +94,8 @@ def server_console():
             else:
                 print("[-] topic non valid!")
         elif cmd.isdigit() and int(cmd) == 13:
-            continue
+            print("Press Ctrl+c in order to stop the listener")
+            exit()
         else:
             print("[-] command not valid!")
 

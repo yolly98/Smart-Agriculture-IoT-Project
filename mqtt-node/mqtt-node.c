@@ -98,9 +98,9 @@ bool elaborate_cmd(char msg[], char topic[]){
             node_memory.configuration.irr_config.enabled = ((strcmp(arguments[2], "true") == 0)?true:false);
         if(strcmp(arguments[3], "null") != 0)
             node_memory.irr_status = ((strcmp(arguments[3], "true") == 0)?true:false);
-        if(strcmp(arguments[4], "null") != 0 && isNumber(arguments[4]))
+        if(isNumber(arguments[4]) && atoi(arguments[4]) != 0)
             node_memory.configuration.irr_config.irr_limit = atoi(arguments[4]);
-        if(strcmp(arguments[5], "null") != 0 && isNumber(arguments[5]))
+        if(isNumber(arguments[5]) && atoi(arguments[5]) != 0)
             node_memory.configuration.irr_config.irr_duration = atoi(arguments[5]);
 
         irrigation_sim();
@@ -268,7 +268,7 @@ void get_config_received_sim(char msg[], char topic[]){
 
 void assign_config_received_sim(char msg[], char topic[]){ //is a simulation of a message received from server
 
-    sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'irr_config': { 'enabled': 'true', 'irr_limit': 22, 'irr_duration': 20 }, 'irr_timer': 720, 'ph_timer': 720, 'light_timer': 60, 'tmp_timer': 60 } ",
+    sprintf(msg, "{ 'land_id': %d, 'node_id': %d, 'irr_config': { 'enabled': 'true', 'irr_limit': 38, 'irr_duration': 20 }, 'irr_timer': 720, 'ph_timer': 720, 'light_timer': 60, 'tmp_timer': 60 } ",
         node_memory.configuration.land_id,
         node_memory.configuration.node_id
         );
@@ -418,7 +418,7 @@ void get_soil_moisture(){
     if(node_timers.sensor_timer_are_setted)
         ctimer_restart(&node_timers.mst_ctimer);
 
-    short moisture = (15 + random_rand()%70);
+    short moisture = (15 + random_rand()%50);
     node_memory.measurements.soil_moisture = moisture;
     printf("[+] soil moisture detected: %d\n", moisture);
 
@@ -433,7 +433,9 @@ void get_soil_moisture(){
 
     printf(" >  [%s] %s\n", topic, msg);
 
-    if(moisture < node_memory.configuration.irr_config.irr_limit){
+    bool irr_enabled = node_memory.configuration.irr_config.enabled;
+    int irr_limit = node_memory.configuration.irr_config.irr_limit;
+    if( irr_enabled && moisture < irr_limit){
         node_memory.irr_status = true;
         int irr_duration = node_memory.configuration.irr_config.irr_duration;
         irrigation_sim();

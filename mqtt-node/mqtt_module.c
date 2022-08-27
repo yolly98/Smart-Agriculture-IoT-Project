@@ -51,6 +51,9 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
  */
 #define APP_BUFFER_SIZE 512
 
+
+#define MAX_TOPIC 7
+
 static struct mqtt_module_str{
   uint8_t state;
   mqtt_status_t status;
@@ -151,89 +154,76 @@ void mqtt_init_service(){
                      linkaddr_node_addr.u8[2], linkaddr_node_addr.u8[5],
                      linkaddr_node_addr.u8[6], linkaddr_node_addr.u8[7]);
 
-  while(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr)));
   // Broker registration					 
   mqtt_register(&mqtt_module.conn, &mqtt_node, mqtt_module.client_id, mqtt_event,
                   MAX_TCP_SEGMENT_SIZE);
 				  
-  mqtt_module.state=STATE_INIT;
-				    
-  // Initialize periodic timer to check the status 
+  mqtt_module.state = STATE_INIT;
+
   etimer_set(&node_timers.mqtt_etimer, STATE_MACHINE_PERIODIC);
 
 }
 
 /*---------------------------------------------------------------------------*/
 
-void mqtt_connect_service(){
+void mqtt_connection_service(){
 
-  while(mqtt_module.state != STATE_SUBSCRIBED){ 
-    if(!etimer_expired(&node_timers.mqtt_etimer))
-      continue; 
-    if(mqtt_module.state==STATE_INIT){
-      if(have_connectivity()==true)  
-        mqtt_module.state = STATE_NET_OK;
-    } 
+  if(mqtt_module.state==STATE_INIT){
+    if(have_connectivity()==true)  
+      mqtt_module.state = STATE_NET_OK;
+  } 
+  
+  if(mqtt_module.state == STATE_NET_OK){
+    // Connect to MQTT server
+    printf("Connecting!\n");
     
-    if(mqtt_module.state == STATE_NET_OK){
-      // Connect to MQTT server
-      printf("Connecting!\n");
-      
-      memcpy(mqtt_module.broker_address, broker_ip, strlen(broker_ip));
-      
-      mqtt_connect(
-                &mqtt_module.conn, mqtt_module.broker_address,
-                DEFAULT_BROKER_PORT,
-                (DEFAULT_PUBLISH_INTERVAL * 3) / CLOCK_SECOND,
-                MQTT_CLEAN_SESSION_ON);
-      mqtt_module.state = STATE_CONNECTING;
-    }
+    memcpy(mqtt_module.broker_address, broker_ip, strlen(broker_ip));
     
-    if(mqtt_module.state==STATE_CONNECTED){
-    
-      int n_topics = 7;
-      char topics_to_subscribe[][100] = { IRR_CMD, GET_CONFIG, ASSIGN_CONFIG, TIMER_CMD, GET_SENSOR, IS_ALIVE};
-      
-      for(int i = 0; i < n_topics; i++){
-        // Subscribe to a topic
-        strcpy(mqtt_module.sub_topic, topics_to_subscribe[i]);
-
-        mqtt_module.status = mqtt_subscribe(&mqtt_module.conn, NULL, mqtt_module.sub_topic, MQTT_QOS_LEVEL_0);
-
-        printf("Subscribing!\n");
-
-        if(mqtt_module.status == MQTT_STATUS_OUT_QUEUE_FULL) {
-          LOG_ERR("Tried to subscribe but command queue was full!\n");
-          //PROCESS_EXIT();
-        }
-      }
-      
-      mqtt_module.state = STATE_SUBSCRIBED;
-    }
-    else if ( mqtt_module.state == STATE_DISCONNECTED ){
-      LOG_ERR("Disconnected form MQTT broker\n");	
-      // Recover from error
-    }
-    etimer_set(&node_timers.mqtt_etimer, STATE_MACHINE_PERIODIC);
+    mqtt_connect(
+              &mqtt_module.conn, mqtt_module.broker_address,
+              DEFAULT_BROKER_PORT,
+              (DEFAULT_PUBLISH_INTERVAL * 3) / CLOCK_SECOND,
+              MQTT_CLEAN_SESSION_ON);
+    mqtt_module.state = STATE_CONNECTING;
   }
-  etimer_set(&node_timers.mqtt_etimer, STATE_MACHINE_PERIODIC);
+  
+  if(mqtt_module.state==STATE_CONNECTED){
+
+    // Subscribe to a topic
+    strcpy(mqtt_module.sub_topic, "#");
+
+    mqtt_module.status = mqtt_subscribe(&mqtt_module.conn, NULL, mqtt_module.sub_topic, MQTT_QOS_LEVEL_0);
+
+    printf("Subscribed for topic %s\n", mqtt_module.sub_topic);
+
+    if(mqtt_module.status == MQTT_STATUS_OUT_QUEUE_FULL) 
+      LOG_ERR("Tried to subscribe but command queue was full!\n");
+      //PROCESS_EXIT();
+    
+    mqtt_module.state = STATE_SUBSCRIBED;
+
+  }
+  else if ( mqtt_module.state == STATE_DISCONNECTED ){
+    LOG_ERR("Disconnected form MQTT broker\n");	
+    // Recover from error
+  }
+
+  etimer_restart(&node_timers.mqtt_etimer);
+
 }
 
 /*---------------------------------------------------------------------------*/
 
 void mqtt_publish_service(char msg[],char topic[]){
 
-  struct etimer conn_timer;
-  while(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr)))
-
   if(mqtt_module.state == STATE_SUBSCRIBED){
-    sprintf(mqtt_module.pub_topic, "%s", topic);
-    sprintf(mqtt_module.app_buffer, "%s", msg);
-    printf("%s Publishing ... [len = %ld]\n", mqtt_module.app_buffer, strlen(msg));
-      
-    mqtt_publish(&mqtt_module.conn, NULL, mqtt_module.pub_topic, (uint8_t *)mqtt_module.app_buffer,
-            strlen(mqtt_module.app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
+      sprintf(mqtt_module.pub_topic, "%s", topic);
+      sprintf(mqtt_module.app_buffer, "%s", msg);
+      printf("%s Publishing ... [len = %ld]\n", mqtt_module.app_buffer, strlen(msg));
+        
+      mqtt_publish(&mqtt_module.conn, NULL, mqtt_module.pub_topic, (uint8_t *)mqtt_module.app_buffer,
+              strlen(mqtt_module.app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
   }
+  else
+    printf("publishing failed\n");
 }
-
-

@@ -636,8 +636,15 @@ PROCESS_THREAD(mqtt_node, ev, data){
     printf("[!] intialization ended\n");
 
     mqtt_init_service();
-    mqtt_connect_service();
 
+    while(true){
+        PROCESS_YIELD();
+        if(etimer_expired(&node_timers.mqtt_etimer)){
+            mqtt_connection_service();
+            if(mqtt_module.state == STATE_SUBSCRIBED)
+                break;
+        }
+    }
     /*---------------CONFIGURATION-------------------*/
     
     printf("[!] configuration ... \n");
@@ -669,9 +676,15 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     /*---------------NORMAL WORKLOAD----------------*/
 
-    while(1){
+    while(true){
 
         PROCESS_YIELD();
+        
+        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr)))
+            printf("the border router is not reachable yet");
+
+        if(etimer_expired(&node_timers.mqtt_etimer))
+            mqtt_connection_service();
 
         //simulation of received command by server
         if(ev == serial_line_event_message){
@@ -715,8 +728,6 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
             
         }
-        if((ev == PROCESS_EVENT_TIMER && data == &node_timers.mqtt_etimer) || ev == PROCESS_EVENT_POLL)
-            mqtt_connect_service();
     }
 
 

@@ -11,6 +11,7 @@
 * [x] testare funzionalità server
 * [x] scrivere un log module che scrive sia su file sia su terminale
 
+* [ ] usare una lista per bufferizzare i messaggi da inviare in mqtt
 * [ ] inserire mqtt nel nodo e testarlo
 * [ ] inserire mqtt nel server
 

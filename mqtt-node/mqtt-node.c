@@ -640,8 +640,8 @@ PROCESS_THREAD(mqtt_node, ev, data){
     while(true){
         PROCESS_YIELD();
         if(etimer_expired(&node_timers.mqtt_etimer)){
-            mqtt_connection_service();
-            if(mqtt_module.state == STATE_SUBSCRIBED)
+            mqtt_connection_service()
+            if(mqtt_module.state == STATE_READY)
                 break;
         }
     }

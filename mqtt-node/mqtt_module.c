@@ -23,12 +23,14 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
 
 /*---------------------------------------------------------------------------*/
 
-#define STATE_INIT    		  0
-#define STATE_NET_OK    	  1
+#define STATE_INIT    		    0
+#define STATE_NET_OK    	    1
 #define STATE_CONNECTING      2
 #define STATE_CONNECTED       3
-#define STATE_SUBSCRIBED      4
-#define STATE_DISCONNECTED    5
+#define STATE_SUBSCRIBING     4
+#define STATE_READY           5
+#define STATE_DISCONNECTED    6
+#define STATE_PUBLISHING      7
 
 /*---------------------------------------------------------------------------*/
 /* Maximum TCP segment size for outgoing segments of our socket */
@@ -50,9 +52,13 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
  * We will need to increase if we start publishing more data.
  */
 #define APP_BUFFER_SIZE 512
+#define APP_TOPIC_SIZE 50
 
-
-#define MAX_TOPIC 7
+static struct mqtt_publish_list{
+  char msg[APP_BUFFER_SIZE];
+  char topic[APP_TOPIC_SIZE];
+  struct mqtt_publish_list * ptr;
+};
 
 static struct mqtt_module_str{
   uint8_t state;
@@ -65,7 +71,21 @@ static struct mqtt_module_str{
   struct mqtt_message *msg_ptr;
   struct mqtt_connection conn;
   uip_ipaddr_t dest_ipaddr;
+  static mqtt_publish_list* plist;
 } mqtt_module;
+
+
+
+void get_publish_msg(char msg[], char topic[]){
+
+  //TODO delete to tail
+}
+
+void add_publish_msg(char msg[], char topic[]){
+
+  //TODO add to head
+}
+
 
 /*---------------------------------------------------------------------------*/
 static void pub_handler(
@@ -108,11 +128,13 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
 
       if(suback_event->success) {
         printf("Application is subscribed to topic successfully\n");
+        mqtt_module.state = STATE_SUBSCRIBED;
       } else {
         printf("Application failed to subscribe to topic (ret code %x)\n", suback_event->return_code);
       }
 #else
       printf("Application is subscribed to topic successfully\n");
+      mqtt_module.state = STATE_SUBSCRIBED;
 #endif
       break;
     }
@@ -122,6 +144,7 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
     }
     case MQTT_EVENT_PUBACK: {
       printf("Publishing complete.\n");
+      mqtt_module.state = STATE_SUBSCRIBED;
       break;
     }
     default:
@@ -168,6 +191,7 @@ void mqtt_init_service(){
 
 void mqtt_connection_service(){
 
+  printf("check mqtt connectivity\n");
   if(mqtt_module.state==STATE_INIT){
     if(have_connectivity()==true)  
       mqtt_module.state = STATE_NET_OK;
@@ -196,16 +220,15 @@ void mqtt_connection_service(){
 
     printf("Subscribed for topic %s\n", mqtt_module.sub_topic);
 
-    if(mqtt_module.status == MQTT_STATUS_OUT_QUEUE_FULL) 
+    if(mqtt_module.status == MQTT_STATUS_OUT_QUEUE_FULL) {
       LOG_ERR("Tried to subscribe but command queue was full!\n");
-      //PROCESS_EXIT();
-    
-    mqtt_module.state = STATE_SUBSCRIBED;
-
+      mqtt_module.state = STATE_INIT;
+    }
+    mqtt_module.state = STATE_SUBSCRIBING;
   }
-  else if ( mqtt_module.state == STATE_DISCONNECTED ){
+  if ( mqtt_module.state == STATE_DISCONNECTED ){
     LOG_ERR("Disconnected form MQTT broker\n");	
-    // Recover from error
+    mqtt_module.state = STATE_INIT;
   }
 
   etimer_restart(&node_timers.mqtt_etimer);
@@ -214,16 +237,21 @@ void mqtt_connection_service(){
 
 /*---------------------------------------------------------------------------*/
 
-void mqtt_publish_service(char msg[],char topic[]){
+bool mqtt_publish_service(char msg[],char topic[]){
 
-  if(mqtt_module.state == STATE_SUBSCRIBED){
-      sprintf(mqtt_module.pub_topic, "%s", topic);
-      sprintf(mqtt_module.app_buffer, "%s", msg);
-      printf("%s Publishing ... [len = %ld]\n", mqtt_module.app_buffer, strlen(msg));
-        
-      mqtt_publish(&mqtt_module.conn, NULL, mqtt_module.pub_topic, (uint8_t *)mqtt_module.app_buffer,
-              strlen(mqtt_module.app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
+  if(mqtt_module.state == STATE_READY){
+    sprintf(mqtt_module.pub_topic, "%s", topic);
+    sprintf(mqtt_module.app_buffer, "%s", msg);
+    printf("%s Publishing ... [len = %ld]\n", mqtt_module.app_buffer, strlen(msg));
+      
+    mqtt_publish(&mqtt_module.conn, NULL, mqtt_module.pub_topic, (uint8_t *)mqtt_module.app_buffer,
+            strlen(mqtt_module.app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
+
+    mqtt_module.state = STATE_PUBLISHING;
+    return true;
   }
-  else
+  else{
     printf("publishing failed\n");
+    return false;
+  }
 }

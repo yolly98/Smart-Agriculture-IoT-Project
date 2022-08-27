@@ -7,6 +7,7 @@
 * [x] spostare tutte le operazioni su mysql su un file
 * [x] scrivere controlli di buona riuscita delle funzioni del modulo mysql
 * [ ] scrivere le funzioni e comandi per modificare land e config di default
+* [ ] mettere il limit alle funzioni get
 * [ ] scrivere un log module che scrive sia su file sia su terminale
 
 * [ ] inserire mqtt nel nodo

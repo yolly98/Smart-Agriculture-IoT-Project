@@ -1,7 +1,8 @@
 import json
-import command
 import random
-import mysql_module
+import to_node
+from persistence import add_mysql_db
+from persistence import update_mysql_db
 
 #--------------
 
@@ -20,7 +21,7 @@ def config_request():
 
     print(" <  [", topic, "] ", msg)
 
-    command.assign_config(msg['land_id'], msg['node_id'])
+    to_node.assign_config(msg['land_id'], msg['node_id'])
 
 
 #------------
@@ -60,7 +61,7 @@ def status():
     light_timer = msg['light_timer']
     tmp_timer = msg['tmp_timer']
 
-    mysql_module.update_configuration(land_id, node_id, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
+    update_mysql_db.update_configuration(land_id, node_id, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
     
 
 #------------
@@ -88,7 +89,7 @@ def irrigation():
     node_id = msg['node_id']
     status = msg['status'] 
     
-    mysql_module.add_irrigation_event(land_id, node_id, status)
+    add_mysql_db.add_irrigation_event(land_id, node_id, status)
 
 #-----------
 
@@ -112,7 +113,7 @@ def moisture():
     sensor = msg['type']
     value = msg['value'] 
 
-    mysql_module.add_measurement_event(land_id, node_id, sensor, value)
+    add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
 
 #-----------
 
@@ -136,7 +137,7 @@ def ph():
     sensor = msg['type']
     value = msg['value'] 
 
-    mysql_module.add_measurement_event(land_id, node_id, sensor, value)
+    add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
 
 #-----------
 
@@ -160,7 +161,7 @@ def light():
     sensor = msg['type']
     value = msg['value'] 
 
-    mysql_module.add_measurement_event(land_id, node_id, sensor, value)
+    add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
 
 #-----------
 
@@ -184,7 +185,7 @@ def tmp():
     sensor = msg['type']
     value = msg['value'] 
 
-    mysql_module.add_measurement_event(land_id, node_id, sensor, value)
+    add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
 
 #-----------
 
@@ -205,4 +206,4 @@ def is_alive_ack():
     land_id = msg['land_id']
     node_id = msg['node_id']
 
-    mysql_module.set_node_online(land_id, node_id)
+    update_mysql_db.set_node_online(land_id, node_id)

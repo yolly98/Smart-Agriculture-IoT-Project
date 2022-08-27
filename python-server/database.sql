@@ -24,11 +24,11 @@ CREATE TABLE IF NOT EXISTS configuration (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO configuration (land_id, node_id, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer) VALUES
-(1, 0, 'online', 22, 20, 720, 720, 30, 60),
-(2, 0, 'online', 25, 25, 720, 1440, 60, 120),
-(3, 0, 'online', 20, 20, 1440, 1440, 120, 120),
-(4, 0, 'online', 20, 15, 1440, 720, 60, 60),
-(5, 0, 'online', 15, 20, 720, 2880, 60, 120);
+(1, 0, 'null', 22, 20, 720, 720, 30, 60),
+(2, 0, 'null', 25, 25, 720, 1440, 60, 120),
+(3, 0, 'null', 20, 20, 1440, 1440, 120, 120),
+(4, 0, 'null', 20, 15, 1440, 720, 60, 60),
+(5, 0, 'null', 15, 20, 720, 2880, 60, 120);
 
 CREATE TABLE IF NOT EXISTS land (
     id int(11) NOT NULL,
@@ -40,19 +40,17 @@ CREATE TABLE IF NOT EXISTS land (
     mst_trashold int(11) NOT NULL,
     min_ph int(11) NOT NULL,
     max_ph int(11) NOT NULL,
-    min_light int(11) NOT NULL,
-    max_light int(11) NOT NULL,
     min_tmp int(11) NOT NULL,
     max_tmp int(11) NOT NULL,
     PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO land (id, area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_light, max_light, min_tmp, max_tmp) VALUES
-(1, 0.1, 'pag 5, part 4, Carbognano (VT)', 'Fondi', 'lettuce', 'loam', 14, 6, 7, 8, 20, 4, 22),
-(2, 0.5, 'pag 2 part 1 Carbognano (VT)', 'Crafeno', 'tomato', 'silt loam', 11, 6, 7, 0, 22, 10, 25),
-(3, 1, 'pag 4 part 5 Carbognano (VT)', 'Filaro', 'olive', 'clay loam', 22, 5, 7, 2, 55, 16, 33),
-(4, 2, 'pag 3 part 2 Carbognano (VT)', 'Galli', 'olive', 'sandy loam', 8, 6, 8, 4, 18, 18, 36),
-(5, 1, 'pag 8 part 3 Carbognano (VT)', 'Corpiè', 'apple', 'slity clay', 27, 6, 8, 1, 22, 20, 38); 
+INSERT INTO land (id, area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_tmp, max_tmp) VALUES
+(1, 0.1, 'pag 5, part 4, Carbognano (VT)', 'Fondi', 'lettuce', 'loam', 14, 6, 7, 4, 22),
+(2, 0.5, 'pag 2 part 1 Carbognano (VT)', 'Crafeno', 'tomato', 'silt loam', 11, 6, 7, 10, 25),
+(3, 1, 'pag 4 part 5 Carbognano (VT)', 'Filaro', 'olive', 'clay loam', 22, 5, 7, 16, 33),
+(4, 2, 'pag 3 part 2 Carbognano (VT)', 'Galli', 'olive', 'sandy loam', 8, 6, 8, 18, 36),
+(5, 1, 'pag 8 part 3 Carbognano (VT)', 'Corpiè', 'apple', 'slity clay', 27, 6, 8, 20, 38); 
 
 CREATE TABLE IF NOT EXISTS measurement (
     land_id int(11) NOT NULL,

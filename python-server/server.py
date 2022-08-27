@@ -1,14 +1,17 @@
-import command
+import to_node
 import from_node
 import time
 import math
 import threading
-import view_db
-import mysql_module
+from view import get_vw
+from view import add_vw
+from view import update_vw
+from view import delete_vw
+
 
 # ------------MAIN-----------
 
-command.get_config(True)
+to_node.get_config(True)
 
 
 #functinon for thread 1(console)
@@ -24,41 +27,93 @@ def server_console():
             print(".[3]     view last measurements")
             print(".[4]     view last violations")
             print(".[5]     view last irrigations")
-            print("------- COMMAND TO NODES-----------")
+            print("------- COMMAND TO NODES ----------")
             print(".[6]     irr_cmd")
             print(".[7]     get_config")
             print(".[8]     assign_config")
             print(".[9]     timer_cmd")
             print(".[10]    get_sensor")
             print(".[11]    is_alive")
+            print("--------- MANAGE DATA -------------")
+            print("     ---- ADD DATA ----")
+            print(".[12]    add new land")
+            print(".[13]    add new configuration")
+            print(".[14]    add irrigation event")
+            print(".[15]    add measurement event")
+            print("     ---- UPDATE DATA ----")
+            print(".[16]    update land")
+            print(".[17]    update configuration")
+            print(".[18]    set node online")
+            print(".[19]    set all node offline")
+            print("     ---- DELETE DATA ----")
+            print(".[20]    delete land")
+            print(".[21]    delete configuration")
+            print(".[22]    delete many irrigation events")
+            print(".[23]    delete one irrigation event")
+            print(".[24]    delete many measurement events")
+            print(".[25]    delete one measurement event")
+            print(".[26]    delete many violations")
+            print(".[27]    delete one violation")
             print("--------- OTHERS ------------------")
-            print(".[12]    test received messages")
-            print(".[13]    exit")
+            print(".[28]    test received messages")
+            print(".[29]    exit")
             cmd = input("$ Type a number or help: ")
 
         if cmd.isdigit() and int(cmd) == 1:
-            view_db.view_lands()
+            get_vw.view_lands()
         elif cmd.isdigit() and int(cmd) == 2:
-            view_db.view_configurations()
+            get_vw.view_configurations()
         elif cmd.isdigit() and int(cmd) == 3:
-            view_db.view_last_measurements()
+            get_vw.view_last_measurements()
         elif cmd.isdigit() and int(cmd) == 4:
-            view_db.view_last_violations()
+            get_vw.view_last_violations()
         elif cmd.isdigit() and int(cmd) == 5:
-            view_db.view_last_irrigations()
+            get_vw.view_last_irrigations()
         elif cmd.isdigit() and int(cmd) == 6:
-            command.irr_cmd()
+            to_node.irr_cmd()
         elif cmd.isdigit() and int(cmd) == 7:
-            command.get_config(False)
+            to_node.get_config(False)
         elif cmd.isdigit() and int(cmd) == 8:
-            command.assign_config(0, 0)
+            to_node.assign_config(0, 0)
         elif cmd.isdigit() and int(cmd) == 9:
-            command.timer_cmd()
+            to_node.timer_cmd()
         elif cmd.isdigit() and int(cmd) == 10:
-            command.get_sensor()
+            to_node.get_sensor()
         elif cmd.isdigit() and int(cmd) == 11:
-            command.is_alive(False)
+            to_node.is_alive(False)
         elif cmd.isdigit() and int(cmd) == 12:
+            add_vw.add_land_vw()
+        elif cmd.isdigit() and int(cmd) == 13:
+            add_vw.add_configuration_vw()
+        elif cmd.isdigit() and int(cmd) == 14:
+            add_vw.add_irrigation_event_vw()
+        elif cmd.isdigit() and int(cmd) == 15:
+            add_vw.add_measurement_event_vw()
+        elif cmd.isdigit() and int(cmd) == 16:
+            update_vw.update_land_vw()
+        elif cmd.isdigit() and int(cmd) == 17:
+            update_vw.update_configuration_vw()
+        elif cmd.isdigit() and int(cmd) == 18:
+            update_vw.set_node_online_vw()
+        elif cmd.isdigit() and int(cmd) == 19:
+            update_vw.set_all_node_offline_vw()
+        elif cmd.isdigit() and int(cmd) == 20:
+            delete_vw.delete_land_vw()
+        elif cmd.isdigit() and int(cmd) == 21:
+            delete_vw.delete_configuration_vw()
+        elif cmd.isdigit() and int(cmd) == 22:
+            delete_vw.delete_irrigation_many_vw()
+        elif cmd.isdigit() and int(cmd) == 23:
+            delete_vw.delete_irrigation_one_vw()
+        elif cmd.isdigit() and int(cmd) == 24:
+            delete_vw.delete_measurement_many_vw()
+        elif cmd.isdigit() and int(cmd) == 25:
+            delete_vw.delete_measurement_one_vw()
+        elif cmd.isdigit() and int(cmd) == 26:
+            delete_vw.delete_violation_many_vw()
+        elif cmd.isdigit() and int(cmd) == 27:
+            delete_vw.delete_violation_one_vw()
+        elif cmd.isdigit() and int(cmd) == 28:
             cmd = input("[!] Type the TOPIC or help: ")
         
             if cmd == "help":
@@ -93,7 +148,7 @@ def server_console():
                 from_node.is_alive_ack()
             else:
                 print("[-] topic non valid!")
-        elif cmd.isdigit() and int(cmd) == 13:
+        elif cmd.isdigit() and int(cmd) == 29:
             print("Press Ctrl+c in order to stop the listener")
             exit()
         else:
@@ -110,8 +165,8 @@ def server_listener():
         
         #check if nodes are online
         if (time.time() - start_timer) >= end_timer:
-            command.is_alive(True)
-            mysql_module.set_all_node_offline()
+            to_node.is_alive(True)
+            update_ctr.set_all_node_offline()
             start_timer = time.time()
 
         time.sleep(0.1)

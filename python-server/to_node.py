@@ -1,5 +1,5 @@
 import json
-import mysql_module
+from persistence import get_mysql_db
 
 #--------------------COMMAND TO NODE--------------
 
@@ -79,12 +79,12 @@ def get_config(broadcast):
 
 def assign_config(land_id, node_id):
 
-    config = mysql_module.get_config(land_id, node_id, True)
+    config = get_mysql_db.get_config(land_id, node_id, True)
 
     #if is a new node, send the default configuration
     if not config:
         print("[!] (", land_id, ", ", node_id, ") is a new node")
-        config = mysql_module.get_config(land_id, 0, True)
+        config = get_mysql_db.get_config(land_id, 0, True)
         if not config:
             print("[-] mysqldb: the land ", land_id, " doesn't exist or return too many result")
             return
@@ -96,7 +96,7 @@ def assign_config(land_id, node_id):
 
     #save the new configuration
     if config[1] == 0:
-        mysql_module.add_configuration(land_id, node_id, "online", config[4], config[5], config[6], config[7], config[8], config[9], config[10])
+        get_mysql_db.add_configuration(land_id, node_id, "online", config[4], config[5], config[6], config[7], config[8], config[9], config[10])
         
 
 #--------

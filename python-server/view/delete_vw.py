@@ -126,9 +126,10 @@ def delete_measurement_one_vw():
         timestamp = input("timestamp: ")
         if timestamp == "cancel":
             return
-        if land_id.isdigit() and land_id > 0
+        if (land_id.isdigit() and land_id > 0
             and node_id.isdigit() and node_id > 0
-            and not timestamp.isdigit():
+            and not timestamp.isdigit()
+        ):
             break
         else:
             print("[-] invalid values")
@@ -162,9 +163,10 @@ def delete_violation_many_vw():
         sensor = input("sensor (moisture/ph/light/tmp/all): ")
         if sensor == "cancel":
             return
-        if land_id.isdigit() and land_id > 0
+        if (land_id.isdigit() and land_id > 0
             and node_id.isdigit() and node_id > 0
-            and (sensor == "moisture" or sensor == "ph" or sensor == "light" or sensor == "tmp" or sensor == "all"):
+            and (sensor == "moisture" or sensor == "ph" or sensor == "light" or sensor == "tmp" or sensor == "all")
+        ):
             break
         else:
             print("[-] invalid values")
@@ -208,9 +210,10 @@ def delete_violation_one_vw():
         timestamp = input("timestamp: ")
         if timestamp == "cancel":
             return
-        if land_id.isdigit() and land_id > 0
+        if (land_id.isdigit() and land_id > 0
             and node_id.isdigit() and node_id > 0
-            and not timestamp.isdigit():
+            and not timestamp.isdigit()
+        ):
             break
         else:
             print("[-] invalid values")
@@ -240,8 +243,9 @@ def delete_irrigation_many_vw():
         node_id = input("node_id: ")
         if node_id == "cancel":
             return
-        if land_id.isdigit() and land_id > 0
-            and node_id.isdigit() and node_id > 0:
+        if (land_id.isdigit() and land_id > 0
+            and node_id.isdigit() and node_id > 0
+        ):
             break
         else:
             print("[-] invalid values")
@@ -285,9 +289,10 @@ def delete_irrigation_one_vw():
         timestamp = input("timestamp: ")
         if timestamp == "cancel":
             return
-        if land_id.isdigit() and land_id > 0
+        if (land_id.isdigit() and land_id > 0
             and node_id.isdigit() and node_id > 0
-            and not timestamp.isdigit():
+            and not timestamp.isdigit()
+        ):
             break
         else:
             print("[-] invalid values")

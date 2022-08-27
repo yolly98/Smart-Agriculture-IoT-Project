@@ -15,12 +15,12 @@ def update_configuration_vw():
     ph_timer = ""
     tmp_timer = ""
 
-    print("[!] New Configuration (type 'cancel' to quit)")
+    print("[!] Update Configuration (type 'cancel' to quit)")
     while True:
         land_id = input("land_id: ")
         if land_id == "cancel":
             return
-        if land_id.isdigit() and land_id > 0:
+        if land_id.isdigit() and int(land_id) > 0:
             break
         else:
             print("[-] invalid value")
@@ -28,12 +28,12 @@ def update_configuration_vw():
         node_id = input("node_id: ")
         if node_id == "cancel":
             return
-        if node_id.isdigit() and node_id > 0:
+        if node_id.isdigit() and int(node_id) > 0:
             break
         else:
             print("[-] invalid value")
 
-    old_configuratiopn = get_mysql_db.get_config(land_id, node_id, True)
+    old_configuration = get_mysql_db.get_config(land_id, node_id, True)
     if not old_configuration:
         print("[-] not exists the configuration (", land_id, ", ", node_id, ")")
         return
@@ -45,6 +45,7 @@ def update_configuration_vw():
             return
         if status == 'x':
             status = old_configuration[2]
+            break
         if status == 'online' or status == 'offline' or status == 'null':
             break
         else:
@@ -55,6 +56,7 @@ def update_configuration_vw():
             return
         if irr_enabled == 'x':
             irr_enabled = old_configuration[4]
+            break
         if irr_enabled == 'true' or irr_enabled == 'false':
             break
         else:
@@ -65,6 +67,7 @@ def update_configuration_vw():
             return
         if irr_limit == 'x':
             irr_limit = old_configuration[5]
+            break
         if irr_limit.isdigit():
             break
         else:
@@ -75,6 +78,7 @@ def update_configuration_vw():
             return
         if irr_duration == 'x':
             irr_duration = old_configuration[6]
+            break
         if irr_duration.isdigit():
             break
         else:
@@ -85,6 +89,7 @@ def update_configuration_vw():
             return
         if mst_timer == 'x':
             mst_timer = old_configuration[7]
+            break
         if mst_timer.isdigit():
             break
         else:
@@ -95,6 +100,7 @@ def update_configuration_vw():
             return
         if ph_timer == 'x':
             ph_timer = old_configuration[8]
+            break
         if ph_timer.isdigit():
             break
         else:
@@ -104,7 +110,8 @@ def update_configuration_vw():
         if light_timer == "cancel":
             return
         if light_timer == 'x':
-            light_timer = old_configuratiopn[9]
+            light_timer = old_configuration[9]
+            break
         if light_timer.isdigit():
             break
         else:
@@ -115,6 +122,7 @@ def update_configuration_vw():
             return
         if tmp_timer == 'x':
             tmp_timer = old_configuration[10]
+            break
         if tmp_timer.isdigit():
             break
         else:
@@ -144,12 +152,12 @@ def update_land_vw():
     min_tmp = ""
     max_tmp = ""
 
-    print("[!] New land (type 'cancel' to quit")
+    print("[!] Update land (type 'cancel' to quit")
     while True:
         land_id = input("land_id: ")
         if land_id == "cancel":
             return
-        if land_id.isdigit() and land_id > 0:
+        if land_id.isdigit() and int(land_id) > 0:
             break
         else:
             print("[-] invalid value")
@@ -158,6 +166,7 @@ def update_land_vw():
     old_land = get_mysql_db.get_land(land_id, True)
     if not old_land:
         print("[-] not exists the land ", land_id)
+        return
     
     print("[!] Type 'x' to not update the attribute")
     while True:
@@ -166,7 +175,8 @@ def update_land_vw():
             return
         if area == 'x':
             area = old_land[1]
-        if area.isdigit() and area > 0:
+            break
+        if area.isdigit() and float(area) > 0:
             break
         else:
             print("[-] invalid value")
@@ -176,6 +186,7 @@ def update_land_vw():
             return
         if locality == 'x':
             locality = old_land[2]
+            break
         if not locality.isdigit():
             break
         else:
@@ -186,6 +197,7 @@ def update_land_vw():
             return
         if name == 'x':
             name = old_land[3]
+            break
         if not name.isdigit():
             break
         else:
@@ -196,6 +208,7 @@ def update_land_vw():
             return
         if crop == 'x':
             crop = old_land[4]
+            break
         if not crop.isdigit():
             break
         else:
@@ -206,6 +219,7 @@ def update_land_vw():
             return
         if soil_type == 'x':
             soil_type = old_land[5]
+            break
         if not soil_type.isdigit():
             break
         else:
@@ -216,6 +230,7 @@ def update_land_vw():
             return
         if mst_trashold == 'x':
             mst_trashold = old_land[6]
+            break
         if mst_trashold.isdigit():
             break
         else:
@@ -224,37 +239,44 @@ def update_land_vw():
         min_ph = input("min_ph: ")
         if min_ph == "cancel":
             return
-        if min_ph == 'x':
-            min_ph = old_land[7]
         max_ph = input("max_ph: ")
         if max_ph == "cancel":
             return
-        if max_ph == 'x':
-            max_ph = old_land[8]
-        if min_ph.isdigit() and max_ph.isdigit() and min_ph <= max_ph:
+        if min_ph.isdigit() and max_ph.isdigit() and int(min_ph) <= int(max_ph):
             break
         else:
-            print("[-] invalid values")
+            if min_ph == 'x':
+                min_ph = old_land[7]
+            if max_ph == 'x':
+                max_ph = old_land[8]
+            if int(min_ph) <= int(max_ph):
+                break
+            else:
+                print("[-] invalid values")
+            
     while True:
         min_tmp = input("min_tmp: ")
         if min_tmp == "cancel":
             return
-        if min_tmp == 'x':
-            min_tmp = old_land[9]
         max_tmp = input("max_tmp: ")
         if max_tmp == "cancel":
             return
-        if max_tmp == 'x':
-            max_tmp = old_land[10]
-        if min_tmp.isdigit() and max_tmp.isdigit() and min_tmp <= max_tmp:
+        if min_tmp.isdigit() and max_tmp.isdigit() and int(min_tmp) <= int(max_tmp):
             break
         else:
-            print("[-] invalid values")
+            if min_tmp == 'x':
+                min_tmp = old_land[9]
+            if max_tmp == 'x':
+                max_tmp = old_land[10]
+            if int(min_tmp) <= int(max_tmp):
+                break
+            else:
+                print("[-] invalid values")
 
-    update_mysql_db.update_land(id, area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_tmp, max_tmp)
+    update_mysql_db.update_land(land_id, area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_tmp, max_tmp)
     new_land = get_mysql_db.get_land(land_id, True)
-    if land:
-        print("[+] ", land)
+    if new_land:
+        print("[+] ", new_land)
     else:
         print("[-] add land failed")
 
@@ -265,12 +287,12 @@ def set_node_online_vw():
     land_id = ""
     node_id = ""
 
-    print("[!] Set a node 'online' (type cancel to quit)")
+    print("[!] Set a node 'online' (type 'cancel' to quit)")
     while True:
         land_id = input("land_id: ")
         if land_id == "cancel":
             return
-        if land_id.isdigit() and land_id > 0:
+        if land_id.isdigit() and int(land_id) > 0:
             break
         else:
             print("[-] invalid value")
@@ -278,7 +300,7 @@ def set_node_online_vw():
         node_id = input("node_id: ")
         if node_id == "cancel":
             return
-        if node_id.isdigit() and node_id > 0:
+        if node_id.isdigit() and int(node_id) > 0:
             break
         else:
             print("[-] invalid value")

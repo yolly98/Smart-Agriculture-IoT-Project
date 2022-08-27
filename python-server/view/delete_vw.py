@@ -10,18 +10,18 @@ def delete_configuration_vw():
 
     print("[!] Delete configuration (type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        if land_id.isdigit() and land_id > 0:
+        if land_id == 'all' or (land_id.isdigit() and int(land_id) > 0):
             break
         else:
             print("[-] invalid value")
     while True:
-        node_id = input("node_id: ")
+        node_id = input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
-        if node_id.isdigit() and node_id > 0:
+        if node_id == 'all' or (node_id.isdigit() and int(node_id) > 0):
             break
         else:
             print("[-] invalid value")
@@ -40,12 +40,12 @@ def delete_land_vw():
 
     land_id = ""
 
-    print("[!] Delete land (type cancel to quit)")
+    print("[!] Delete land (type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        if land_id.isdigit() and land_id > 0:
+        if land_id == 'all' or (land_id.isdigit() and int(land_id)) > 0:
             break
         else:
             print("[-] invalid value")
@@ -70,17 +70,17 @@ def delete_measurement_many_vw():
 
     print("[!] Delete measurement events (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        node_id = input("node_id: ")
+        node_id = input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
         sensor = input("sensor (moisture/ph/light/tmp/all): ")
         if sensor == "cancel":
             return
-        if (land_id.isdigit() and land_id > 0
-            and node_id.isdigit() and node_id > 0
+        if ( (land_id == 'all' or (land_id.isdigit() and int(land_id) > 0))
+            and (node_id == 'all' or (node_id.isdigit() and int(node_id) > 0))
             and (sensor == "moisture" or sensor == "ph" or sensor == "light" or sensor == "tmp" or sensor == "all")
         ):
             break
@@ -101,7 +101,7 @@ def delete_measurement_many_vw():
             print("[-] values are not correct")
 
     delete_mysql_db.delete_measurement_many(land_id, node_id, sensor, older_time, recent_time)
-    measurements = get_mysql_db.get_measurement(land_id, node_id, sensor, older_time, recent_time)
+    measurements = get_mysql_db.get_measurement(land_id, node_id, sensor, older_time, recent_time,1)
     if not measurements:
          print("[+] measurements eliminated")
     else:
@@ -126,8 +126,8 @@ def delete_measurement_one_vw():
         timestamp = input("timestamp: ")
         if timestamp == "cancel":
             return
-        if (land_id.isdigit() and land_id > 0
-            and node_id.isdigit() and node_id > 0
+        if (land_id.isdigit() and int(land_id) > 0
+            and node_id.isdigit() and int(node_id) > 0
             and not timestamp.isdigit()
         ):
             break
@@ -154,17 +154,17 @@ def delete_violation_many_vw():
 
     print("[!] Delete violation events (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        node_id = input("node_id: ")
+        node_id = input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
         sensor = input("sensor (moisture/ph/light/tmp/all): ")
         if sensor == "cancel":
             return
-        if (land_id.isdigit() and land_id > 0
-            and node_id.isdigit() and node_id > 0
+        if ((land_id == 'all' or (land_id.isdigit() and int(land_id) > 0))
+            and (node_id == 'all' or (node_id.isdigit() and int(node_id) > 0))
             and (sensor == "moisture" or sensor == "ph" or sensor == "light" or sensor == "tmp" or sensor == "all")
         ):
             break
@@ -185,7 +185,7 @@ def delete_violation_many_vw():
             print("[-] values are not correct")
 
     delete_mysql_db.delete_violation_many(land_id, node_id, sensor, older_time, recent_time)
-    violations = get_mysql_db.get_violation(land_id, node_id, sensor, older_time, recent_time)
+    violations = get_mysql_db.get_violation(land_id, node_id, sensor, older_time, recent_time, 1)
     if not violations:
          print("[+] violations eliminated")
     else:
@@ -210,8 +210,8 @@ def delete_violation_one_vw():
         timestamp = input("timestamp: ")
         if timestamp == "cancel":
             return
-        if (land_id.isdigit() and land_id > 0
-            and node_id.isdigit() and node_id > 0
+        if (land_id.isdigit() and int(land_id) > 0
+            and node_id.isdigit() and int(node_id) > 0
             and not timestamp.isdigit()
         ):
             break
@@ -237,14 +237,14 @@ def delete_irrigation_many_vw():
 
     print("[!] Delete irrigation events (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        node_id = input("node_id: ")
+        node_id = input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
-        if (land_id.isdigit() and land_id > 0
-            and node_id.isdigit() and node_id > 0
+        if ((land_id == 'all' or (land_id.isdigit() and int(land_id) > 0))
+            and (node_id == 'all' or (node_id.isdigit() and int(node_id) > 0))
         ):
             break
         else:
@@ -264,7 +264,7 @@ def delete_irrigation_many_vw():
             print("[-] values are not correct")
 
     delete_mysql_db.delete_irrigation_many(land_id, node_id, older_time, recent_time)
-    irrigations = get_mysql_db.get_irrigation(land_id, node_id, older_time, recent_time)
+    irrigations = get_mysql_db.get_irrigation(land_id, node_id, older_time, recent_time, 1)
     if not irrigations:
          print("[+] irrigations eliminated")
     else:
@@ -289,8 +289,8 @@ def delete_irrigation_one_vw():
         timestamp = input("timestamp: ")
         if timestamp == "cancel":
             return
-        if (land_id.isdigit() and land_id > 0
-            and node_id.isdigit() and node_id > 0
+        if (land_id.isdigit() and int(land_id) > 0
+            and node_id.isdigit() and int(node_id) > 0
             and not timestamp.isdigit()
         ):
             break

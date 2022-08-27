@@ -1,5 +1,6 @@
 import json
 from persistence import get_mysql_db
+from persistence import add_mysql_db
 
 #--------------------COMMAND TO NODE--------------
 
@@ -96,7 +97,7 @@ def assign_config(land_id, node_id):
 
     #save the new configuration
     if config[1] == 0:
-        get_mysql_db.add_configuration(land_id, node_id, "online", config[4], config[5], config[6], config[7], config[8], config[9], config[10])
+        add_mysql_db.add_configuration(land_id, node_id, "online", config[4], config[5], config[6], config[7], config[8], config[9], config[10])
         
 
 #--------

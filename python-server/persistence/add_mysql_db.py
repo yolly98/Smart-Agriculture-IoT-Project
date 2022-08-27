@@ -78,35 +78,38 @@ def add_measurement_event(land_id, node_id, sensor, value):
     mydb.commit()
 
     #check if the measure if out of range
-    if sensor != 'light':
+    if sensor == 'light':
         return
 
     sql = "SELECT * FROM land WHERE id = %s" 
     mycursor.execute(sql, (land_id,))
-    myresult = mycursor.fetchone()
+    land = mycursor.fetchone()
 
-    if not myresult:
+    if not land:
         print("[-] the land ", land_id, " doesn't exist")
         return
 
     is_violation = False
     
     if sensor == 'moisture':
-        mst_trashold = myresult[6]
-        if value < mst_trashold:
+        mst_trashold = land[6]
+        if int(value) < int(mst_trashold):
             is_violation = True
     elif sensor == 'ph':
-        ph_min = myresult[7]
-        ph_max = myresult[8]
-        if value < ph_min or value > ph_max:
+        ph_min = land[7]
+        ph_max = land[8]
+        if int(value) < int(ph_min) or int(value) > int(ph_max):
             is_violation = True
     elif sensor == 'tmp':
-        tmp_min = myresult[9]
-        tmp_max = myresult[10]
-        if value < tmp_min or value > tmp_max:
+        tmp_min = land[9]
+        tmp_max = land[10]
+        if int(value) < int(tmp_min) or int(value) > int(tmp_max):
             is_violation = True
+    else:
+        print("[-] Unknown error")
  
     if is_violation:
+        print("[-] Violation detected")
         sql = "INSERT INTO violation (land_id, node_id, sensor, v_value) \
             VALUES(%s, %s, %s, %s)"
         mycursor.execute(sql, (land_id, node_id, sensor, value))

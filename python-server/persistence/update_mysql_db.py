@@ -33,11 +33,11 @@ def update_land(id, area, locality, name, crop, soil_type, mst_trashold, min_ph,
     )
     mycursor = mydb.cursor(prepared=True)
 
-    sql = "UPDATE land ( \
+    sql = "UPDATE land  \
         SET area = %s, locality = %s, \
         name = %s, crop = %s, soil_type = %s, \
         mst_trashold = %s, min_ph = %s, max_ph = %s, \
-        min_tmp = %s, max_tmp = %s) \
+        min_tmp = %s, max_tmp = %s \
         WHERE id = %s"
     mycursor.execute(sql, (area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_tmp, max_tmp, id))
     mydb.commit()

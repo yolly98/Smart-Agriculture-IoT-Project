@@ -71,9 +71,9 @@ def irrigation_sim():
     node_id = random.randint(1,10)
     status = ""
     if random.randint(1,2) == 1:
-        enable = "on"
+        status = "on"
     else:
-        enable = "off"
+        status = "off"
     msg = { 'land_id': land_id, 'node_id': node_id, "status": status}
     return json.dumps(msg)
 

@@ -8,7 +8,7 @@
 * [x] scrivere controlli di buona riuscita delle funzioni del modulo mysql
 * [x] scrivere le funzioni e comandi per modificare land e config di default
 * [x] mettere il limit alle funzioni get
-* [ ] testare funzionalità server
+* [x] testare funzionalità server
 * [ ] scrivere un log module che scrive sia su file sia su terminale
 
 * [ ] inserire mqtt nel nodo

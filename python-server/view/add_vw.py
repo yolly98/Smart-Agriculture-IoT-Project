@@ -18,7 +18,7 @@ def add_configuration_vw():
         land_id = input("land_id: ")
         if land_id == "cancel":
             return
-        if land_id.isdigit() and land_id > 0:
+        if land_id.isdigit() and int(land_id) > 0:
             break
         else:
             print("[-] invalid value")
@@ -26,7 +26,7 @@ def add_configuration_vw():
         node_id = input("node_id: ")
         if node_id == "cancel":
             return
-        if node_id.isdigit() and node_id > 0:
+        if node_id.isdigit() and int(node_id) > 0:
             break
         else:
             print("[-] invalid value")
@@ -118,12 +118,12 @@ def add_land_vw():
     min_tmp = ""
     max_tmp = ""
 
-    print("[!] New land (type 'cancel' to quit")
+    print("[!] New land (type 'cancel' to quit)")
     while True:
         land_id = input("land_id: ")
         if land_id == "cancel":
             return
-        if land_id.isdigit() and land_id > 0:
+        if land_id.isdigit() and int(land_id) > 0:
             break
         else:
             print("[-] invalid value")
@@ -131,7 +131,7 @@ def add_land_vw():
         area = input("area: ")
         if area == "cancel":
             return
-        if area.isdigit() and area > 0:
+        if area.isdigit() and float(area) > 0:
             break
         else:
             print("[-] invalid value")
@@ -182,7 +182,7 @@ def add_land_vw():
         max_ph = input("max_ph: ")
         if max_ph == "cancel":
             return
-        if min_ph.isdigit() and max_ph.isdigit() and min_ph <= max_ph:
+        if min_ph.isdigit() and max_ph.isdigit() and int(min_ph) <= int(max_ph):
             break
         else:
             print("[-] invalid values")
@@ -193,15 +193,15 @@ def add_land_vw():
         max_tmp = input("max_tmp: ")
         if max_tmp == "cancel":
             return
-        if min_tmp.isdigit() and max_tmp.isdigit() and min_tmp <= max_tmp:
+        if min_tmp.isdigit() and max_tmp.isdigit() and int(min_tmp) <= int(max_tmp):
             break
         else:
             print("[-] invalid values")
 
     add_mysql_db.add_land(land_id, area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_tmp, max_tmp)
     new_land = get_mysql_db.get_land(land_id, True)
-    if land:
-        print("[+] ", land)
+    if new_land:
+        print("[+] ", new_land)
     else:
         print("[-] add land failed")
 
@@ -224,7 +224,7 @@ def add_irrigation_event_vw():
         status = input("status (on/off): ")
         if status == "cancel":
             return
-        if land_id.isdigit() and land_id > 0 and node_id.isdigit() and node_id > 0 and (status == "on" or status == "off"):
+        if land_id.isdigit() and int(land_id) > 0 and node_id.isdigit() and int(node_id) > 0 and (status == "on" or status == "off"):
             break
         else:
             print("[-] invalid values")
@@ -259,8 +259,8 @@ def add_measurement_event_vw():
         value = input("value: ")
         if value == "cancel":
             return
-        if (land_id.isdigit() and land_id > 0
-            and node_id.isdigit() and node_id > 0
+        if (land_id.isdigit() and int(land_id) > 0
+            and node_id.isdigit() and int(node_id) > 0
             and (sensor == "moisture" or sensor == "ph" or sensor == "light" or sensor == "tmp")
             and value.isdigit()
         ):

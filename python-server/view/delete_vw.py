@@ -1,5 +1,6 @@
 from persistence import delete_mysql_db
 from persistence import get_mysql_db
+import log 
 
 #---------------------
 
@@ -8,31 +9,31 @@ def delete_configuration_vw():
     land_id = ""
     node_id = ""
 
-    print("[!] Delete configuration (type 'cancel' to quit)")
+    log.log_info("Delete configuration (type 'cancel' to quit)")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
         if land_id == 'all' or (land_id.isdigit() and int(land_id) > 0):
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        node_id = input("node_id (number or 'all'): ")
+        node_id = log.log_input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
         if node_id == 'all' or (node_id.isdigit() and int(node_id) > 0):
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
 
     delete_mysql_db.delete_configuration(land_id, node_id)
     config = get_mysql_db.get_config(land_id, node_id, True)
 
     if not config:
-        print("[+] configuration eliminated")
+        log.log_success("configuration eliminated")
     else:
-        print("[-] delete configuratino failed")
+        log.log_err(f"delete configuratino failed")
 
 #--------------------------
 
@@ -40,23 +41,23 @@ def delete_land_vw():
 
     land_id = ""
 
-    print("[!] Delete land (type 'cancel' to quit)")
+    log.log_info("Delete land (type 'cancel' to quit)")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
         if land_id == 'all' or (land_id.isdigit() and int(land_id)) > 0:
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
 
     delete_mysql_db.delete_land(land_id)
     land = get_mysql_db.get_land(land_id, True)
 
     if not land:
-        print("[+] land eliminated")
+        log.log_success("land eliminated")
     else:
-        print("[-] delete land failed")    
+        log.log_err(f"delete land failed")    
 
 #----------------------
 
@@ -68,15 +69,15 @@ def delete_measurement_many_vw():
     older_time = ""
     recent_time = ""
 
-    print("[!] Delete measurement events (Type 'cancel' to quit)")
+    log.log_info("Delete measurement events (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        node_id = input("node_id (number or 'all'): ")
+        node_id = log.log_input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
-        sensor = input("sensor (moisture/ph/light/tmp/all): ")
+        sensor = log.log_input("sensor (moisture/ph/light/tmp/all): ")
         if sensor == "cancel":
             return
         if ( (land_id == 'all' or (land_id.isdigit() and int(land_id) > 0))
@@ -85,27 +86,27 @@ def delete_measurement_many_vw():
         ):
             break
         else:
-            print("[-] invalid values")
+            log.log_err(f"invalid values")
 
-    print("[!] Insert the time period in days (both 0 for all)")
+    log.log_info("Insert the time period in days (both 0 for all)")
     while True:
-        older_time = input("older value: ")
+        older_time = log.log_input("older value: ")
         if older_time == "cancel":
             return
-        recent_time = input("recent value: ")
+        recent_time = log.log_input("recent value: ")
         if recent_time == "cancel":
             return
         if older_time.isdigit() and recent_time.isdigit() and int(older_time) >= int(recent_time):
             break
         else:
-            print("[-] values are not correct")
+            log.log_err(f"values are not correct")
 
     delete_mysql_db.delete_measurement_many(land_id, node_id, sensor, older_time, recent_time)
     measurements = get_mysql_db.get_measurement(land_id, node_id, sensor, older_time, recent_time,1)
     if not measurements:
-         print("[+] measurements eliminated")
+         log.log_success("measurements eliminated")
     else:
-        print("[-] delete measurements failed")
+        log.log_err(f"delete measurements failed")
 
 #---------------
 
@@ -115,15 +116,15 @@ def delete_measurement_one_vw():
     node_id = ""
     timestamp = ""
 
-    print("[!] Delete measurement event (Type 'cancel' to quit)")
+    log.log_info("Delete measurement event (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = log.log_input("land_id: ")
         if land_id == "cancel":
             return
-        node_id = input("node_id: ")
+        node_id = log.log_input("node_id: ")
         if node_id == "cancel":
             return
-        timestamp = input("timestamp: ")
+        timestamp = log.log_input("timestamp: ")
         if timestamp == "cancel":
             return
         if (land_id.isdigit() and int(land_id) > 0
@@ -132,15 +133,15 @@ def delete_measurement_one_vw():
         ):
             break
         else:
-            print("[-] invalid values")
+            log.log_err(f"invalid values")
 
 
     delete_mysql_db.delete_measurement_one(land_id, node_id, timestamp)
     measurement = get_mysql_db.get_measurement_one(land_id, node_id, timestamp)
     if not measurement:
-         print("[+] measurement eliminated")
+         log.log_success("measurement eliminated")
     else:
-        print("[-] delete measurement failed")
+        log.log_err(f"delete measurement failed")
 
 #----------------------
 
@@ -152,15 +153,15 @@ def delete_violation_many_vw():
     older_time = ""
     recent_time = ""
 
-    print("[!] Delete violation events (Type 'cancel' to quit)")
+    log.log_info("Delete violation events (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        node_id = input("node_id (number or 'all'): ")
+        node_id = log.log_input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
-        sensor = input("sensor (moisture/ph/light/tmp/all): ")
+        sensor = log.log_input("sensor (moisture/ph/light/tmp/all): ")
         if sensor == "cancel":
             return
         if ((land_id == 'all' or (land_id.isdigit() and int(land_id) > 0))
@@ -169,27 +170,27 @@ def delete_violation_many_vw():
         ):
             break
         else:
-            print("[-] invalid values")
+            log.log_err(f"invalid values")
 
-    print("[!] Insert the time period in days (both 0 for all)")
+    log.log_info("Insert the time period in days (both 0 for all)")
     while True:
-        older_time = input("older value: ")
+        older_time = log.log_input("older value: ")
         if older_time == "cancel":
             return
-        recent_time = input("recent value: ")
+        recent_time = log.log_input("recent value: ")
         if recent_time == "cancel":
             return
         if older_time.isdigit() and recent_time.isdigit() and int(older_time) >= int(recent_time):
             break
         else:
-            print("[-] values are not correct")
+            log.log_err(f"values are not correct")
 
     delete_mysql_db.delete_violation_many(land_id, node_id, sensor, older_time, recent_time)
     violations = get_mysql_db.get_violation(land_id, node_id, sensor, older_time, recent_time, 1)
     if not violations:
-         print("[+] violations eliminated")
+         log.log_success("violations eliminated")
     else:
-        print("[-] delete violations failed")
+        log.log_err(f"delete violations failed")
 
 #---------------
 
@@ -199,15 +200,15 @@ def delete_violation_one_vw():
     node_id = ""
     timestamp = ""
 
-    print("[!] Delete violation event (Type 'cancel' to quit)")
+    log.log_info("Delete violation event (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = log.log_input("land_id: ")
         if land_id == "cancel":
             return
-        node_id = input("node_id: ")
+        node_id = log.log_input("node_id: ")
         if node_id == "cancel":
             return
-        timestamp = input("timestamp: ")
+        timestamp = log.log_input("timestamp: ")
         if timestamp == "cancel":
             return
         if (land_id.isdigit() and int(land_id) > 0
@@ -216,15 +217,15 @@ def delete_violation_one_vw():
         ):
             break
         else:
-            print("[-] invalid values")
+            log.log_err(f"invalid values")
 
 
     delete_mysql_db.delete_violation_one(land_id, node_id, timestamp)
     violation = get_mysql_db.get_violation_one(land_id, node_id, timestamp)
     if not violation:
-         print("[+] violation eliminated")
+         log.log_success("violation eliminated")
     else:
-        print("[-] delete violation failed")
+        log.log_err(f"delete violation failed")
 
 #----------------------
 
@@ -235,12 +236,12 @@ def delete_irrigation_many_vw():
     older_time = ""
     recent_time = ""
 
-    print("[!] Delete irrigation events (Type 'cancel' to quit)")
+    log.log_info("Delete irrigation events (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        node_id = input("node_id (number or 'all'): ")
+        node_id = log.log_input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
         if ((land_id == 'all' or (land_id.isdigit() and int(land_id) > 0))
@@ -248,27 +249,27 @@ def delete_irrigation_many_vw():
         ):
             break
         else:
-            print("[-] invalid values")
+            log.log_err(f"invalid values")
 
-    print("[!] Insert the time period in days (both 0 for all)")
+    log.log_info("Insert the time period in days (both 0 for all)")
     while True:
-        older_time = input("older value: ")
+        older_time = log.log_input("older value: ")
         if older_time == "cancel":
             return
-        recent_time = input("recent value: ")
+        recent_time = log.log_input("recent value: ")
         if recent_time == "cancel":
             return
         if older_time.isdigit() and recent_time.isdigit() and int(older_time) >= int(recent_time):
             break
         else:
-            print("[-] values are not correct")
+            log.log_err(f"values are not correct")
 
     delete_mysql_db.delete_irrigation_many(land_id, node_id, older_time, recent_time)
     irrigations = get_mysql_db.get_irrigation(land_id, node_id, older_time, recent_time, 1)
     if not irrigations:
-         print("[+] irrigations eliminated")
+         log.log_success("irrigations eliminated")
     else:
-        print("[-] delete irrigations failed")
+        log.log_err(f"delete irrigations failed")
 
 #---------------
 
@@ -278,15 +279,15 @@ def delete_irrigation_one_vw():
     node_id = ""
     timestamp = ""
 
-    print("[!] Delete irrigation event (Type 'cancel' to quit)")
+    log.log_info("Delete irrigation event (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = log.log_input("land_id: ")
         if land_id == "cancel":
             return
-        node_id = input("node_id: ")
+        node_id = log.log_input("node_id: ")
         if node_id == "cancel":
             return
-        timestamp = input("timestamp: ")
+        timestamp = log.log_input("timestamp: ")
         if timestamp == "cancel":
             return
         if (land_id.isdigit() and int(land_id) > 0
@@ -295,12 +296,12 @@ def delete_irrigation_one_vw():
         ):
             break
         else:
-            print("[-] invalid values")
+            log.log_err(f"invalid values")
 
 
     delete_mysql_db.delete_irrigation_one(land_id, node_id, timestamp)
     irrigation = get_mysql_db.get_irrigation_one(land_id, node_id, timestamp)
     if not irrigation:
-         print("[+] irrigation eliminated")
+         log.log_success("irrigation eliminated")
     else:
-        print("[-] delete irrigation failed")
+        log.log_err(f"delete irrigation failed")

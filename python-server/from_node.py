@@ -1,6 +1,7 @@
 import json
 import random
 import to_node
+import log
 from persistence import add_mysql_db
 from persistence import update_mysql_db
 
@@ -19,7 +20,7 @@ def config_request():
     json_msg = config_request_sim()
     msg = json.loads(json_msg)
 
-    print(" <  [", topic, "] ", msg)
+    log.log_receive(f"[{topic}] {msg}")
 
     to_node.assign_config(msg['land_id'], msg['node_id'])
 
@@ -49,7 +50,7 @@ def status():
     json_msg = status_sim()
     msg = json.loads(json_msg)
 
-    print(" <  [", topic, "] ", msg)
+    log.log_receive(f"[{topic}] {msg}")
 
     land_id = msg['land_id']
     node_id = msg['node_id']
@@ -83,7 +84,7 @@ def irrigation():
     json_msg = irrigation_sim()
     msg = json.loads(json_msg)
 
-    print(" < [", topic, "] ", msg)
+    log.log_receive(f"[{topic}] {msg}")
 
     land_id = msg['land_id']
     node_id = msg['node_id']
@@ -106,7 +107,7 @@ def moisture():
     json_msg = moisture_sim()
     msg = json.loads(json_msg)
     
-    print(" < [", topic, "] ", msg)
+    log.log_receive(f"[{topic}] {msg}")
 
     land_id = msg['land_id']
     node_id = msg['node_id']
@@ -130,7 +131,7 @@ def ph():
     json_msg = ph_sim()
     msg = json.loads(json_msg)
     
-    print(" < [", topic, "] ", msg)
+    log.log_receive(f"[{topic}] {msg}")
     
     land_id = msg['land_id']
     node_id = msg['node_id']
@@ -154,7 +155,7 @@ def light():
     json_msg = light_sim()
     msg = json.loads(json_msg)
     
-    print(" < [", topic, "] ", msg)
+    log.log_receive(f"[{topic}] {msg}")
     
     land_id = msg['land_id']
     node_id = msg['node_id']
@@ -178,7 +179,7 @@ def tmp():
     json_msg = tmp_sim()
     msg = json.loads(json_msg)
     
-    print(" < [", topic, "] ", msg)
+    log.log_receive(f"[{topic}] {msg}")
     
     land_id = msg['land_id']
     node_id = msg['node_id']
@@ -201,7 +202,7 @@ def is_alive_ack():
     json_msg = is_alive_ack_sim()
     msg = json.loads(json_msg)
     
-    print(" < [", topic, "] ", msg)
+    log.log_receive(f"[{topic}] {msg}")
     
     land_id = msg['land_id']
     node_id = msg['node_id']

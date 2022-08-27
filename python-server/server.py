@@ -3,24 +3,25 @@ import from_node
 import time
 import math
 import threading
+import log
 from view import get_vw
 from view import add_vw
 from view import update_vw
 from view import delete_vw
 
-
 # ------------MAIN-----------
 
+log.log_init()
 to_node.get_config(True)
-
 
 #functinon for thread 1(console)
 def server_console():
+
     while True:
 
-        cmd = input("$ Type a number or help: ")
+        cmd = log.log_input("$ Type a number or help: ")
         if cmd == "help":
-            print("[!] command list:")
+            log.log_info("Command list:")
             print("----------- SHOW DATA -------------")
             print(".[1]     view lands")
             print(".[2]     view configurations")
@@ -57,7 +58,7 @@ def server_console():
             print("--------- OTHERS ------------------")
             print(".[28]    test received messages")
             print(".[29]    exit")
-            cmd = input("$ Type a number or help: ")
+            cmd = log.log_input("$ Type a number or help: ")
 
         if cmd.isdigit() and int(cmd) == 1:
             get_vw.view_lands()
@@ -114,7 +115,7 @@ def server_console():
         elif cmd.isdigit() and int(cmd) == 27:
             delete_vw.delete_violation_one_vw()
         elif cmd.isdigit() and int(cmd) == 28:
-            cmd = input("[!] Type the TOPIC or help: ")
+            cmd = log.log_input("[!] Type the TOPIC or help: ")
         
             if cmd == "help":
                 print(".[1]     CONFIG_RQST")
@@ -126,7 +127,7 @@ def server_console():
                 print(".[7]     TMP")
                 print(".[8]     IS_ALIVE_ACK")
                 print(".[9]     cancel")
-                cmd = input("[!] Type the TOPIC or help: ")
+                cmd = log.log_input("[!] Type the TOPIC or help: ")
 
             if cmd.isdigit() and int(cmd) == 9:
                 continue
@@ -147,12 +148,13 @@ def server_console():
             elif cmd.isdigit() and int(cmd) == 8:
                 from_node.is_alive_ack()
             else:
-                print("[-] topic non valid!")
+                log.log_err(f"topic non valid!")
         elif cmd.isdigit() and int(cmd) == 29:
-            print("Press Ctrl+c in order to stop the listener")
+            log.log_info("typed 'exit'")
+            log.log_info("Press Ctrl+c in order to stop the listener")
             exit()
         else:
-            print("[-] command not valid!")
+            log.log_err(f"command not valid!")
 
 #functino for thread 2 (daemon)
 def server_listener():
@@ -160,7 +162,7 @@ def server_listener():
     end_timer =  60 * 60 * 3    # 3 hours
     start_timer = time.time()
     while True:
-        
+
         #TODO check if there is a message from nodes
         
         #check if nodes are online
@@ -170,8 +172,6 @@ def server_listener():
             start_timer = time.time()
 
         time.sleep(0.1)
-            
-            
             
 
 t1 = threading.Thread(target = server_console, args = (), daemon = False)

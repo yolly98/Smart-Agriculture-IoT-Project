@@ -1,4 +1,5 @@
 import mysql.connector
+import log 
 
 #--------------------ADD------------------------------
 
@@ -86,7 +87,7 @@ def add_measurement_event(land_id, node_id, sensor, value):
     land = mycursor.fetchone()
 
     if not land:
-        print("[-] the land ", land_id, " doesn't exist")
+        log.log_err(f"the land {land_id} doesn't exist")
         return
 
     is_violation = False
@@ -106,10 +107,10 @@ def add_measurement_event(land_id, node_id, sensor, value):
         if int(value) < int(tmp_min) or int(value) > int(tmp_max):
             is_violation = True
     else:
-        print("[-] Unknown error")
+        log.log_err(f"Unknown error")
  
     if is_violation:
-        print("[-] Violation detected")
+        log.log_err(f"Violation detected")
         sql = "INSERT INTO violation (land_id, node_id, sensor, v_value) \
             VALUES(%s, %s, %s, %s)"
         mycursor.execute(sql, (land_id, node_id, sensor, value))

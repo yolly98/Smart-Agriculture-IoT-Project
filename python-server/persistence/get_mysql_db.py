@@ -1,5 +1,5 @@
 import mysql.connector
-
+import log 
 #----------------------GET--------------------
 
 def get_land(land_id, fetchone):

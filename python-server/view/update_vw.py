@@ -1,5 +1,6 @@
 from persistence import update_mysql_db
 from persistence import get_mysql_db
+import log 
 
 #-------------------------------
 
@@ -15,32 +16,32 @@ def update_configuration_vw():
     ph_timer = ""
     tmp_timer = ""
 
-    print("[!] Update Configuration (type 'cancel' to quit)")
+    log.log_info("Update Configuration (type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = log.log_input("land_id: ")
         if land_id == "cancel":
             return
         if land_id.isdigit() and int(land_id) > 0:
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        node_id = input("node_id: ")
+        node_id = log.log_input("node_id: ")
         if node_id == "cancel":
             return
         if node_id.isdigit() and int(node_id) > 0:
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
 
     old_configuration = get_mysql_db.get_config(land_id, node_id, True)
     if not old_configuration:
-        print("[-] not exists the configuration (", land_id, ", ", node_id, ")")
+        log.log_err(f"not exists the configuration ({land_id}, {node_id})")
         return
 
-    print("[-] Note: type 'x' to not update the attribute")
+    log.log_err(f"Note: type 'x' to not update the attribute")
     while True:
-        status = input("status: ")
+        status = log.log_input("status: ")
         if status == "cancel":
             return
         if status == 'x':
@@ -49,9 +50,9 @@ def update_configuration_vw():
         if status == 'online' or status == 'offline' or status == 'null':
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        irr_enabled = input("irr_enabled: ")
+        irr_enabled = log.log_input("irr_enabled: ")
         if irr_enabled == "cancel":
             return
         if irr_enabled == 'x':
@@ -60,9 +61,9 @@ def update_configuration_vw():
         if irr_enabled == 'true' or irr_enabled == 'false':
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        irr_limit = input("irr_limit: ")
+        irr_limit = log.log_input("irr_limit: ")
         if irr_limit == "cancel":
             return
         if irr_limit == 'x':
@@ -71,9 +72,9 @@ def update_configuration_vw():
         if irr_limit.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        irr_duration = input("irr_duration: ")
+        irr_duration = log.log_input("irr_duration: ")
         if irr_duration == "cancel":
             return
         if irr_duration == 'x':
@@ -82,9 +83,9 @@ def update_configuration_vw():
         if irr_duration.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        mst_timer = input("mst_timer: ")
+        mst_timer = log.log_input("mst_timer: ")
         if mst_timer == "cancel":
             return
         if mst_timer == 'x':
@@ -93,9 +94,9 @@ def update_configuration_vw():
         if mst_timer.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        ph_timer = input("ph_timer: ")
+        ph_timer = log.log_input("ph_timer: ")
         if ph_timer == "cancel":
             return
         if ph_timer == 'x':
@@ -104,9 +105,9 @@ def update_configuration_vw():
         if ph_timer.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        light_timer = input("light_timer: ")
+        light_timer = log.log_input("light_timer: ")
         if light_timer == "cancel":
             return
         if light_timer == 'x':
@@ -115,9 +116,9 @@ def update_configuration_vw():
         if light_timer.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        tmp_timer = input("tmp_timer: ")
+        tmp_timer = log.log_input("tmp_timer: ")
         if tmp_timer == "cancel":
             return
         if tmp_timer == 'x':
@@ -126,14 +127,14 @@ def update_configuration_vw():
         if tmp_timer.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
 
     update_mysql_db.update_configuration(land_id, node_id, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
     new_config = get_mysql_db.get_config(land_id, node_id, True)
     if new_config:
-        print("[+] ", new_config)
+        log.log_success(f"updated configuration: {new_config}")
     else:
-        print("[-] add configuration failed")
+        log.log_err(f"update configuration failed")
 
 #----------------
 
@@ -152,25 +153,25 @@ def update_land_vw():
     min_tmp = ""
     max_tmp = ""
 
-    print("[!] Update land (type 'cancel' to quit")
+    log.log_info("Update land (type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = log.log_input("land_id: ")
         if land_id == "cancel":
             return
         if land_id.isdigit() and int(land_id) > 0:
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
 
 
     old_land = get_mysql_db.get_land(land_id, True)
     if not old_land:
-        print("[-] not exists the land ", land_id)
+        log.log_err(f"not exists the land {land_id}")
         return
     
-    print("[!] Type 'x' to not update the attribute")
+    log.log_info("Type 'x' to not update the attribute")
     while True:
-        area = input("area: ")
+        area = log.log_input("area: ")
         if area == "cancel":
             return
         if area == 'x':
@@ -179,9 +180,9 @@ def update_land_vw():
         if area.isdigit() and float(area) > 0:
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        locality = input("locality: ")
+        locality = log.log_input("locality: ")
         if locality == "cancel":
             return
         if locality == 'x':
@@ -190,9 +191,9 @@ def update_land_vw():
         if not locality.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        name = input("name: ")
+        name = log.log_input("name: ")
         if name == "cancel":
             return
         if name == 'x':
@@ -201,9 +202,9 @@ def update_land_vw():
         if not name.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        crop = input("crop: ")
+        crop = log.log_input("crop: ")
         if crop == "cancel":
             return
         if crop == 'x':
@@ -212,9 +213,9 @@ def update_land_vw():
         if not crop.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        soil_type = input("soil_type: ")
+        soil_type = log.log_input("soil_type: ")
         if soil_type == "cancel":
             return
         if soil_type == 'x':
@@ -223,9 +224,9 @@ def update_land_vw():
         if not soil_type.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        mst_trashold = input("mst_trashold: ")
+        mst_trashold = log.log_input("mst_trashold: ")
         if mst_trashold == "cancel":
             return
         if mst_trashold == 'x':
@@ -234,12 +235,12 @@ def update_land_vw():
         if mst_trashold.isdigit():
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        min_ph = input("min_ph: ")
+        min_ph = log.log_input("min_ph: ")
         if min_ph == "cancel":
             return
-        max_ph = input("max_ph: ")
+        max_ph = log.log_input("max_ph: ")
         if max_ph == "cancel":
             return
         if min_ph.isdigit() and max_ph.isdigit() and int(min_ph) <= int(max_ph):
@@ -252,13 +253,13 @@ def update_land_vw():
             if int(min_ph) <= int(max_ph):
                 break
             else:
-                print("[-] invalid values")
+                log.log_err(f"invalid values")
             
     while True:
-        min_tmp = input("min_tmp: ")
+        min_tmp = log.log_input("min_tmp: ")
         if min_tmp == "cancel":
             return
-        max_tmp = input("max_tmp: ")
+        max_tmp = log.log_input("max_tmp: ")
         if max_tmp == "cancel":
             return
         if min_tmp.isdigit() and max_tmp.isdigit() and int(min_tmp) <= int(max_tmp):
@@ -271,14 +272,14 @@ def update_land_vw():
             if int(min_tmp) <= int(max_tmp):
                 break
             else:
-                print("[-] invalid values")
+                log.log_err(f"invalid values")
 
     update_mysql_db.update_land(land_id, area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_tmp, max_tmp)
     new_land = get_mysql_db.get_land(land_id, True)
     if new_land:
-        print("[+] ", new_land)
+        log.log_success(f"updated land: {new_land}")
     else:
-        print("[-] add land failed")
+        log.log_err(f"update land failed")
 
 #-------------
 
@@ -287,35 +288,35 @@ def set_node_online_vw():
     land_id = ""
     node_id = ""
 
-    print("[!] Set a node 'online' (type 'cancel' to quit)")
+    log.log_info("Set a node 'online' (type 'cancel' to quit)")
     while True:
-        land_id = input("land_id: ")
+        land_id = log.log_input("land_id: ")
         if land_id == "cancel":
             return
         if land_id.isdigit() and int(land_id) > 0:
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        node_id = input("node_id: ")
+        node_id = log.log_input("node_id: ")
         if node_id == "cancel":
             return
         if node_id.isdigit() and int(node_id) > 0:
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
 
     update_mysql_db.set_node_online(land_id, node_id)
     node = get_mysql_db.get_config(land_id, node_id, True)
 
     if node:
-        print("[+] ", node)
+        log.log_success(f"node: {node}")
     else:
-        print("[-] set node online failed")
+        log.log_err(f"set node online failed")
 
 #---------------------
 
 def set_all_node_offline_vw():
     update_mysql_db.set_all_node_offline()
-    print("[+] set all node offline completed")
+    log.log_success("set all node offline completed")
     

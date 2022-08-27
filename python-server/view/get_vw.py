@@ -1,12 +1,14 @@
 from persistence import get_mysql_db
+import log 
 
 #-----------------------------------
 
 def print_lands(land_list):
 
     if not land_list:
-        print("[-] There are no lands")
+        log.log_err(f"There are no lands")
         return
+    log.log_info("LAND LIST")
     for land in land_list:
         print("-----------------")
         print("land_id:      ", land[0])
@@ -25,15 +27,15 @@ def print_lands(land_list):
 def view_lands():
 
     land_id = ""
-    print("[!] View lands ('cancel' to quit) ")
+    log.log_info("View lands ('cancel' to quit) ")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
         if land_id.isdigit() or land_id == 'all':
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
 
     lands = get_mysql_db.get_land(land_id, False)
     print_lands(lands)
@@ -43,8 +45,9 @@ def view_lands():
 def print_configurations(config_list):
 
     if not config_list:
-        print("[-] There are no configurations saved")
+        log.log_err(f"There are no configurations saved")
         return
+    log.log_info("CONFIGURATION LIST")
     for config in config_list:
         print("-----------------")
         print("land_id:         ", config[0])
@@ -66,23 +69,23 @@ def view_configurations():
     land_id = ""
     node_id = ""
     
-    print("[!] View configurations (type 'cancel' to quit)")
+    log.log_info("View configurations (type 'cancel' to quit)")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
         if land_id.isdigit() or land_id == 'all':
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
     while True:
-        node_id = input("node_id (number or 'all'): ")
+        node_id = log.log_input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
         if node_id.isdigit() or node_id == 'all':
             break
         else:
-            print("[-] invalid value")
+            log.log_err(f"invalid value")
 
     configs = get_mysql_db.get_config(land_id, node_id, False)
     print_configurations(configs)
@@ -92,8 +95,9 @@ def view_configurations():
 def print_measurements(measurement_list):
 
     if not measurement_list:
-        print("[-] There are no measurements")
+        log.log_err(f"There are no measurements")
         return
+    log.log_info("MEASUREMENT LIST")
     for measurement in measurement_list:
         print("-----------------")
         print("land_id:     ", measurement[0])
@@ -113,15 +117,15 @@ def view_last_measurements():
     older_time = ""
     recent_time = ""
 
-    print("[!] View measurement events (Type 'cancel' to quit)")
+    log.log_info("View measurement events (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        node_id = input("node_id (number or 'all'): ")
+        node_id = log.log_input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
-        sensor = input("sensor (moisture/ph/light/tmp/all): ")
+        sensor = log.log_input("sensor (moisture/ph/light/tmp/all): ")
         if sensor == "cancel":
             return
         if ((land_id.isdigit() or land_id == "all")
@@ -130,55 +134,20 @@ def view_last_measurements():
         ):
             break
         else:
-            print("[-] invalid values")
+            log.log_err(f"invalid values")
 
-    print("[!] Insert the time period in days (both 0 for all)")
+    log.log_info("Insert the time period in days (both 0 for all)")
     while True:
-        older_time = input("older value: ")
+        older_time = log.log_input("older value: ")
         if older_time == "cancel":
             return
-        recent_time = input("recent value: ")
+        recent_time = log.log_input("recent value: ")
         if recent_time == "cancel":
             return
         if older_time.isdigit() and recent_time.isdigit() and int(older_time) >= int(recent_time):
             break
         else:
-            print("[-] values are not correct")
-
-#    cmd = input("[!] Type the land_id or 'all': ")
-#    if not cmd.isdigit() and cmd != 'all':
-#        print("[-] not value land_id")
-#        return
-#    land_id = cmd
-#    
-#    cmd = input("[!] Type the node_id or 'all': ")
-#    if not cmd.isdigit() and cmd != 'all':
-#        print("[-] not value node_id")
-#        return
-#    node_id = cmd
-#
-#    cmd = input("[!] Type the sensor (moisture, ph. light, tmp) or 'all': ")
-#    if cmd != 'moisture' and cmd != 'ph' and cmd != 'light' and cmd != 'tmp' and cmd != 'all':
-#        print("[-] sensor not valid")
-#        return
-#    sensor = cmd
-#
-#    print("[!] Insert the time period in days (both 0 for all)")
-#    cmd = input("older value: ")
-#    if not cmd.isdigit():
-#        print("[-] values are not correct")
-#        return
-#    older = cmd
-#
-#    cmd = input("more recent value: ")
-#    if not cmd.isdigit():
-#        print("[-] recent value is not correct")
-#        return
-#    recent = cmd
-#
-#    if int(older) < int(recent):
-#        print("[-] older value has to be greater then the recent one")
-#        return
+            log.log_err(f"values are not correct")
 
     measurements = get_mysql_db.get_measurement(land_id, node_id, sensor, older_time, recent_time, 10)
     print_measurements(measurements)
@@ -188,8 +157,9 @@ def view_last_measurements():
 def print_violations(violation_list):
 
     if not violation_list:
-        print("[-] There are no violations")
+        log.log_err(f"There are no violations")
         return
+    log.log_info("VIOLATION LIST")
     for violation in violation_list:
         print("-----------------")
         print("land_id:     ", violation[0])
@@ -208,15 +178,15 @@ def view_last_violations():
     older_time = ""
     recent_time = ""
 
-    print("[!] View violation events (Type 'cancel' to quit)")
+    log.log_info("View violation events (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        node_id = input("node_id (number or 'all'): ")
+        node_id = log.log_input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
-        sensor = input("sensor (moisture/ph/light/tmp/all): ")
+        sensor = log.log_input("sensor (moisture/ph/light/tmp/all): ")
         if sensor == "cancel":
             return
         if ((land_id.isdigit() or land_id == "all")
@@ -225,55 +195,20 @@ def view_last_violations():
         ):
             break
         else:
-            print("[-] invalid values")
+            log.log_err(f"invalid values")
 
-    print("[!] Insert the time period in days (both 0 for all)")
+    log.log_info("Insert the time period in days (both 0 for all)")
     while True:
-        older_time = input("older value: ")
+        older_time = log.log_input("older value: ")
         if older_time == "cancel":
             return
-        recent_time = input("recent value: ")
+        recent_time = log.log_input("recent value: ")
         if recent_time == "cancel":
             return
         if older_time.isdigit() and recent_time.isdigit() and int(older_time) >= int(recent_time):
             break
         else:
-            print("[-] values are not correct")
-   
-#    cmd = input("[!] Type the land_id or 'all': ")
-#    if not cmd.isdigit() and cmd != 'all':
-#        print("[-] not value land_id")
-#        return
-#    land_id = cmd
-#    
-#    cmd = input("[!] Type the node_id or 'all': ")
-#    if not cmd.isdigit() and cmd != 'all':
-#        print("[-] not value node_id")
-#        return
-#    node_id = cmd
-#
-#    cmd = input("[!] Type the sensor (moisture, ph. light, tmp) or 'all': ")
-#    if cmd != 'moisture' and cmd != 'ph' and cmd != 'light' and cmd != 'tmp' and cmd != 'all':
-#        print("[-] sensor not valid")
-#        return
-#    sensor = cmd
-#
-#    print("[!] Insert the time period in days (both 0 for all)")
-#    cmd = input("older value: ")
-#    if not cmd.isdigit():
-#        print("[-] values are not correct")
-#        return
-#    older = cmd
-#
-#    cmd = input("more recent value: ")
-#    if not cmd.isdigit():
-#        print("[-] recent value is not correct")
-#        return
-#    recent = cmd
-#
-#    if int(older) < int(recent):
-#        print("[-] older value has to be greater then the recent one")
-#        return
+            log.log_err(f"values are not correct")
 
     violations = get_mysql_db.get_violation(land_id, node_id, sensor, older_time, recent_time, 10)
     print_violations(violations)
@@ -282,8 +217,9 @@ def view_last_violations():
 def print_irrigations(irrigation_list):
 
     if not irrigation_list:
-        print("[-] There are no irrigations")
+        log.log_err(f"There are no irrigations")
         return
+    log.log_info("IRRIGATION LIST")
     for irrigation in irrigation_list:
         print("-----------------")
         print("land_id:     ", irrigation[0])
@@ -295,12 +231,12 @@ def print_irrigations(irrigation_list):
 
 def view_last_irrigations():
 
-    print("[!] View irrigation events (Type 'cancel' to quit)")
+    log.log_info("View irrigation events (Type 'cancel' to quit)")
     while True:
-        land_id = input("land_id (number or 'all'): ")
+        land_id = log.log_input("land_id (number or 'all'): ")
         if land_id == "cancel":
             return
-        node_id = input("node_id (number or 'all'): ")
+        node_id = log.log_input("node_id (number or 'all'): ")
         if node_id == "cancel":
             return
         if ((land_id.isdigit() or land_id == 'all')
@@ -308,48 +244,20 @@ def view_last_irrigations():
         ):
             break
         else:
-            print("[-] invalid values")
+            log.log_err(f"invalid values")
 
-    print("[!] Insert the time period in days (both 0 for all)")
+    log.log_info("Insert the time period in days (both 0 for all)")
     while True:
-        older_time = input("older value: ")
+        older_time = log.log_input("older value: ")
         if older_time == "cancel":
             return
-        recent_time = input("recent value: ")
+        recent_time = log.log_input("recent value: ")
         if recent_time == "cancel":
             return
         if older_time.isdigit() and recent_time.isdigit() and int(older_time) >= int(recent_time):
             break
         else:
-            print("[-] values are not correct")
-#    cmd = input("[!] Type the land_id or 'all': ")
-#    if not cmd.isdigit() and cmd != 'all':
-#        print("[-] not value land_id")
-#        return
-#    land_id = cmd
-#    
-#    cmd = input("[!] Type the node_id or 'all': ")
-#    if not cmd.isdigit() and cmd != 'all':
-#        print("[-] not value node_id")
-#        return
-#    node_id = cmd
-#
-#    print("[!] Insert the time period in days (both 0 for all)")
-#    cmd = input("older value: ")
-#    if not cmd.isdigit():
-#        print("[-] values are not correct")
-#        return
-#    older = cmd
-#
-#    cmd = input("more recent value: ")
-#    if not cmd.isdigit():
-#        print("[-] recent value is not correct")
-#        return
-#    recent = cmd
-#
-#    if int(older) < int(recent):
-#        print("[-] older value has to be greater then the recent one")
-#        return
+            log.log_err(f"values are not correct")
 
     irrigations = get_mysql_db.get_irrigation(land_id, node_id, older_time, recent_time, 10)
     print_irrigations(irrigations)

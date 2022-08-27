@@ -1,5 +1,5 @@
 import mysql.connector
-
+import log 
 #-----------------------UPDATE-------------------------
 
 def update_configuration(land_id, node_id, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer):

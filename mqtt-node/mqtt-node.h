@@ -8,6 +8,7 @@
 #include "os/dev/leds.h"
 #include "random.h"
 
+#include "net/netstack.h"
 #include "net/routing/routing.h"
 #include "mqtt.h"
 #include "net/ipv6/uip.h"
@@ -102,10 +103,10 @@ void get_sensor_received_sim(char msg[], char topic[]);
 void is_alive_received_sim(char msg[], char topic[]);
 
 //SENDING TO SERVER (SIMULATED)
-void config_request_sim();
-void status_sim();
-void irrigation_sim();
-void is_alive_ack_sim();
+void send_config_request();
+void send_status();
+void send_irrigation();
+void send_is_alive_ack();
 
 //SENSORS READINGS (SIMULATED)
 void irr_stopping();
@@ -115,4 +116,7 @@ void get_lihght_raw();
 void get_soil_tmp();
 
 void receive_configuration();
+
+PROCESS(mqtt_node, "Mqtt node");
+AUTOSTART_PROCESSES(&mqtt_node);
 

@@ -102,7 +102,7 @@ bool elaborate_cmd(char msg[], char topic[]){
         if(isNumber(arguments[5]) && atoi(arguments[5]) != 0)
             node_memory.configuration.irr_config.irr_duration = atoi(arguments[5]);
 
-        irrigation_sim();
+        send_irrigation();
         printf("[+] IRR_CMD command elaborated with success\n");
 
     }
@@ -122,7 +122,7 @@ bool elaborate_cmd(char msg[], char topic[]){
             return false;
         }
 
-        status_sim();
+        send_status();
         printf("[+] GET_CONFIG command elaborated with success\n");
     }
     else if(strcmp(topic, TIMER_CMD) == 0){
@@ -158,7 +158,7 @@ bool elaborate_cmd(char msg[], char topic[]){
             ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, get_soil_tmp, NULL);
         }
 
-        status_sim();
+        send_status();
         printf("[+] TIMER_CMD command elaborated with success\n");
     }
     else if(strcmp(topic, ASSIGN_CONFIG) == 0){
@@ -186,7 +186,7 @@ bool elaborate_cmd(char msg[], char topic[]){
         node_memory.configuration.light_timer = atoi(arguments[7]);
         node_memory.configuration.tmp_timer = atoi(arguments[8]);
 
-        status_sim();
+        send_status();
         printf("[+] ASSIGN_CONFIG command elaborated with success\n");
     }
     else if(strcmp(topic, GET_SENSOR) == 0){
@@ -232,7 +232,7 @@ bool elaborate_cmd(char msg[], char topic[]){
             return false;
         }
 
-        is_alive_ack_sim();
+        send_is_alive_ack();
         printf("[+] IS_ALIVE command elaborated with success\n");
     }
     else{
@@ -343,7 +343,7 @@ void is_alive_received_sim(char msg[], char topic[]){
 
 /*------------------SENDING TO SERVER (SIMULATED)-----------------------------*/
 
-void config_request_sim(){
+void send_config_request(){
 
     char msg[100];
     char topic[50];
@@ -354,11 +354,12 @@ void config_request_sim(){
         );
     sprintf(topic, CONFIG_RQST);
     printf(" >  [%s] %s \n", topic, msg);
+    mqtt_publish_service(msg, topic);
 }
 
 /*--------*/
 
-void status_sim(){
+void send_status(){
 
     char msg[200];
     char topic[50];
@@ -377,12 +378,13 @@ void status_sim(){
     
     sprintf(topic, STATUS);
     printf(" >  [%s] %s \n", topic, msg);
+    mqtt_publish_service(msg, topic);
 
 }
 
 /*-------*/
 
-void irrigation_sim(){
+void send_irrigation(){
 
     char msg[100];
     char topic[50];
@@ -394,11 +396,12 @@ void irrigation_sim(){
         );
     sprintf(topic, IRRIGATION);
     printf(" >  [%s] %s \n", topic, msg);
+    mqtt_publish_service(msg, topic);
 }
 
 /*-------*/
 
-void is_alive_ack_sim(){
+void send_is_alive_ack(){
 
     char msg[50];
     char topic[50];
@@ -408,13 +411,14 @@ void is_alive_ack_sim(){
         );
     sprintf(topic, IS_ALIVE_ACK);
     printf(" >  [%s] %s \n", topic, msg);
+    mqtt_publish_service(msg, topic);
 }
 
-/*-----------------SENSORS READINGS (SIMULATED)-------------------------------*/
+/*-----------------SENSORS READINGS AND SEND TO SERVER(SIMULATED)-------------------------------*/
 
 void irr_stopping(){
     node_memory.irr_status = false;
-    irrigation_sim();
+    send_irrigation();
 }
 
 void get_soil_moisture(){
@@ -435,13 +439,14 @@ void get_soil_moisture(){
     sprintf(topic, MOISTURE);
 
     printf(" >  [%s] %s\n", topic, msg);
+    mqtt_publish_service(msg, topic);
 
     bool irr_enabled = node_memory.configuration.irr_config.enabled;
     int irr_limit = node_memory.configuration.irr_config.irr_limit;
     if( irr_enabled && moisture < irr_limit){
         node_memory.irr_status = true;
         int irr_duration = node_memory.configuration.irr_config.irr_duration;
-        irrigation_sim();
+        send_irrigation();
         if(!node_timers.irr_timer_is_setted){
             ctimer_set(&node_timers.irr_duration_ctimer, irr_duration * CLOCK_MINUTE, irr_stopping, NULL);
             node_timers.irr_timer_is_setted = true;
@@ -472,6 +477,7 @@ void get_ph_level(){
         );
     sprintf(topic, PH);
     printf(" >  [%s] %s\n", topic, msg);
+    mqtt_publish_service(msg, topic);
 
 }
 
@@ -495,6 +501,7 @@ void get_lihght_raw(){
         );
     sprintf(topic, LIGHT);
     printf(" >  [%s] %s\n", topic, msg);
+    mqtt_publish_service(msg, topic);
 } 
 
 /*--------*/
@@ -517,6 +524,7 @@ void get_soil_tmp(){
         );
     sprintf(topic, TMP);
     printf(" >  [%s] %s\n", topic, msg);
+    mqtt_publish_service(msg, topic);
 }
 /*-------------------------------------------------------------------*/
 
@@ -530,8 +538,8 @@ void receive_configuration(){
 }
 
 
-PROCESS(mqtt_node, "Mqtt node");
-AUTOSTART_PROCESSES(&mqtt_node);
+//PROCESS(mqtt_node, "Mqtt node");
+//AUTOSTART_PROCESSES(&mqtt_node);
 
 PROCESS_THREAD(mqtt_node, ev, data){
     
@@ -627,11 +635,14 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     printf("[!] intialization ended\n");
 
+    mqtt_init_service();
+    mqtt_connect_service();
+
     /*---------------CONFIGURATION-------------------*/
     
     printf("[!] configuration ... \n");
 
-    config_request_sim();
+    send_config_request();
     receive_configuration();
     print_config();
 
@@ -704,6 +715,8 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
             
         }
+        if((ev == PROCESS_EVENT_TIMER && data == &node_timers.mqtt_etimer) || ev == PROCESS_EVENT_POLL)
+            mqtt_connect_service();
     }
 
 

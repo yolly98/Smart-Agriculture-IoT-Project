@@ -31,10 +31,6 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
 #define STATE_DISCONNECTED    5
 
 /*---------------------------------------------------------------------------*/
-PROCESS_NAME(mqtt_client_process);
-AUTOSTART_PROCESSES(&mqtt_client_process);
-
-/*---------------------------------------------------------------------------*/
 /* Maximum TCP segment size for outgoing segments of our socket */
 #define MAX_TCP_SEGMENT_SIZE    32
 #define CONFIG_IP_ADDR_STR_LEN   64
@@ -55,23 +51,17 @@ AUTOSTART_PROCESSES(&mqtt_client_process);
  */
 #define APP_BUFFER_SIZE 512
 
-static struct msg_to_send {
-  int int_example;
-  bool bool_example;
-  char * string_example;
-  int array_example[2];
-} msg;
-
-struct mqtt_module_str{
-  static uint8_t state;
+static struct mqtt_module_str{
+  uint8_t state;
   mqtt_status_t status;
   char broker_address[CONFIG_IP_ADDR_STR_LEN];
-  static char client_id[BUFFER_SIZE];
-  static char pub_topic[BUFFER_SIZE];
-  static char sub_topic[BUFFER_SIZE];
-  static char app_buffer[APP_BUFFER_SIZE];
-  static struct mqtt_message *msg_ptr = 0;
-  static struct mqtt_connection conn;
+  char client_id[BUFFER_SIZE];
+  char pub_topic[BUFFER_SIZE];
+  char sub_topic[BUFFER_SIZE];
+  char app_buffer[APP_BUFFER_SIZE];
+  struct mqtt_message *msg_ptr;
+  struct mqtt_connection conn;
+  uip_ipaddr_t dest_ipaddr;
 } mqtt_module;
 
 /*---------------------------------------------------------------------------*/
@@ -81,15 +71,10 @@ static void pub_handler(
   const uint8_t *chunk,
    uint16_t chunk_len
    ){
-  printf("Pub Handler: topic='%s' (len=%u), chunk_len=%u\n", topic,
+  printf("received: topic='%s' (len=%u), chunk_len=%u\n", topic,
           topic_len, chunk_len);
 
-  if(strcmp(topic, "status") == 0) {
-    printf("Received Actuator command\n");
-	  printf("%s\n", chunk);
-    // Do something :)
-    return;
-  }
+  elaborate_cmd((char*)chunk, (char*)topic);
 }
 /*---------------------------------------------------------------------------*/
 static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data){
@@ -104,7 +89,7 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
       printf("MQTT Disconnect. Reason %u\n", *((mqtt_event_t *)data));
 
       mqtt_module.state = STATE_DISCONNECTED;
-      process_poll(&mqtt_client_process);
+      //process_poll(&mqtt_client_process);
       break;
     }
     case MQTT_EVENT_PUBLISH: {
@@ -154,9 +139,11 @@ static bool have_connectivity(void){
 
 /*---------------------------------------------------------------------------*/
 
-void mqtt_init(){
+void mqtt_init_service(){
 
-  printf("MQTT Client Process\n");
+  printf("MQTT Service\n");
+
+  mqtt_module.msg_ptr = 0;
 
   // Initialize the ClientID as MAC address
   snprintf(mqtt_module.client_id, BUFFER_SIZE, "%02x%02x%02x%02x%02x%02x",
@@ -164,8 +151,9 @@ void mqtt_init(){
                      linkaddr_node_addr.u8[2], linkaddr_node_addr.u8[5],
                      linkaddr_node_addr.u8[6], linkaddr_node_addr.u8[7]);
 
+  while(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr)));
   // Broker registration					 
-  mqtt_register(&mqtt_module.conn, &mqtt_client_process, mqtt_module.client_id, mqtt_event,
+  mqtt_register(&mqtt_module.conn, &mqtt_node, mqtt_module.client_id, mqtt_event,
                   MAX_TCP_SEGMENT_SIZE);
 				  
   mqtt_module.state=STATE_INIT;
@@ -175,66 +163,73 @@ void mqtt_init(){
 
 }
 
-//if((ev == PROCESS_EVENT_TIMER && data == &node_timers.mqtt_etimer) || ev == PROCESS_EVENT_POLL){
+/*---------------------------------------------------------------------------*/
 
-void mqtt_service(){
-		  			  
-  if(mqtt_module.state==STATE_INIT){
-    if(have_connectivity()==true)  
-      mqtt_module.state = STATE_NET_OK;
-  } 
-  
-  if(mqtt_module.state == STATE_NET_OK){
-    // Connect to MQTT server
-    printf("Connecting!\n");
+void mqtt_connect_service(){
+
+  while(mqtt_module.state != STATE_SUBSCRIBED){ 
+    if(!etimer_expired(&node_timers.mqtt_etimer))
+      continue; 
+    if(mqtt_module.state==STATE_INIT){
+      if(have_connectivity()==true)  
+        mqtt_module.state = STATE_NET_OK;
+    } 
     
-    memcpy(mqtt_module.broker_address, broker_ip, strlen(broker_ip));
-    
-    mqtt_connect(
-              &mqtt_module.conn, mqtt_module.broker_address,
-              DEFAULT_BROKER_PORT,
-              (DEFAULT_PUBLISH_INTERVAL * 3) / CLOCK_SECOND,
-              MQTT_CLEAN_SESSION_ON);
-    mqtt_module.state = STATE_CONNECTING;
-  }
-  
-  if(mqtt_module.state==STATE_CONNECTED){
-  
-    int n_topics = 7;
-    char topics_to_subscribe[] = { IRR_CMD, GET_CONFIG, ASSIGN_CONFIG, TIMER_CMD, GET_SENSOR, IS_ALIVE};
-    
-    for(int i = 0; i < n_topics; i++){
-      // Subscribe to a topic
-      strcpy(mqtt_module.sub_topic, topics_to_subscribe[i]);
-
-      mqtt_module.status = mqtt_subscribe(&mqtt_module.conn, NULL, mqtt_module.sub_topic, MQTT_QOS_LEVEL_0);
-
-      printf("Subscribing!\n");
-
-      if(mqtt_module.status == MQTT_STATUS_OUT_QUEUE_FULL) {
-        LOG_ERR("Tried to subscribe but command queue was full!\n");
-        //PROCESS_EXIT();
-      }
+    if(mqtt_module.state == STATE_NET_OK){
+      // Connect to MQTT server
+      printf("Connecting!\n");
+      
+      memcpy(mqtt_module.broker_address, broker_ip, strlen(broker_ip));
+      
+      mqtt_connect(
+                &mqtt_module.conn, mqtt_module.broker_address,
+                DEFAULT_BROKER_PORT,
+                (DEFAULT_PUBLISH_INTERVAL * 3) / CLOCK_SECOND,
+                MQTT_CLEAN_SESSION_ON);
+      mqtt_module.state = STATE_CONNECTING;
     }
     
-    mqtt_module.state = STATE_SUBSCRIBED;
-  }
-  else if ( mqtt_module.state == STATE_DISCONNECTED ){
-    LOG_ERR("Disconnected form MQTT broker\n");	
-    // Recover from error
+    if(mqtt_module.state==STATE_CONNECTED){
+    
+      int n_topics = 7;
+      char topics_to_subscribe[][100] = { IRR_CMD, GET_CONFIG, ASSIGN_CONFIG, TIMER_CMD, GET_SENSOR, IS_ALIVE};
+      
+      for(int i = 0; i < n_topics; i++){
+        // Subscribe to a topic
+        strcpy(mqtt_module.sub_topic, topics_to_subscribe[i]);
+
+        mqtt_module.status = mqtt_subscribe(&mqtt_module.conn, NULL, mqtt_module.sub_topic, MQTT_QOS_LEVEL_0);
+
+        printf("Subscribing!\n");
+
+        if(mqtt_module.status == MQTT_STATUS_OUT_QUEUE_FULL) {
+          LOG_ERR("Tried to subscribe but command queue was full!\n");
+          //PROCESS_EXIT();
+        }
+      }
+      
+      mqtt_module.state = STATE_SUBSCRIBED;
+    }
+    else if ( mqtt_module.state == STATE_DISCONNECTED ){
+      LOG_ERR("Disconnected form MQTT broker\n");	
+      // Recover from error
+    }
+    etimer_set(&node_timers.mqtt_etimer, STATE_MACHINE_PERIODIC);
   }
   etimer_set(&node_timers.mqtt_etimer, STATE_MACHINE_PERIODIC);
-  
 }
 
 /*---------------------------------------------------------------------------*/
 
-void mqtt_publish(topic[], msg[]){
+void mqtt_publish_service(char msg[],char topic[]){
+
+  struct etimer conn_timer;
+  while(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr)))
 
   if(mqtt_module.state == STATE_SUBSCRIBED){
     sprintf(mqtt_module.pub_topic, "%s", topic);
     sprintf(mqtt_module.app_buffer, "%s", msg);
-    printf("%s Publishing ... [len = %ld]\n", mqtt_module.app_buffer, strlen(json_doc));
+    printf("%s Publishing ... [len = %ld]\n", mqtt_module.app_buffer, strlen(msg));
       
     mqtt_publish(&mqtt_module.conn, NULL, mqtt_module.pub_topic, (uint8_t *)mqtt_module.app_buffer,
             strlen(mqtt_module.app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);

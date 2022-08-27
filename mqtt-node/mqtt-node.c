@@ -640,8 +640,8 @@ PROCESS_THREAD(mqtt_node, ev, data){
     while(true){
         PROCESS_YIELD();
         if(etimer_expired(&node_timers.mqtt_etimer)){
-            mqtt_connection_service()
-            if(mqtt_module.state == STATE_READY)
+            mqtt_connection_service();
+            if(mqtt_module.state == STATE_SUBSCRIBED)
                 break;
         }
     }
@@ -681,7 +681,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
         PROCESS_YIELD();
         
         if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr)))
-            printf("the border router is not reachable yet");
+            printf("the border router is not reachable yet\n");
 
         if(etimer_expired(&node_timers.mqtt_etimer))
             mqtt_connection_service();
@@ -700,6 +700,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
                 printf("    . assign_config\n");
                 printf("    . get_sensor\n");
                 printf("    . is_alive\n");
+                printf("    . mqtt_status\n");
                 printf("---------------\n");
                 continue;
             }
@@ -720,6 +721,10 @@ PROCESS_THREAD(mqtt_node, ev, data){
             }
             else if(strcmp(cmd, "is_alive") == 0){
                 is_alive_received_sim(msg, topic);
+            }
+            else if(strcmp(cmd, "mqtt_status") == 0){
+                print_mqtt_status();
+                continue;
             }
 
             printf(" <  [%s] %s \n",topic, msg);

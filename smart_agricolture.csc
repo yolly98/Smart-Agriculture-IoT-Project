@@ -17,7 +17,7 @@
     </events>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype521148837</identifier>
+      <identifier>mtype274048489</identifier>
       <description>Cooja Mote Type #1</description>
       <source>[CONTIKI_DIR]/smart_agricolture_IoT_project/mqtt-node/mqtt-node.c</source>
       <commands>make -j$(CPUS) mqtt-node.cooja TARGET=cooja</commands>
@@ -41,7 +41,7 @@
     </motetype>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype552978980</identifier>
+      <identifier>mtype771141769</identifier>
       <description>Cooja Mote Type #2</description>
       <source>[CONTIKI_DIR]/contiki-ng-lab/border-router/border-router-and-java-app/border-router/border_router.c</source>
       <commands>make -j$(CPUS) border_router.cooja TARGET=cooja</commands>
@@ -65,7 +65,7 @@
     </motetype>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype202684684</identifier>
+      <identifier>mtype97508413</identifier>
       <description>Cooja Mote Type #3</description>
       <source>[CONTIKI_DIR]/smart_agricolture_IoT_project/border-router/border-router.c</source>
       <commands>make -j$(CPUS) border-router.cooja TARGET=cooja</commands>
@@ -89,7 +89,7 @@
     </motetype>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype874340412</identifier>
+      <identifier>mtype386175514</identifier>
       <description>Cooja Mote Type #4</description>
       <source>[CONTIKI_DIR]/smart_agricolture_IoT_project/mqtt-node/mqtt-node.c</source>
       <commands>make -j$(CPUS) mqtt-node.cooja TARGET=cooja</commands>
@@ -127,7 +127,7 @@
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype202684684</motetype_identifier>
+      <motetype_identifier>mtype97508413</motetype_identifier>
     </mote>
     <mote>
       <interface_config>
@@ -141,17 +141,21 @@
         <id>2</id>
       </interface_config>
       <interface_config>
+        org.contikios.cooja.contikimote.interfaces.ContikiRS232
+        <history>5~;4~;3~;irr_cmd~;help~;get_node~;get_sensor~;get_sesnor~;get_sensor~;3~;2~;</history>
+      </interface_config>
+      <interface_config>
         org.contikios.cooja.contikimote.interfaces.ContikiRadio
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype874340412</motetype_identifier>
+      <motetype_identifier>mtype386175514</motetype_identifier>
     </mote>
   </simulation>
   <plugin>
     org.contikios.cooja.plugins.SimControl
     <width>280</width>
-    <z>6</z>
+    <z>1</z>
     <height>160</height>
     <location_x>400</location_x>
     <location_y>0</location_y>
@@ -167,7 +171,7 @@
       <viewport>3.1577150241060523 0.0 0.0 3.1577150241060523 2.4082069614746726 122.69385824714469</viewport>
     </plugin_config>
     <width>400</width>
-    <z>2</z>
+    <z>4</z>
     <height>400</height>
     <location_x>1</location_x>
     <location_y>1</location_y>
@@ -180,7 +184,7 @@
       <coloring />
     </plugin_config>
     <width>381</width>
-    <z>0</z>
+    <z>3</z>
     <height>484</height>
     <location_x>399</location_x>
     <location_y>163</location_y>
@@ -196,7 +200,7 @@
       <zoomfactor>500.0</zoomfactor>
     </plugin_config>
     <width>1173</width>
-    <z>8</z>
+    <z>7</z>
     <height>166</height>
     <location_x>0</location_x>
     <location_y>656</location_y>
@@ -208,20 +212,21 @@
       <decorations>true</decorations>
     </plugin_config>
     <width>493</width>
-    <z>7</z>
+    <z>-1</z>
     <height>160</height>
     <location_x>680</location_x>
     <location_y>0</location_y>
+    <minimized>true</minimized>
   </plugin>
   <plugin>
     org.contikios.cooja.serialsocket.SerialSocketServer
     <mote_arg>0</mote_arg>
     <plugin_config>
       <port>60001</port>
-      <bound>false</bound>
+      <bound>true</bound>
     </plugin_config>
     <width>362</width>
-    <z>5</z>
+    <z>2</z>
     <height>116</height>
     <location_x>683</location_x>
     <location_y>19</location_y>
@@ -234,7 +239,7 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>350</width>
-    <z>4</z>
+    <z>6</z>
     <height>120</height>
     <location_x>11</location_x>
     <location_y>407</location_y>
@@ -247,7 +252,7 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>350</width>
-    <z>3</z>
+    <z>5</z>
     <height>112</height>
     <location_x>15</location_x>
     <location_y>536</location_y>
@@ -260,7 +265,7 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>387</width>
-    <z>1</z>
+    <z>0</z>
     <height>487</height>
     <location_x>785</location_x>
     <location_y>162</location_y>

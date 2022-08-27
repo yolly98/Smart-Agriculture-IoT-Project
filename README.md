@@ -11,7 +11,7 @@
 * [x] testare funzionalità server
 * [x] scrivere un log module che scrive sia su file sia su terminale
 
-* [ ] inserire mqtt nel nodo
+* [ ] inserire mqtt nel nodo e testarlo
 * [ ] inserire mqtt nel server
 
 * [ ] scrivere nodo COAP

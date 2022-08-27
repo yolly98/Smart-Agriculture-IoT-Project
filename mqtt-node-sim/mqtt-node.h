@@ -8,15 +8,6 @@
 #include "os/dev/leds.h"
 #include "random.h"
 
-#include "net/routing/routing.h"
-#include "mqtt.h"
-#include "net/ipv6/uip.h"
-#include "net/ipv6/uip-icmp6.h"
-#include "net/ipv6/sicslowpan.h"
-#include "sys/ctimer.h"
-#include "lib/sensors.h"
-#include "os/sys/log.h"
-#include <strings.h>
 /*------------------------------------*/
 //TOPICS
 
@@ -43,7 +34,6 @@
 static struct timers{
     struct etimer btn_etimer;
     struct etimer led_etimer;
-    struct etimer mqtt_etimer;
     struct ctimer mst_ctimer;
     struct ctimer ph_ctimer;
     struct ctimer light_ctimer;

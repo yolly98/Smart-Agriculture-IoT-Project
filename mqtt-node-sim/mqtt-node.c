@@ -1,4 +1,5 @@
-#include "mqtt_module.c"
+#include "mqtt-node.h"
+
 
 /*------------------------UTILITY------------------------------------------*/
 
@@ -543,6 +544,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     /*------------INITIALIZATION---------------*/
     printf("[!] initialization ...\n");
+    
 
     //set land_id
 

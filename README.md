@@ -16,7 +16,9 @@
 * [x] aggingere il campo protocol (COAP/MQTT) alle config in sql
 * [x] testare server
 * [x] inserire mqtt nel server (modificare json)
-* [ ] testare configurazione del nodo e occuparmi dei TODO
+* [ ] testare configurazione del nodo e occuparmi dei TODO 
+* [ ] capire pwerchè il while di configurazione non funziona
+* [ ] far tornare al reset il nodo se la land non esiste
 * [ ] test di tutti i comandi
 
 * [ ] scrivere nodo COAP

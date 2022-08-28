@@ -81,11 +81,6 @@ bool elaborate_cmd(char msg[]){
     if(strcmp(cmd[0], IRR_CMD) == 0){
         printf("[!] IRR_CMD command elaboration ...\n");
 
-        if(mqtt_module.state != STATE_CONFIGURED){
-            printf("[-] Node not configured\n");
-            return false;
-        }
-
         int n_arguments = 5;
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments);
@@ -105,22 +100,11 @@ bool elaborate_cmd(char msg[]){
     }
     else if(strcmp(cmd[0], GET_CONFIG) == 0){
         printf("[!] GET_CONFIG command elaboration ...\n");
-
-        if(mqtt_module.state != STATE_CONFIGURED){
-            printf("[-] Node not configured\n");
-            return false;
-        }
-
         send_status();
         printf("[+] GET_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], TIMER_CMD) == 0){
         printf("[!] TIMER_CMD command elaboration ...\n");
-
-        if(mqtt_module.state != STATE_CONFIGURED){
-            printf("[-] Node not configured\n");
-            return false;
-        }
         
         int n_arguments = 3;
         char arguments[n_arguments][100];
@@ -572,8 +556,20 @@ PROCESS_THREAD(mqtt_node, ev, data){
     printf("[!] configuration ... \n");
 
     send_config_request();
-    receive_configuration(); //TODO capire perchè se tolgo questo succede un macello
-    print_config();
+    //receive_configuration(); //TODO capire perchè se tolgo questo succede un macello
+    //print_config();
+
+    while(true){
+        PROCESS_YIELD();
+        if(etimer_expired(&node_timers.mqtt_etimer))
+            mqtt_connection_service();
+
+        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr)))
+            printf("the border router is not reachable yet\n");
+            
+        if(mqtt_module.state == STATE_CONFIGURED)
+            break;
+    }
 
     printf("[+] configuration ended\n");
 
@@ -651,15 +647,11 @@ PROCESS_THREAD(mqtt_node, ev, data){
             printf(" <  [%s] %s \n",cmd, msg);
 
             elaborate_cmd(msg);
-
-            
+    
         }
     }
 
-
-
     /*---------------------------------------------*/
-
 
     PROCESS_END();
 }

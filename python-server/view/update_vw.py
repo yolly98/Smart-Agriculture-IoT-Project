@@ -8,6 +8,7 @@ def update_configuration_vw():
 
     land_id = ""
     node_id = ""
+    protocol = ""
     status = ""
     irr_enabled = ""
     irr_limit = ""
@@ -41,11 +42,22 @@ def update_configuration_vw():
 
     log.log_err(f"Note: type 'x' to not update the attribute")
     while True:
+        protocol = log.log_input("protocol: ")
+        if protocol == "cancel":
+            return
+        if protocol == 'x':
+            protocol = old_configuration[2]
+            break
+        if protocol == 'COAP' or protocol == 'MQTT':
+            break
+        else:
+            log.log_err(f"invalid value")
+    while True:
         status = log.log_input("status: ")
         if status == "cancel":
             return
         if status == 'x':
-            status = old_configuration[2]
+            status = old_configuration[3]
             break
         if status == 'online' or status == 'offline' or status == 'null':
             break
@@ -56,7 +68,7 @@ def update_configuration_vw():
         if irr_enabled == "cancel":
             return
         if irr_enabled == 'x':
-            irr_enabled = old_configuration[4]
+            irr_enabled = old_configuration[5]
             break
         if irr_enabled == 'true' or irr_enabled == 'false':
             break
@@ -67,7 +79,7 @@ def update_configuration_vw():
         if irr_limit == "cancel":
             return
         if irr_limit == 'x':
-            irr_limit = old_configuration[5]
+            irr_limit = old_configuration[6]
             break
         if irr_limit.isdigit():
             break
@@ -78,7 +90,7 @@ def update_configuration_vw():
         if irr_duration == "cancel":
             return
         if irr_duration == 'x':
-            irr_duration = old_configuration[6]
+            irr_duration = old_configuration[7]
             break
         if irr_duration.isdigit():
             break
@@ -89,7 +101,7 @@ def update_configuration_vw():
         if mst_timer == "cancel":
             return
         if mst_timer == 'x':
-            mst_timer = old_configuration[7]
+            mst_timer = old_configuration[8]
             break
         if mst_timer.isdigit():
             break
@@ -100,7 +112,7 @@ def update_configuration_vw():
         if ph_timer == "cancel":
             return
         if ph_timer == 'x':
-            ph_timer = old_configuration[8]
+            ph_timer = old_configuration[9]
             break
         if ph_timer.isdigit():
             break
@@ -111,7 +123,7 @@ def update_configuration_vw():
         if light_timer == "cancel":
             return
         if light_timer == 'x':
-            light_timer = old_configuration[9]
+            light_timer = old_configuration[10]
             break
         if light_timer.isdigit():
             break
@@ -122,14 +134,14 @@ def update_configuration_vw():
         if tmp_timer == "cancel":
             return
         if tmp_timer == 'x':
-            tmp_timer = old_configuration[10]
+            tmp_timer = old_configuration[11]
             break
         if tmp_timer.isdigit():
             break
         else:
             log.log_err(f"invalid value")
 
-    update_mysql_db.update_configuration(land_id, node_id, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
+    update_mysql_db.update_configuration(land_id, node_id, protocol, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
     new_config = get_mysql_db.get_config(land_id, node_id, True)
     if new_config:
         log.log_success(f"updated configuration: {new_config}")

@@ -47,9 +47,9 @@ def irr_cmd():
     elif len(irr_duration) == 0:
         irr_duration = 0
 
-    msg = { 'land_id': int(land_id), 'node_id': int(node_id), 'enable': enable, 'status': status, 'limit': int(limit), 'irr_duration': int(irr_duration) }
+    msg = { 'cmd': 'irr_cmd', 'body': { 'enable': enable, 'status': status, 'limit': int(limit), 'irr_duration': int(irr_duration) } }
     json_msg = json.dumps(msg)
-    topic = "IRR_CMD"
+    topic = f"NODE/{land_id}/{node_id}"
     log.log_receive(f"[{topic}] {json_msg}")
 
 #---------
@@ -73,14 +73,14 @@ def get_config(broadcast):
         land_id = 0
         node_id = 0
     
-    msg = { 'land_id': int(land_id), 'node_id': int(node_id) }
+    msg = { 'cmd': 'get_config' }
     json_msg = json.dumps(msg)
-    topic = "GET_CONFIG"
+    topic = f"NODE/{land_id}/{node_id}"
     log.log_receive(f"[{topic}] {json_msg}")
 
 #---------
 
-def assign_config(land_id, node_id):
+def assign_config(land_id, node_id, protocol):
 
     log.log_info("assign_config command")
     config = get_mysql_db.get_config(land_id, node_id, True)
@@ -93,14 +93,14 @@ def assign_config(land_id, node_id):
             log.log_err(f"mysqldb: the land {land_id} doesn't exist or return too many results")
             return
 
-    msg = { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': config[4], 'irr_limit':  config[5], 'irr_duration': config[6]}, 'mst_timer': config[7], 'ph_timer': config[8], 'light_timer': config[9], 'tmp_timer': config[10] }
+    msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[5], 'irr_limit':  config[6], 'irr_duration': config[7]}, 'mst_timer': config[8], 'ph_timer': config[9], 'light_timer': config[10], 'tmp_timer': config[11] } }
     json_msg = json.dumps(msg)
-    topic = "ASSIGN_CONFIG"
+    topic = f"NODE/{land_id}/{node_id}"
     log.log_receive(f"[{topic}] {json_msg}")
 
     #save the new configuration
     if config[1] == 0:
-        add_mysql_db.add_configuration(land_id, node_id, "online", config[4], config[5], config[6], config[7], config[8], config[9], config[10])
+        add_mysql_db.add_configuration(land_id, node_id, protocol, "online", config[5], config[6], config[7], config[8], config[9], config[10], config[11])
         
 
 #--------
@@ -132,9 +132,9 @@ def timer_cmd():
     elif len(timer) == 0:
         timer = 0
 
-    msg = { 'land_id': int(land_id), 'node_id': int(node_id), 'sensor': sensor, 'timer': int(timer) }
+    msg = { 'cmd': 'timer_cmd', 'body': { 'sensor': sensor, 'timer': int(timer) } }
     json_msg = json.dumps(msg)
-    topic = "TIMER_CMD"
+    topic = f"NODE/{land_id}/{node_id}"
     log.log_receive(f"[{topic}] {json_msg}")
 
 #-------
@@ -159,9 +159,9 @@ def get_sensor():
         log.log_err(f"sensor is not valid [{sensor}]")
         return
 
-    msg = { 'land_id': int(land_id), 'node_id': int(node_id), 'type': sensor }
+    msg = { 'cmd': 'get_sensor', 'type': sensor }
     json_msg = json.dumps(msg)
-    topic = "GET_SENSOR"
+    topic = f"NODE/{land_id}/{node_id}"
     log.log_receive(f"[{topic}] {json_msg}")
 
 #-------
@@ -185,7 +185,7 @@ def is_alive(broadcast):
         land_id = 0
         node_id = 0
 
-    msg = { 'land_id': int(land_id), 'node_id': int(node_id) }
+    msg = { 'cmd': 'is_alive' }
     json_msg = json.dumps(msg)
-    topic = "GET_SENSOR"
+    topic = f"NODE/{land_id}/{node_id}"
     log.log_receive(f"[{topic}] {json_msg}")

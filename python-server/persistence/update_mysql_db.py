@@ -2,7 +2,7 @@ import mysql.connector
 import log 
 #-----------------------UPDATE-------------------------
 
-def update_configuration(land_id, node_id, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer):
+def update_configuration(land_id, node_id, protocol, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer):
 
     mydb = mysql.connector.connect(
         host = "localhost",
@@ -13,12 +13,13 @@ def update_configuration(land_id, node_id, irr_enabled, irr_limit, irr_duration,
     mycursor = mydb.cursor(prepared=True)
 
     sql = "UPDATE configuration \
-        SET status = 'online', irr_enabled = %s, \
+        SET protocol = %s, status = 'online', \
+        irr_enabled = %s, \
         irr_limit = %s, irr_duration = %s, \
         mst_timer = %s, ph_timer = %s, \
         light_timer = %s, tmp_timer = %s \
         WHERE land_id = %s AND node_id = %s "
-    mycursor.execute(sql, (irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer, land_id, node_id))
+    mycursor.execute(sql, (protocol, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer, land_id, node_id))
     mydb.commit()
 
 #-----------------------------

@@ -11,9 +11,11 @@
 * [x] testare funzionalità server
 * [x] scrivere un log module che scrive sia su file sia su terminale
 
-* [ ] usare una lista per bufferizzare i messaggi da inviare in mqtt
-* [ ] inserire mqtt nel nodo e testarlo
-* [ ] inserire mqtt nel server
+* [x] usare una lista per bufferizzare i messaggi da inviare in mqtt
+* [x] inserire mqtt nel nodo e testarlo
+* [x] aggingere il campo protocol (COAP/MQTT) alle config in sql
+* [ ] testare server
+* [ ] inserire mqtt nel server (modificare json)
 
 * [ ] scrivere nodo COAP
 * [ ] inserire COAP nel server

@@ -3,7 +3,7 @@ import log
 
 #--------------------ADD------------------------------
 
-def add_configuration(land_id, node_id, status, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer):
+def add_configuration(land_id, node_id, protocol, status, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer):
 
     mydb = mysql.connector.connect(
         host = "localhost",
@@ -14,11 +14,11 @@ def add_configuration(land_id, node_id, status, irr_enabled, irr_limit, irr_dura
     mycursor = mydb.cursor(prepared=True)
 
     sql = "INSERT INTO configuration ( \
-        land_id, node_id, status, \
+        land_id, node_id, protocol, status, \
         irr_enabled, irr_limit, irr_duration, \
         mst_timer, ph_timer, light_timer, tmp_timer) \
-        VALUES( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    mycursor.execute(sql, (land_id, node_id, status, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer))
+        VALUES( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    mycursor.execute(sql, (land_id, node_id, protocol, status, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer))
     mydb.commit()
    
 

@@ -56,7 +56,7 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
 
 struct mqtt_publish_list{
   char msg[APP_BUFFER_SIZE];
-  char topic[BUFFER_SIZE];
+  char cmd[BUFFER_SIZE];
   struct mqtt_publish_list * ptr;
 };
 
@@ -84,7 +84,7 @@ void print_mqtt_status(){
     printf("-----BUFFER MQTT--------\n");
     struct mqtt_publish_list *p = mqtt_module.plist_head;
     for(int i = 0; i < mqtt_module.messages; i++){
-        printf("[ %s, len: %ld]->", p->topic, strlen(p->msg));
+        printf("[ %s, len: %ld]->", p->cmd, strlen(p->msg));
         p = p->ptr;
     }
     printf("\n");
@@ -95,7 +95,7 @@ void print_mqtt_status(){
 
 /*--------------------------------------------------------*/
 
-bool mqtt_publish_service(char msg[], char topic[]){ //add to list
+bool mqtt_publish_service(char msg[], char cmd[]){ //add to list
 
   if(mqtt_module.messages == MAX_MSGS){
     printf("[-] buffer for msg to publish is full\n");
@@ -106,7 +106,7 @@ bool mqtt_publish_service(char msg[], char topic[]){ //add to list
   
   struct mqtt_publish_list *new_msg = (struct mqtt_publish_list*)malloc(sizeof(struct mqtt_publish_list));
   sprintf(new_msg->msg, "%s", msg);
-  sprintf(new_msg->topic, "%s", topic);
+  sprintf(new_msg->cmd, "%s", cmd);
   new_msg->ptr = NULL;
 
   if(mqtt_module.plist_head == NULL){
@@ -130,10 +130,12 @@ bool get_msg_to_publish(char msg[], char topic[]){ //remove from list
   if(mqtt_module.messages == 0)
     return false;
 
+  char cmd[BUFFER_SIZE];
   sprintf(msg, "%s",  mqtt_module.plist_tail->msg);
-  sprintf(topic, "%s",  mqtt_module.plist_tail->topic);
+  sprintf(cmd, "%s",  mqtt_module.plist_tail->cmd);
+  sprintf(topic, "%s", "SERVER");
 
-  printf("[!] Publishing [ %s, len: %ld]\n", topic, strlen(msg));
+  printf("[!] Publishing [ %s, len: %ld]\n", cmd, strlen(msg));
 
   if(mqtt_module.messages == 1){
     mqtt_module.plist_head = NULL;
@@ -168,7 +170,7 @@ static void pub_handler(
   printf("[!] received: topic='%s' (len=%u), chunk_len=%u\n", topic,
           topic_len, chunk_len);
 
-  elaborate_cmd((char*)chunk, (char*)topic);
+  elaborate_cmd((char*)chunk);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -201,12 +203,14 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
 
       if(suback_event->success) {
         printf("[+] Application is subscribed to topic successfully\n");
+        mqtt_module.state = STATE_SUBSCRIBED;
 
       } else {
         printf("[-] Application failed to subscribe to topic (ret code %x)\n", suback_event->return_code);
       }
 #else
       printf("[+] Application is subscribed to topic successfully\n");
+      mqtt_module.state = STATE_SUBSCRIBED;
 #endif
       break;
     }
@@ -287,7 +291,9 @@ void mqtt_connection_service(){
   if(mqtt_module.state==STATE_CONNECTED){
 
     // Subscribe to a topic
-    strcpy(mqtt_module.sub_topic, "TEST");
+    int land_id = node_memory.configuration.land_id;
+    int node_id = node_memory.configuration.node_id;
+    sprintf(mqtt_module.sub_topic, "NODE/%d/%d", land_id, node_id);
 
     mqtt_module.status = mqtt_subscribe(&mqtt_module.conn, NULL, mqtt_module.sub_topic, MQTT_QOS_LEVEL_0);
 
@@ -297,7 +303,7 @@ void mqtt_connection_service(){
       printf("[-] Tried to subscribe but command queue was full!\n");
       mqtt_module.state = STATE_INIT;
     }
-    mqtt_module.state = STATE_SUBSCRIBED;
+    mqtt_module.state = STATE_SUBSCRIBING;
   }
 
   if(mqtt_module.state == STATE_SUBSCRIBED){

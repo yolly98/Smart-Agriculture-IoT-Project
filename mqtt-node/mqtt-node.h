@@ -19,24 +19,25 @@
 #include "os/sys/log.h"
 #include <strings.h>
 /*------------------------------------*/
-//TOPICS
+//COMMANDS
 
-#define CONFIG_RQST     "CONFIG_RQST"
-#define STATUS          "STATUS"
-#define IRRIGATION      "IRRIGATION"
-#define MOISTURE        "MOISTURE"
-#define PH              "PH"
-#define LIGHT           "LIGHT"
-#define TMP             "TMP"
-#define IS_ALIVE_ACK    "IS_ALIVE_ACK"
+#define CONFIG_RQST     "config_rqst"
+#define STATUS          "status"
+#define IRRIGATION      "irrigation"
+#define MOISTURE        "moisture"
+#define PH              "ph"
+#define LIGHT           "light"
+#define TMP             "tmp"
+#define IS_ALIVE_ACK    "is_alive_ack"
 
-#define IRR_CMD         "IRR_CMD"
-#define GET_CONFIG      "GET_CONFIG"
-#define ASSIGN_CONFIG   "ASSIGN_CONFIG"
-#define TIMER_CMD       "TIMER_CMD"
-#define GET_SENSOR      "GET_SENSOR"
-#define IS_ALIVE        "IS_ALIVE"
+#define IRR_CMD         "irr_cmd"
+#define GET_CONFIG      "get_config"
+#define ASSIGN_CONFIG   "assign_config"
+#define TIMER_CMD       "timer_cmd"
+#define GET_SENSOR      "get_sensor"
+#define IS_ALIVE        "is_alive"
 #define CLOCK_MINUTE    CLOCK_SECOND * 60
+#define MSG_SIZE        512
 
 /*------------------------------------*/
 //DATA STRUCTURES
@@ -92,15 +93,15 @@ void print_config();
 void parse_json(char json[], int n_arguments, char arguments[][100]);
 
 //COMMAND ELABORATOR
-bool elaborate_cmd(char msg[], char topic[]);
+bool elaborate_cmd(char msg[]);
 
 //COMMAND RECEIVED (SIMULATED)
-void irr_cmd_received_sim(char msg[], char topic[]);
-void get_config_received_sim(char msg[], char topic[]);
-void assign_config_received_sim(char msg[], char topic[]);
-void timer_cmd_received_sim(char msg[], char topic[]);
-void get_sensor_received_sim(char msg[], char topic[]);
-void is_alive_received_sim(char msg[], char topic[]);
+void irr_cmd_received_sim(char msg[]);
+void get_config_received_sim(char msg[]);
+void assign_config_received_sim(char msg[]);
+void timer_cmd_received_sim(char msg[]);
+void get_sensor_received_sim(char msg[]);
+void is_alive_received_sim(char msg[]);
 
 //SENDING TO SERVER (SIMULATED)
 void send_config_request();

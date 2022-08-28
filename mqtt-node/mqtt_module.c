@@ -30,7 +30,7 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
 #define STATE_SUBSCRIBING     4
 #define STATE_SUBSCRIBED      5
 #define STATE_DISCONNECTED    6
-#define STATE_PUBLISHING      7
+#define STATE_CONFIGURED      7
 
 /*---------------------------------------------------------------------------*/
 /* Maximum TCP segment size for outgoing segments of our socket */
@@ -44,7 +44,7 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
 #define BUFFER_SIZE 64
 
 // Periodic timer to check the state of the MQTT client
-#define STATE_MACHINE_PERIODIC     (CLOCK_SECOND * 1)
+#define STATE_MACHINE_PERIODIC     (CLOCK_SECOND * 5)
 
 /*---------------------------------------------------------------------------*/
 /*
@@ -306,7 +306,7 @@ void mqtt_connection_service(){
     mqtt_module.state = STATE_SUBSCRIBING;
   }
 
-  if(mqtt_module.state == STATE_SUBSCRIBED){
+  if(mqtt_module.state == STATE_SUBSCRIBED || mqtt_module.state == STATE_CONFIGURED){
     
     if(!get_msg_to_publish(mqtt_module.app_buffer, mqtt_module.pub_topic)){
       etimer_restart(&node_timers.mqtt_etimer);

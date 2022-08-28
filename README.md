@@ -14,8 +14,10 @@
 * [x] usare una lista per bufferizzare i messaggi da inviare in mqtt
 * [x] inserire mqtt nel nodo e testarlo
 * [x] aggingere il campo protocol (COAP/MQTT) alle config in sql
-* [ ] testare server
-* [ ] inserire mqtt nel server (modificare json)
+* [x] testare server
+* [x] inserire mqtt nel server (modificare json)
+* [ ] testare configurazione del nodo e occuparmi dei TODO
+* [ ] test di tutti i comandi
 
 * [ ] scrivere nodo COAP
 * [ ] inserire COAP nel server

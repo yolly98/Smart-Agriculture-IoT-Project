@@ -8,11 +8,13 @@ from view import get_vw
 from view import add_vw
 from view import update_vw
 from view import delete_vw
+from protocol import mqtt_module
 
 # ------------MAIN-----------
 
 log.log_init()
-to_node.get_config(True)
+to_node.get_config(True) #TODO 
+mqtt_module.mqtt_init()
 
 #functinon for thread 1(console)
 def server_console():
@@ -132,32 +134,32 @@ def server_console():
             if cmd.isdigit() and int(cmd) == 9:
                 continue
             elif cmd.isdigit() and int(cmd) == 1:
-                from_node.config_request("MQTT")
+                from_node.config_request("MQTT", "")
             elif cmd.isdigit() and int(cmd) == 2:
-                from_node.status("MQTT")
+                from_node.status("MQTT", "")
             elif cmd.isdigit() and int(cmd) == 3:
-                from_node.irrigation()
+                from_node.irrigation("")
             elif cmd.isdigit() and int(cmd) == 4:
-                from_node.moisture()
+                from_node.moisture("")
             elif cmd.isdigit() and int(cmd) == 5:
-                from_node.ph()
+                from_node.ph("")
             elif cmd.isdigit() and int(cmd) == 6:
-                from_node.light()
+                from_node.light("")
             elif cmd.isdigit() and int(cmd) == 7:
-                from_node.tmp()
+                from_node.tmp("")
             elif cmd.isdigit() and int(cmd) == 8:
-                from_node.is_alive_ack()
+                from_node.is_alive_ack("")
             else:
                 log.log_err(f"topic non valid!")
         elif cmd.isdigit() and int(cmd) == 29:
             log.log_info("typed 'exit'")
-            log.log_info("Press Ctrl+c in order to stop the listener")
+            log.log_info("Press Ctrl+c two time in order to stop the other threads")
             exit()
         else:
             log.log_err(f"command not valid!")
 
 #functino for thread 2 (daemon)
-def server_listener():
+def server_check_node():
 
     end_timer =  60 * 60 * 3    # 3 hours
     start_timer = time.time()
@@ -173,15 +175,20 @@ def server_listener():
 
         time.sleep(0.1)
             
+def server_listener():
+    mqtt_module.mqtt_subscribe()
 
 t1 = threading.Thread(target = server_console, args = (), daemon = False)
-t2 = threading.Thread(target = server_listener, args = (), daemon = True) 
+t2 = threading.Thread(target = server_check_node, args = (), daemon = True) 
+t3 = threading.Thread(target = server_listener, args = (), daemon = True) 
 
 t1.start()
 t2.start()
+t3.start()
 
 t1.join()
 t2.join()
+t3.join()
 
 
 

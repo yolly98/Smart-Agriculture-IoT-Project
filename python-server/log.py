@@ -8,7 +8,6 @@ def log_init():
 #-------------------
 
 def log_receive(msg):
-    global daemon
 
     log_file = open("log.txt", "a")
     current_time = str(datetime.datetime.now())
@@ -21,7 +20,6 @@ def log_receive(msg):
 #-------------------
 
 def log_send(msg):
-    global daemon
 
     log_file = open("log.txt", "a")
     current_time = str(datetime.datetime.now())
@@ -33,8 +31,6 @@ def log_send(msg):
 #-------------------
 
 def log_err(msg):
-    
-    global daemon
 
     log_file = open("log.txt", "a")
     current_time = str(datetime.datetime.now())
@@ -48,8 +44,6 @@ def log_err(msg):
 
 def log_success(msg):
 
-    global daemon
-
     log_file = open("log.txt", "a")
     current_time = str(datetime.datetime.now())
     
@@ -61,8 +55,6 @@ def log_success(msg):
 #---------------------
 
 def log_info(msg):
-
-    global daemon
 
     log_file = open("log.txt", "a")
     current_time = str(datetime.datetime.now())

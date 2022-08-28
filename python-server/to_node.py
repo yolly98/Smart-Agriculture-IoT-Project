@@ -2,55 +2,73 @@ import json
 import log
 from persistence import get_mysql_db
 from persistence import add_mysql_db
+from protocol import mqtt_module
 
 #--------------------COMMAND TO NODE--------------
 
 def irr_cmd():
     log.log_info("irr_cmd command selected")
-    log.log_info("Type the arguments ...")
-    land_id = log.log_input("$ land_id: ")
-    node_id = log.log_input("$ node_id: ")
-    enable = log.log_input("$ enable: ")
-    status = log.log_input("$ status: ")
-    limit = log.log_input("$ limit: ")
-    irr_duration = log.log_input("$ irr_duration: ")
-    
-    if not land_id.isdigit():
-        log.log_err(f"land_id has to be a number > 0 [{land_id}]")
-        return
+    land_id = ""
+    node_id = ""
+    enabled = ""
+    status = ""
+    limit = ""
+    irr_duration = ""
+    log.log_info("Type the arguments or 'cancel'")
+    while True:
+        land_id = log.log_input("land_id: ")
+        if land_id == "cancel":
+            return
+        if land_id.isdigit() and int(land_id) > 0:
+            break
+        else:
+            log.log_err(f"invalid value, has to be > 0")
+    while True:
+        node_id = log.log_input("node_id: ")
+        if node_id == "cancel":
+            return
+        if node_id.isdigit() and int(node_id) > 0:
+            break
+        else:
+            log.log_err(f"invalid value, has to be > 0")
+    while True:
+        status = log.log_input("status (on/off/null): ")
+        if status == "cancel":
+            return
+        if status == 'on' or status == 'off' or status == 'null':
+            break
+        else:
+            log.log_err(f"invalid value")
+    while True:
+        enabled = log.log_input("enabled (true/false/null): ")
+        if enabled == "cancel":
+            return
+        if enabled == 'true' or enabled == 'false' or enabled == 'null':
+            break
+        else:
+            log.log_err(f"invalid value")
+    while True:
+        limit = log.log_input("limit (0 to not update): ")
+        if limit == "cancel":
+            return
+        if limit.isdigit():
+            break
+        else:
+            log.log_err(f"invalid value, , has to be >= 0")
+    while True:
+        irr_duration = log.log_input("irr_duration (0 to not update): ")
+        if irr_duration == "cancel":
+            return
+        if irr_duration.isdigit():
+            break
+        else:
+            log.log_err(f"invalid value, has to be > 0")
 
-    if not node_id.isdigit():
-        log.log_err(f"node_id has to be a number > 0 [{node_id}]")
-        return
-
-    if enable != "true" and enable != "false" and len(enable) != 0:
-        log.log_err(f"enable is not valid [{enable}]")
-        return
-    elif len(enable) == 0:
-        enable = "null"
-
-    if status != "on" and status != "off" and len(status) != 0:
-        log.log_err(f"status is not valid [{status}]")
-        return
-    elif len(status) == 0:
-        status = "null"
-
-    if (not limit.isdigit()) and len(limit) != 0:
-        log.log_err(f"limit has to be a number > 0 [{limit}]")
-        return
-    elif len(limit) == 0:
-        limit = 0
-
-    if (not irr_duration.isdigit()) and len(irr_duration) != 0:
-        log.log_err(f"irr_duration has to be a number > 0 [{irr_duration}]")
-        return
-    elif len(irr_duration) == 0:
-        irr_duration = 0
-
-    msg = { 'cmd': 'irr_cmd', 'body': { 'enable': enable, 'status': status, 'limit': int(limit), 'irr_duration': int(irr_duration) } }
+    msg = { 'cmd': 'irr_cmd', 'body': { 'enable': enabled, 'status': status, 'limit': int(limit), 'irr_duration': int(irr_duration) } }
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_receive(f"[{topic}] {json_msg}")
+    log.log_send(f"[{topic}] {json_msg}")
+    mqtt_module.mqtt_publish(topic, json_msg)
 
 #---------
 
@@ -76,7 +94,8 @@ def get_config(broadcast):
     msg = { 'cmd': 'get_config' }
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_receive(f"[{topic}] {json_msg}")
+    log.log_send(f"[{topic}] {json_msg}")
+    mqtt_module.mqtt_publish(topic, json_msg)
 
 #---------
 
@@ -96,7 +115,8 @@ def assign_config(land_id, node_id, protocol):
     msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[5], 'irr_limit':  config[6], 'irr_duration': config[7]}, 'mst_timer': config[8], 'ph_timer': config[9], 'light_timer': config[10], 'tmp_timer': config[11] } }
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_receive(f"[{topic}] {json_msg}")
+    log.log_send(f"[{topic}] {json_msg}")
+    mqtt_module.mqtt_publish(topic, json_msg)
 
     #save the new configuration
     if config[1] == 0:
@@ -126,7 +146,7 @@ def timer_cmd():
         log.log_err(f"sensor is not valid [{sensor}]")
         return
 
-    if (not timer.isdigit()) and len(timer) != 0:
+    if (timer.isdigit() and int(timer) <= 0) or ((not timer.isdigit()) and len(timer) != 0):
         log.log_err(f"timer has to be a number > 0 [{timer}]")
         return
     elif len(timer) == 0:
@@ -135,7 +155,8 @@ def timer_cmd():
     msg = { 'cmd': 'timer_cmd', 'body': { 'sensor': sensor, 'timer': int(timer) } }
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_receive(f"[{topic}] {json_msg}")
+    log.log_send(f"[{topic}] {json_msg}")
+    mqtt_module.mqtt_publish(topic, json_msg)
 
 #-------
 
@@ -162,7 +183,8 @@ def get_sensor():
     msg = { 'cmd': 'get_sensor', 'type': sensor }
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_receive(f"[{topic}] {json_msg}")
+    log.log_send(f"[{topic}] {json_msg}")
+    mqtt_module.mqtt_publish(topic, json_msg)
 
 #-------
 
@@ -188,4 +210,5 @@ def is_alive(broadcast):
     msg = { 'cmd': 'is_alive' }
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_receive(f"[{topic}] {json_msg}")
+    log.log_send(f"[{topic}] {json_msg}")
+    mqtt_module.mqtt_publish(topic, json_msg)

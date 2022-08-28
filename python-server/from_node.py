@@ -12,13 +12,14 @@ def config_request_sim():
     land_id = random.randint(1,10)
     node_id = random.randint(1,10)
     msg = { 'cmd': 'config_rqst', 'body': { 'land_id': land_id, 'node_id': node_id } }
-    return json.dumps(msg)
+    return msg
 
-def config_request(protocol):
+def config_request(protocol, doc):
 
     cmd = "config_rqst"
-    json_msg = config_request_sim()
-    msg = json.loads(json_msg)
+    msg = doc
+    if msg == "":
+        msg = config_request_sim()
 
     log.log_receive(f"[{cmd}] {msg}")
 
@@ -42,13 +43,14 @@ def status_sim():
     light_timer = random.randint(1,4)*60
     tmp_timer = random.randint(1,4)*60
     msg = { 'cmd': 'status', 'body': { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': enable, 'irr_limit': irr_limit, 'irr_duration': irr_duration}, 'mst_timer': mst_timer, 'ph_timer': ph_timer, 'light_timer': light_timer, 'tmp_timer': tmp_timer } }
-    return json.dumps(msg)
+    return msg
 
-def status(protocol):
+def status(protocol, doc):
 
     cmd = "status"
-    json_msg = status_sim()
-    msg = json.loads(json_msg)
+    msg = doc
+    if msg == "":
+        msg = status_sim()
 
     log.log_receive(f"[{cmd}] {msg}")
 
@@ -76,14 +78,15 @@ def irrigation_sim():
     else:
         status = "off"
     msg = { 'cmd': 'irrigation', 'body': { 'land_id': land_id, 'node_id': node_id, "status": status } }
-    return json.dumps(msg)
+    return msg
 
-def irrigation():
+def irrigation(doc):
     
     cmd = "irrigation"
-    json_msg = irrigation_sim()
-    msg = json.loads(json_msg)
-
+    msg = doc
+    if msg == "":
+        msg = irrigation_sim()
+    
     log.log_receive(f"[{cmd}] {msg}")
 
     land_id = msg['body']['land_id']
@@ -98,20 +101,21 @@ def moisture_sim():
     land_id = random.randint(1,10)
     node_id = random.randint(1,10)
     value = random.randint(10,50)
-    msg = { 'cmd': 'moisture', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': "moisture", 'value': value } }
-    return json.dumps(msg)
+    msg = { 'cmd': 'moisture', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'moisture', 'value': value } }
+    return msg
 
-def moisture():
+def moisture(doc):
 
     cmd = "moisture"
-    json_msg = moisture_sim()
-    msg = json.loads(json_msg)
+    msg = doc
+    if msg == "":
+        msg = moisture_sim()
     
     log.log_receive(f"[{cmd}] {msg}")
 
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
-    sensor = msg['body']['type']
+    sensor = cmd
     value = msg['body']['value'] 
 
     add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
@@ -123,19 +127,20 @@ def ph_sim():
     node_id = random.randint(1,10)
     value = random.randint(5,8)
     msg = { 'cmd': 'ph', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': "ph", 'value': value } }
-    return json.dumps(msg)
+    return msg
 
-def ph():
+def ph(doc):
 
     cmd = "ph"
-    json_msg = ph_sim()
-    msg = json.loads(json_msg)
+    msg = doc
+    if msg == "":
+        msg = ph_sim()
     
     log.log_receive(f"[{cmd}] {msg}")
     
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
-    sensor = msg['body']['type']
+    sensor = cmd
     value = msg['body']['value'] 
 
     add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
@@ -147,19 +152,20 @@ def light_sim():
     node_id = random.randint(1,10)
     value = random.randint(0, 1800)
     msg = { 'cmd': 'light', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': "light", 'value': value } }
-    return json.dumps(msg)
+    return msg
 
-def light():
+def light(doc):
 
     cmd = "light"
-    json_msg = light_sim()
-    msg = json.loads(json_msg)
+    msg = doc
+    if msg == "":
+        msg = light_sim()
     
     log.log_receive(f"[{cmd}] {msg}")
     
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
-    sensor = msg['body']['type']
+    sensor = cmd
     value = msg['body']['value'] 
 
     add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
@@ -171,19 +177,20 @@ def tmp_sim():
     node_id = random.randint(1,10)
     value = random.randint(5, 35)
     msg = { 'cmd': 'tmp', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': "tmp", 'value': value } }
-    return json.dumps(msg)
+    return msg
 
-def tmp():
+def tmp(doc):
 
     cmd = "tmp"
-    json_msg = tmp_sim()
-    msg = json.loads(json_msg)
+    msg = doc
+    if msg == "":
+        msg = tmp_sim()
     
     log.log_receive(f"[{cmd}] {msg}")
     
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
-    sensor = msg['body']['type']
+    sensor = cmd
     value = msg['body']['value'] 
 
     add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
@@ -194,13 +201,14 @@ def is_alive_ack_sim():
     land_id = random.randint(1,10)
     node_id = random.randint(1,10)
     msg = { 'cmd': 'is_alive_ack', 'body': { 'land_id': land_id, 'node_id': node_id } }
-    return json.dumps(msg)
+    return msg
 
 def is_alive_ack():
 
     cmd = "is_alive_ack"
-    json_msg = is_alive_ack_sim()
-    msg = json.loads(json_msg)
+    msg = doc
+    if msg == "":
+        msg = is_alive_ack_sim()
     
     log.log_receive(f"[{cmd}] {msg}")
     

@@ -81,6 +81,11 @@ bool elaborate_cmd(char msg[]){
     if(strcmp(cmd[0], IRR_CMD) == 0){
         printf("[!] IRR_CMD command elaboration ...\n");
 
+        if(mqtt_module.state != STATE_CONFIGURED){
+            printf("[-] Node not configured\n");
+            return false;
+        }
+
         int n_arguments = 5;
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments);
@@ -88,7 +93,7 @@ bool elaborate_cmd(char msg[]){
         if(strcmp(arguments[1], "null") != 0)
             node_memory.configuration.irr_config.enabled = ((strcmp(arguments[2], "true") == 0)?true:false);
         if(strcmp(arguments[2], "null") != 0)
-            node_memory.irr_status = ((strcmp(arguments[3], "true") == 0)?true:false);
+            node_memory.irr_status = ((strcmp(arguments[3], "on") == 0)?true:false);
         if(isNumber(arguments[3]) && atoi(arguments[3]) != 0)
             node_memory.configuration.irr_config.irr_limit = atoi(arguments[3]);
         if(isNumber(arguments[4]) && atoi(arguments[4]) != 0)
@@ -101,11 +106,21 @@ bool elaborate_cmd(char msg[]){
     else if(strcmp(cmd[0], GET_CONFIG) == 0){
         printf("[!] GET_CONFIG command elaboration ...\n");
 
+        if(mqtt_module.state != STATE_CONFIGURED){
+            printf("[-] Node not configured\n");
+            return false;
+        }
+
         send_status();
         printf("[+] GET_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], TIMER_CMD) == 0){
         printf("[!] TIMER_CMD command elaboration ...\n");
+
+        if(mqtt_module.state != STATE_CONFIGURED){
+            printf("[-] Node not configured\n");
+            return false;
+        }
         
         int n_arguments = 3;
         char arguments[n_arguments][100];
@@ -133,7 +148,7 @@ bool elaborate_cmd(char msg[]){
     }
     else if(strcmp(cmd[0], ASSIGN_CONFIG) == 0){
         printf("[!] ASSIGN_CONFIG command elaboration ...\n");
-        
+        mqtt_module.state = STATE_CONFIGURED;
         int n_arguments = 8; 
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments );
@@ -185,7 +200,7 @@ bool elaborate_cmd(char msg[]){
 
 void irr_cmd_received_sim(char msg[]){
 
-    sprintf(msg, "{ 'cmd': '%s', 'body': {'enable': '%s', 'status': '%s', 'limit': %d, 'irr_duration': %d } } ",
+    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": {\"enable\": \"%s\", \"status\": \"%s\", \"limit\": %d, \"irr_duration\": %d } } ",
         IRR_CMD,
         ((random_rand()%2)!=0)?(((random_rand()%2)!=0)?"true":"false"):"null",
         ((random_rand()%2)!=0)?(((random_rand()%2)!=0)?"on":"off"):"null",
@@ -199,14 +214,14 @@ void irr_cmd_received_sim(char msg[]){
 
 void get_config_received_sim(char msg[]){
 
-    sprintf(msg, "{ 'cmd': '%s' } ", GET_CONFIG);
+    sprintf(msg, "{ \"cmd\": \"%s\" } ", GET_CONFIG);
 }
 
 /*--------*/
 
 void assign_config_received_sim(char msg[]){ //is a simulation of a message received from server
 
-    sprintf(msg, "{ 'cmd': '%s', 'body': { 'irr_config': { 'enabled': 'true', 'irr_limit': 38, 'irr_duration': 20 }, 'mst_timer': 720, 'ph_timer': 720, 'light_timer': 60, 'tmp_timer': 60 } } ",
+    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"irr_config\": { \"enabled\": \"true\", \"irr_limit\": 38, \"irr_duration\": 20 }, \"mst_timer\": 720, \"ph_timer\": 720, \"light_timer\": 60, \"tmp_timer\": 60 } } ",
         ASSIGN_CONFIG
         );
 }
@@ -226,7 +241,7 @@ void timer_cmd_received_sim(char msg[]){
     else
         sprintf(sensor, "tmp");
 
-    sprintf(msg, "{ 'cmd': '%s', 'body': { 'sensor': '%s', 'timer': %d } } ",
+    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"sensor\": \"%s\", \"timer\": %d } } ",
         TIMER_CMD,
         sensor,
         20 + random_rand()%690
@@ -248,14 +263,14 @@ void get_sensor_received_sim(char msg[]){
     else
         sprintf(sensor, "%s", "tmp");
 
-    sprintf(msg, "{ 'cmd': '%s', 'type': '%s' } ", GET_SENSOR, sensor);
+    sprintf(msg, "{ \"cmd\": \"%s\", \"type\": \"%s\" } ", GET_SENSOR, sensor);
 }
 
 /*--------*/
 
 void is_alive_received_sim(char msg[]){
 
-    sprintf(msg, "{ 'cmd': '%s' }", IS_ALIVE);
+    sprintf(msg, "{ \"cmd\": \"%s\" }", IS_ALIVE);
 }
 
 /*------------------SENDING TO SERVER (SIMULATED)-----------------------------*/
@@ -263,7 +278,7 @@ void is_alive_received_sim(char msg[]){
 void send_config_request(){
 
     char msg[MSG_SIZE];
-    sprintf(msg, "{ 'cmd': '%s', 'body': { land_id': %d, 'node_id': %d } ",
+    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d } }",
         CONFIG_RQST,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id
@@ -277,7 +292,7 @@ void send_config_request(){
 void send_status(){
 
     char msg[MSG_SIZE];
-    sprintf(msg, "{ 'cmd': '%s', 'body': { 'land_id': %d, 'node_id': %d, 'irr_config': { 'enabled': '%s', 'irr_limit': %d, 'irr_duration': %d }, 'irr_timer': %d, 'ph_timer': %d, 'light_timer': %d, 'tmp_timer': %d } } ",
+    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"irr_config\": { \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d }, \"mst_timer\": %d, \"ph_timer\": %d, \"light_timer\": %d, \"tmp_timer\": %d } } ",
         STATUS,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -300,7 +315,7 @@ void send_status(){
 void send_irrigation(){
 
     char msg[MSG_SIZE];
-    sprintf(msg, "{ 'cmd': '%s', 'body': { 'land_id': %d, 'node_id': %d, 'status': '%s' } }",
+    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"status\": \"%s\" } }",
         IRRIGATION,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -315,7 +330,7 @@ void send_irrigation(){
 void send_is_alive_ack(){
 
     char msg[MSG_SIZE];
-    sprintf(msg, "{ 'cmd': '%s', 'body': { 'land_id': %d, 'node_id': %d } }",
+    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d } }",
         IS_ALIVE_ACK,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id
@@ -342,7 +357,7 @@ void get_soil_moisture(){
     printf("[+] soil moisture detected: %d\n", moisture);
 
     char msg[MSG_SIZE];
-    sprintf(msg,"{ 'cmd': '%s', 'body': { 'land_id': %d, 'node_id: %d, 'type': 'moisture', 'value': %d } }",
+    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
         MOISTURE,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -379,7 +394,7 @@ void get_ph_level(){
     printf("[+] ph level detected: %d\n", ph_level);
 
     char msg[MSG_SIZE];
-    sprintf(msg,"{ 'cmd': '%s', 'body': { 'land_id': %d, 'node_id: %d, 'type': 'ph', 'value': %d } }",
+    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
         PH, 
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -403,7 +418,7 @@ void get_lihght_raw(){
     printf("[+] light raw detected: %d\n", light);
 
     char msg[MSG_SIZE];
-    sprintf(msg,"{ ''cmd': '%s', 'body': { land_id': %d, 'node_id: %d, 'type': 'light', 'value': %d } }",
+    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
         LIGHT,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -425,7 +440,7 @@ void get_soil_tmp(){
     printf("[+] soil temperature detected: %d\n", tmp);
 
     char msg[MSG_SIZE];
-    sprintf(msg,"{ 'cmd': '%s', 'body': { 'land_id': %d, 'node_id: %d, 'type': 'tmp', 'value': %d } }",
+    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
         TMP,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -557,7 +572,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
     printf("[!] configuration ... \n");
 
     send_config_request();
-    receive_configuration();
+    receive_configuration(); //TODO capire perchè se tolgo questo succede un macello
     print_config();
 
     printf("[+] configuration ended\n");

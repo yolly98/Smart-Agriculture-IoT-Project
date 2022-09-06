@@ -17,7 +17,8 @@
 * [x] testare server
 * [x] inserire mqtt nel server (modificare json)
 * [ ] testare configurazione del nodo e occuparmi dei TODO 
-* [ ] capire pwerchè il while di configurazione non funziona
+* [x] capire pwerchè il while di configurazione non funziona
+* [ ] capire perchè con cooja non ricevo nulla (vedere il border router!)
 * [ ] far tornare al reset il nodo se la land non esiste
 * [ ] test di tutti i comandi
 

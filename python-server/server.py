@@ -77,7 +77,7 @@ def server_console():
         elif cmd.isdigit() and int(cmd) == 7:
             to_node.get_config(False)
         elif cmd.isdigit() and int(cmd) == 8:
-            to_node.assign_config(0, 0, "MQTT")
+            to_node.assign_config_cmd()
         elif cmd.isdigit() and int(cmd) == 9:
             to_node.timer_cmd()
         elif cmd.isdigit() and int(cmd) == 10:

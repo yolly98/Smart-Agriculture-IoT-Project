@@ -99,6 +99,38 @@ def get_config(broadcast):
 
 #---------
 
+def assign_config_cmd():
+
+    land_id = ""
+    node_id = ""
+    protocol = ""
+    while True:
+        land_id = log.log_input("land_id: ")
+        if land_id == "cancel":
+            return
+        if land_id.isdigit() and int(land_id) > 0:
+            break
+        else:
+            log.log_err(f"invalid value")
+    while True:
+        node_id = log.log_input("node_id: ")
+        if node_id == "cancel":
+            return
+        if node_id.isdigit() and int(node_id) > 0:
+            break
+        else:
+            log.log_err(f"invalid value")
+    while True:
+        protocol = log.log_input("protocolo(MQTT/COAP): ")
+        if protocol == "cancel":
+            return
+        if protocol == "MQTT" or protocol == "COAP":
+            break
+        else:
+            log.log_err(f"invalid value")
+    assign_config(land_id, node_id, protocol)
+
+
 def assign_config(land_id, node_id, protocol):
 
     log.log_info("assign_config command")

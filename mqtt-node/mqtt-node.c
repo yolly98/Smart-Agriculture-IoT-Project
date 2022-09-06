@@ -435,7 +435,7 @@ void get_soil_tmp(){
 }
 /*-------------------------------------------------------------------*/
 
-void receive_configuration(){
+void receive_configuration_sim(){
 
     char msg[200];
     assign_config_received_sim(msg);
@@ -556,7 +556,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
     printf("[!] configuration ... \n");
 
     send_config_request();
-    //receive_configuration(); //TODO capire perchè se tolgo questo succede un macello
+    //receive_configuration_sim(); //TODO capire perchè se tolgo questo succede un macello
     //print_config();
 
     while(true){
@@ -564,9 +564,10 @@ PROCESS_THREAD(mqtt_node, ev, data){
         if(etimer_expired(&node_timers.mqtt_etimer))
             mqtt_connection_service();
 
-        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr)))
-            printf("the border router is not reachable yet\n");
-            
+        //if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
+        //    printf("the border router is not reachable yet\n");
+        //}
+          
         if(mqtt_module.state == STATE_CONFIGURED)
             break;
     }
@@ -598,10 +599,11 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
         PROCESS_YIELD();
         
-        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr)))
-            printf("the border router is not reachable yet\n");
+        //if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
+        //    printf("the border router is not reachable yet\n");
+        //}
 
-        if(etimer_expired(&node_timers.mqtt_etimer))
+        if(etimer_expired(&node_timers.mqtt_etimer) || ev == PROCESS_EVENT_POLL)
             mqtt_connection_service();
 
         //simulation of received command by server

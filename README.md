@@ -21,6 +21,15 @@
 * [x] far tornare al reset il nodo se la land non esiste
 * [x] test di tutti i comandi
 
-* [ ] scrivere nodo COAP
+### NODO COAP
+
+* [ ] ridfinizione protocolli coap
+* [ ] controllare i protocolli negli handler delle risorse
+* [ ] inserire i trigger delle risorse nei posti corretti
+* [ ] scrivere le funzioni da client coap
+* [ ] adattare il processo
+
+### COAP SERVER
 * [ ] inserire COAP nel server
+* [ ] vedere se i file.h sono aggiornati con tutte le funzioni
 * [ ] capire perchè con cooja non ricevo nulla (vedere il border router!)

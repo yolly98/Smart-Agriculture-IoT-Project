@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS configuration (
     land_id int(11) NOT NULL,
     node_id int(11) NOT NULL,
     protocol varchar(100) NOT NULL,
-    status varchar(100) NOT NULL DEFAULT true,
+    status varchar(100) NOT NULL DEFAULT "online",
     last_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     irr_enabled varchar(100) NOT NULL,
     irr_limit int(11) NOT NULL,

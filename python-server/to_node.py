@@ -75,6 +75,10 @@ def irr_cmd():
 def get_config(broadcast):
 
     log.log_info("get_config command selected")
+    
+    msg = { 'cmd': 'get_config' }
+    json_msg = json.dumps(msg)
+
     if( not broadcast):
         log.log_info("Type the arguments ...")
         land_id = log.log_input("$ land_id: ")
@@ -87,15 +91,27 @@ def get_config(broadcast):
         if not node_id.isdigit():
             log.log_err(f"node_id has to be a number > 0 [{node_id}]")
             return
+
+        topic = f"NODE/{land_id}/{node_id}"
+        log.log_send(f"[{topic}] {json_msg}")
+        mqtt_module.mqtt_publish(topic, json_msg)
+
     else:
-        land_id = 0
-        node_id = 0
+        configs = get_mysql_db.get_config('all', 'all', False)
+        if not configs:
+            log.log_info("There are no configutations")
+            return
+        
+        for config in configs:
+            land_id = config[0]
+            node_id = config[1]
+            if node_id == 0:
+                continue
+            topic = f"NODE/{land_id}/{node_id}"
+            log.log_send(f"[{topic}] {json_msg}")
+            mqtt_module.mqtt_publish(topic, json_msg)
+        
     
-    msg = { 'cmd': 'get_config' }
-    json_msg = json.dumps(msg)
-    topic = f"NODE/{land_id}/{node_id}"
-    log.log_send(f"[{topic}] {json_msg}")
-    mqtt_module.mqtt_publish(topic, json_msg)
 
 #---------
 
@@ -135,24 +151,27 @@ def assign_config(land_id, node_id, protocol):
 
     log.log_info("assign_config command")
     config = get_mysql_db.get_config(land_id, node_id, True)
-
+    msg = {}
+    
     #if is a new node, send the default configuration
     if not config:
         log.log_info(f"({land_id}, {node_id}) is a new node")
         config = get_mysql_db.get_config(land_id, 0, True)
         if not config:
             log.log_err(f"mysqldb: the land {land_id} doesn't exist or return too many results")
-            return
-
-    msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[5], 'irr_limit':  config[6], 'irr_duration': config[7]}, 'mst_timer': config[8], 'ph_timer': config[9], 'light_timer': config[10], 'tmp_timer': config[11] } }
+            msg = { 'cmd': 'error_land'}
+        else:
+            #save the new config
+            add_mysql_db.add_configuration(land_id, node_id, protocol, "online", config[5], config[6], config[7], config[8], config[9], config[10], config[11])
+            msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[5], 'irr_limit':  config[6], 'irr_duration': config[7]}, 'mst_timer': config[8], 'ph_timer': config[9], 'light_timer': config[10], 'tmp_timer': config[11] } }
+    else:
+        msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[5], 'irr_limit':  config[6], 'irr_duration': config[7]}, 'mst_timer': config[8], 'ph_timer': config[9], 'light_timer': config[10], 'tmp_timer': config[11] } }
+    
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
     log.log_send(f"[{topic}] {json_msg}")
     mqtt_module.mqtt_publish(topic, json_msg)
 
-    #save the new configuration
-    if config[1] == 0:
-        add_mysql_db.add_configuration(land_id, node_id, protocol, "online", config[5], config[6], config[7], config[8], config[9], config[10], config[11])
         
 
 #--------
@@ -223,6 +242,9 @@ def get_sensor():
 def is_alive(broadcast):
 
     log.log_info("is_alive command selected")
+    msg = { 'cmd': 'is_alive' }
+    json_msg = json.dumps(msg)
+
     if(not broadcast):
         log.log_info("Type the arguments ...")
         land_id = log.log_input("$ land_id: ")
@@ -235,12 +257,22 @@ def is_alive(broadcast):
         if not node_id.isdigit():
             log.log_err(f"node_id has to be a number > 0 [{node_id}]")
             return
-    else:
-        land_id = 0
-        node_id = 0
 
-    msg = { 'cmd': 'is_alive' }
-    json_msg = json.dumps(msg)
-    topic = f"NODE/{land_id}/{node_id}"
-    log.log_send(f"[{topic}] {json_msg}")
-    mqtt_module.mqtt_publish(topic, json_msg)
+        topic = f"NODE/{land_id}/{node_id}"
+        log.log_send(f"[{topic}] {json_msg}")
+        mqtt_module.mqtt_publish(topic, json_msg)
+    else:
+        configs = get_mysql_db.get_config('all', 'all', False)
+        if not configs:
+            log.log_info("There are no configutations")
+            return
+        
+        for config in configs:
+            land_id = config[0]
+            node_id = config[1]
+            if node_id == 0:
+                continue
+            topic = f"NODE/{land_id}/{node_id}"
+            log.log_send(f"[{topic}] {json_msg}")
+            mqtt_module.mqtt_publish(topic, json_msg)
+

@@ -1,6 +1,8 @@
 import paho.mqtt.client as mqtt
 import json
 import from_node
+import log
+
 # The callback for when the client receives a CONNACK response from the broker.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -14,6 +16,7 @@ def parse_json(payload):
 def on_message(client, userdata, msg):
     payload = (str(msg.payload))[1:]
     doc = parse_json(payload)
+    log.log_receive(doc)
     if doc['cmd'] == 'config_rqst':
         from_node.config_request("MQTT", doc)
     elif doc['cmd'] == 'status':

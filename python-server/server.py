@@ -13,8 +13,8 @@ from protocol import mqtt_module
 # ------------MAIN-----------
 
 log.log_init()
-to_node.get_config(True) #TODO 
 mqtt_module.mqtt_init()
+to_node.get_config(True)
 
 #functinon for thread 1(console)
 def server_console():
@@ -117,7 +117,7 @@ def server_console():
         elif cmd.isdigit() and int(cmd) == 27:
             delete_vw.delete_violation_one_vw()
         elif cmd.isdigit() and int(cmd) == 28:
-            cmd = log.log_input("[!] Type the TOPIC or help: ")
+            cmd = log.log_input("[!] Type the COMMAND or help: ")
         
             if cmd == "help":
                 print(".[1]     CONFIG_RQST")
@@ -150,7 +150,7 @@ def server_console():
             elif cmd.isdigit() and int(cmd) == 8:
                 from_node.is_alive_ack("")
             else:
-                log.log_err(f"topic non valid!")
+                log.log_err(f"command non valid!")
         elif cmd.isdigit() and int(cmd) == 29:
             log.log_info("typed 'exit'")
             log.log_info("Press Ctrl+c two time in order to stop the other threads")
@@ -161,16 +161,17 @@ def server_console():
 #functino for thread 2 (daemon)
 def server_check_node():
 
+    #[REAL]
     end_timer =  60 * 60 * 3    # 3 hours
+    #[TEST]
+    #end_timer = 60               # 1 minute
     start_timer = time.time()
     while True:
-
-        #TODO check if there is a message from nodes
         
         #check if nodes are online
         if (time.time() - start_timer) >= end_timer:
             to_node.is_alive(True)
-            update_ctr.set_all_node_offline()
+            update_vw.set_all_node_offline_vw()
             start_timer = time.time()
 
         time.sleep(0.1)

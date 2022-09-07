@@ -16,11 +16,11 @@
 * [x] aggingere il campo protocol (COAP/MQTT) alle config in sql
 * [x] testare server
 * [x] inserire mqtt nel server (modificare json)
-* [ ] testare configurazione del nodo e occuparmi dei TODO 
+* [x] testare configurazione del nodo e occuparmi dei TODO 
 * [x] capire pwerchè il while di configurazione non funziona
-* [ ] capire perchè con cooja non ricevo nulla (vedere il border router!)
-* [ ] far tornare al reset il nodo se la land non esiste
-* [ ] test di tutti i comandi
+* [x] far tornare al reset il nodo se la land non esiste
+* [x] test di tutti i comandi
 
 * [ ] scrivere nodo COAP
 * [ ] inserire COAP nel server
+* [ ] capire perchè con cooja non ricevo nulla (vedere il border router!)

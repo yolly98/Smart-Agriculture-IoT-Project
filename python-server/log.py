@@ -1,5 +1,6 @@
 import datetime
 from threading import *
+import json
 
 def log_init():
     log_file = open("log.txt", "w")
@@ -14,6 +15,8 @@ def log_receive(msg):
     
     if not current_thread().isDaemon():
         print(" <  ", msg)
+    else:
+        print(f" < [{msg['cmd']}] from node ({msg['body']['land_id']},{msg['body']['node_id']})")
 
     log_file.write(f"[{current_time}]  <  {msg}\n")
 

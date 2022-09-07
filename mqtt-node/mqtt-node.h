@@ -33,6 +33,7 @@
 #define IRR_CMD         "irr_cmd"
 #define GET_CONFIG      "get_config"
 #define ASSIGN_CONFIG   "assign_config"
+#define ERROR_LAND      "error_land"
 #define TIMER_CMD       "timer_cmd"
 #define GET_SENSOR      "get_sensor"
 #define IS_ALIVE        "is_alive"

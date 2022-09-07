@@ -16,12 +16,9 @@ def config_request_sim():
 
 def config_request(protocol, doc):
 
-    cmd = "config_rqst"
     msg = doc
     if msg == "":
         msg = config_request_sim()
-
-    log.log_receive(f"[{cmd}] {msg}")
 
     to_node.assign_config(msg['body']['land_id'], msg['body']['node_id'], protocol)
 
@@ -47,12 +44,9 @@ def status_sim():
 
 def status(protocol, doc):
 
-    cmd = "status"
     msg = doc
     if msg == "":
         msg = status_sim()
-
-    log.log_receive(f"[{cmd}] {msg}")
 
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
@@ -81,13 +75,10 @@ def irrigation_sim():
     return msg
 
 def irrigation(doc):
-    
-    cmd = "irrigation"
+
     msg = doc
     if msg == "":
         msg = irrigation_sim()
-    
-    log.log_receive(f"[{cmd}] {msg}")
 
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
@@ -106,16 +97,13 @@ def moisture_sim():
 
 def moisture(doc):
 
-    cmd = "moisture"
     msg = doc
     if msg == "":
         msg = moisture_sim()
-    
-    log.log_receive(f"[{cmd}] {msg}")
 
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
-    sensor = cmd
+    sensor = "moisture"
     value = msg['body']['value'] 
 
     add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
@@ -131,16 +119,13 @@ def ph_sim():
 
 def ph(doc):
 
-    cmd = "ph"
     msg = doc
     if msg == "":
         msg = ph_sim()
     
-    log.log_receive(f"[{cmd}] {msg}")
-    
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
-    sensor = cmd
+    sensor = "ph"
     value = msg['body']['value'] 
 
     add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
@@ -156,16 +141,13 @@ def light_sim():
 
 def light(doc):
 
-    cmd = "light"
     msg = doc
     if msg == "":
         msg = light_sim()
     
-    log.log_receive(f"[{cmd}] {msg}")
-    
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
-    sensor = cmd
+    sensor = "light"
     value = msg['body']['value'] 
 
     add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
@@ -181,16 +163,13 @@ def tmp_sim():
 
 def tmp(doc):
 
-    cmd = "tmp"
     msg = doc
     if msg == "":
         msg = tmp_sim()
     
-    log.log_receive(f"[{cmd}] {msg}")
-    
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
-    sensor = cmd
+    sensor = "tmp"
     value = msg['body']['value'] 
 
     add_mysql_db.add_measurement_event(land_id, node_id, sensor, value)
@@ -203,14 +182,11 @@ def is_alive_ack_sim():
     msg = { 'cmd': 'is_alive_ack', 'body': { 'land_id': land_id, 'node_id': node_id } }
     return msg
 
-def is_alive_ack():
+def is_alive_ack(doc):
 
-    cmd = "is_alive_ack"
     msg = doc
     if msg == "":
         msg = is_alive_ack_sim()
-    
-    log.log_receive(f"[{cmd}] {msg}")
     
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']

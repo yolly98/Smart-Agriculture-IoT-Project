@@ -1,4 +1,5 @@
 #include "contiki.h"
+#include "contiki-net.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,17 +8,17 @@
 #include "os/dev/button-hal.h"
 #include "os/dev/leds.h"
 #include "random.h"
-
 #include "net/netstack.h"
 #include "net/routing/routing.h"
-#include "mqtt.h"
+#include "coap-engine.h"
+#include "coap-blocking-api.h"
 #include "net/ipv6/uip.h"
 #include "net/ipv6/uip-icmp6.h"
 #include "net/ipv6/sicslowpan.h"
 #include "sys/ctimer.h"
 #include "lib/sensors.h"
-#include "os/sys/log.h"
 #include <strings.h>
+
 /*------------------------------------*/
 //COMMANDS
 
@@ -46,7 +47,6 @@
 static struct timers{
     struct etimer btn_etimer;
     struct etimer led_etimer;
-    struct etimer mqtt_etimer;
     struct ctimer mst_ctimer;
     struct ctimer ph_ctimer;
     struct ctimer light_ctimer;
@@ -93,32 +93,15 @@ bool isNumber(char *text);
 void print_config();
 void parse_json(char json[], int n_arguments, char arguments[][100]);
 
-//COMMAND ELABORATOR
-bool elaborate_cmd(char msg[]);
 
-//COMMAND RECEIVED (SIMULATED)
-void irr_cmd_received_sim(char msg[]);
-void get_config_received_sim(char msg[]);
-void assign_config_received_sim(char msg[]);
-void timer_cmd_received_sim(char msg[]);
-void get_sensor_received_sim(char msg[]);
-void is_alive_received_sim(char msg[]);
+//COAP
+void coap_init();
+void client_chunk_handler(coap_message_t *response);
+void copa_send(char msg[]);
 
-//SENDING TO SERVER (SIMULATED)
-void send_config_request();
-void send_status();
-void send_irrigation();
-void send_is_alive_ack();
-
-//SENSORS READINGS (SIMULATED)
+void assign_config(char msg[]);
 void irr_stopping();
-void get_soil_moisture();
-void get_ph_level();
-void get_lihght_raw();
-void get_soil_tmp();
 
-void receive_configuration();
-
-PROCESS(mqtt_node, "Mqtt node");
-AUTOSTART_PROCESSES(&mqtt_node);
+PROCESS(coap_node, "Coap node");
+AUTOSTART_PROCESSES(&coap_node);
 

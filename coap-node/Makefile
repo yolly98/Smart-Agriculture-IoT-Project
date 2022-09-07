@@ -1,9 +1,9 @@
 CONTIKI_PROJECT = coap-node
 all: $(CONTIKI_PROJECT)
 
-CONTIKI = ../..
-
 MODULES_REL += ./resources
+
+CONTIKI = ../..
 
 include $(CONTIKI)/Makefile.dir-variables
 MODULES += $(CONTIKI_NG_APP_LAYER_DIR)/coap

@@ -77,6 +77,26 @@ static void config_get_handler(
 
 /*----------------------------------------------------------*/
 
+void assign_config(char msg[]){
+
+  printf("[!] ASSIGN_CONFIG command elaboration ...\n");
+
+  int n_arguments = 8; 
+  char arguments[n_arguments][100];
+  parse_json(msg, n_arguments, arguments );
+
+  node_memory.configuration.irr_config.enabled = arguments[1];
+  node_memory.configuration.irr_config.irr_limit = atoi(arguments[2]);
+  node_memory.configuration.irr_config.irr_duration = atoi(arguments[3]);
+  node_memory.configuration.mst_timer = atoi(arguments[4]);
+  node_memory.configuration.ph_timer = atoi(arguments[5]);
+  node_memory.configuration.light_timer = atoi(arguments[6]);
+  node_memory.configuration.tmp_timer = atoi(arguments[7]);
+
+  printf("[+] ASSIGN_CONFIG command elaborated with success\n");
+  
+}
+
 static void config_put_handler(
   coap_message_t *request,
   coap_message_t *response,
@@ -85,25 +105,12 @@ static void config_put_handler(
   int32_t *offset
   ){
 
-    onst char msg[MSG_SIZE];
+    const char msg[MSG_SIZE];
     char reply[MSG_SIZE];
     int len = coap_get_post_variable(request, "value", &msg);
-    printf("[!] ASSIGN_CONFIG command elaboration ...\n");
-
-    int n_arguments = 8; 
-    char arguments[n_arguments][100];
-    parse_json(msg, n_arguments, arguments );
-
-    node_memory.configuration.irr_config.enabled = arguments[1];
-    node_memory.configuration.irr_config.irr_limit = atoi(arguments[2]);
-    node_memory.configuration.irr_config.irr_duration = atoi(arguments[3]);
-    node_memory.configuration.mst_timer = atoi(arguments[4]);
-    node_memory.configuration.ph_timer = atoi(arguments[5]);
-    node_memory.configuration.light_timer = atoi(arguments[6]);
-    node_memory.configuration.tmp_timer = atoi(arguments[7]);
-
+    
+    assign_config(msg);
     send_status(reply);
-    printf("[+] ASSIGN_CONFIG command elaborated with success\n");
 
     coap_set_header_content_format(response, TEXT_PLAIN);
     coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
@@ -121,5 +128,5 @@ static void config_del_handler(
   ){
 
     printf("[!] ERROR_LAND received, reset the node\n");
-    process_exit(&mqtt_node);
+    process_exit(&coap_node);
 }

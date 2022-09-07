@@ -72,7 +72,7 @@ void parse_json(char json[], int n_arguments, char arguments[][100]){
 
 }
 
-/*------------------SENDING TO SERVER (SIMULATED)-----------------------------*/
+/*------------------------------------------------*/
 
 void send_config_request(){
 
@@ -83,19 +83,19 @@ void send_config_request(){
         node_memory.configuration.node_id
         );
     printf(" >  %s \n", msg);
-    mqtt_publish_service(msg, CONFIG_RQST);
+    coap_send(msg);
 }
 
 /*---------------*/
 
 void irr_stopping(){
     node_memory.irr_status = false;
-    send_irrigation();
+    irr_rsc.trigger();
 }
 
-/*------------------*/
+/*-------------------------------------------------------*/
 
-PROCESS_THREAD(mqtt_node, ev, data){
+PROCESS_THREAD(coap_node, ev, data){
     
     static unsigned int btn_count;
     static bool led_status;
@@ -106,7 +106,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
     /*------------INITIALIZATION---------------*/
     printf("[!] initialization ...\n");
 
-    //set land_id
+    //set land_id and node_id
 
     printf("[!] manual land_id setting\n");
 
@@ -189,36 +189,20 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     printf("[!] intialization ended\n");
 
-    mqtt_init_service();
-
-    while(true){
-        PROCESS_YIELD();
-        if(etimer_expired(&node_timers.mqtt_etimer)){
-            mqtt_connection_service();
-            if(mqtt_module.state == STATE_SUBSCRIBED)
-                break;
-        }
-    }
+    coap_activate_resource(&config_rsc);
+    coap_activate_resource(&irr_rsc);
+    coap_activate_resource(&isalive_rsc);
+    coap_activate_resource(&mst_rsc);
+    coap_activate_resource(&ph_rsc);
+    coap_activate_resource(&light_rsc);
+    coap_activate_resource(&tmp_rsc);
+    
+    coap_init();
     /*---------------CONFIGURATION-------------------*/
     
     printf("[!] configuration ... \n");
 
     send_config_request();
-    //receive_configuration_sim(); //TODO capire perchè se tolgo questo succede un macello
-    //print_config();
-
-    while(true){
-        PROCESS_YIELD();
-        if(etimer_expired(&node_timers.mqtt_etimer))
-            mqtt_connection_service();
-
-        //if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
-        //    printf("the border router is not reachable yet\n");
-        //}
-          
-        if(mqtt_module.state == STATE_CONFIGURED)
-            break;
-    }
 
     printf("[+] configuration ended\n");
 
@@ -229,10 +213,10 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     node_timers.sensor_timer_are_setted = false;
     node_timers.irr_timer_is_setted = false;
-    get_soil_moisture();
-    get_ph_level();
-    get_lihght_raw();
-    get_soil_tmp();
+    mst_rsc.trigger();
+    ph_rsc.trigger();
+    light_rsc.trigger();
+    tmp_rsc.trigger();
 
     ctimer_set(&node_timers.mst_ctimer, node_memory.configuration.mst_timer * CLOCK_MINUTE, get_soil_moisture, NULL);
     ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
@@ -241,7 +225,6 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     node_timers.sensor_timer_are_setted = true;
 
-    /*---------------NORMAL WORKLOAD----------------*/
 
     while(true){
 
@@ -250,58 +233,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
         //if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
         //    printf("the border router is not reachable yet\n");
         //}
-
-        if(etimer_expired(&node_timers.mqtt_etimer) || ev == PROCESS_EVENT_POLL)
-            mqtt_connection_service();
-
-        //simulation of received command by server
-        if(ev == serial_line_event_message){
-            char * cmd = (char*)data;
-            char msg[200];
-        
-            if(strcmp(cmd, "help") == 0){
-                printf("[!] command list:\n");
-                printf("    . irr_cmd\n");
-                printf("    . get_config\n");
-                printf("    . timer_cmd\n");
-                printf("    . assign_config\n");
-                printf("    . get_sensor\n");
-                printf("    . is_alive\n");
-                printf("    . mqtt_status\n");
-                printf("---------------\n");
-                continue;
-            }
-            else if(strcmp(cmd, "irr_cmd") == 0){
-                irr_cmd_received_sim(msg);
-            }
-            else if(strcmp(cmd, "get_config") == 0){
-                get_config_received_sim(msg);
-            }
-            else if(strcmp(cmd, "timer_cmd") == 0){
-                timer_cmd_received_sim(msg);
-            }
-            else if(strcmp(cmd, "assign_config") == 0){
-                assign_config_received_sim(msg);
-            }
-            else if(strcmp(cmd, "get_sensor") == 0){
-                get_sensor_received_sim(msg);
-            }
-            else if(strcmp(cmd, "is_alive") == 0){
-                is_alive_received_sim(msg);
-            }
-            else if(strcmp(cmd, "mqtt_status") == 0){
-                print_mqtt_status();
-                continue;
-            }
-
-            printf(" <  [%s] %s \n",cmd, msg);
-
-            elaborate_cmd(msg);
-    
-        }
     }
-
-    /*---------------------------------------------*/
 
     PROCESS_END();
 }

@@ -21,13 +21,23 @@
 * [x] far tornare al reset il nodo se la land non esiste
 * [x] test di tutti i comandi
 
+### NODO MQTT
+
+* [ ] cercare di dividere il file mqtt-node.c in più file (tutti in una cartella)
+* [ ] togliere il log
+* [ ] controllare se tutte le librerie servono
+
 ### NODO COAP
 
+* [ ] capire problema con la funzione COAP_BLOCKING_REQUEST
 * [ ] ridfinizione protocolli coap
 * [ ] controllare i protocolli negli handler delle risorse
 * [ ] inserire i trigger delle risorse nei posti corretti
 * [ ] scrivere le funzioni da client coap
 * [ ] adattare il processo
+* [ ] eliminare i rimasugli del modulo mqtt
+* [ ] fare attenzione ai problemi di visibilità delle funzioni
+* [ ] controllare se tutte le librerie servono
 
 ### COAP SERVER
 * [ ] inserire COAP nel server

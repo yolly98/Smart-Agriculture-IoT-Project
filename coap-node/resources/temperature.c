@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "coap-engine.h"
-#include "coap-node.h"
+#include "resource.h"
 
 static void tmp_get_handler(
   coap_message_t *request,
@@ -39,12 +35,28 @@ EVENT_RESOURCE(
     tmp_event_handler
 );
 
+/*--------------------------------------------*/
+
+void save_tmp_timer(int timer){
+  tmp_mem.tmp_timer = timer;
+}
+
+void get_tmp_timer(unsigned int* timer){
+  timer = &tmp_mem.tmp_timer;
+}
+void set_tmp_timer(){
+  etimer_set(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
+}
+
+bool check_tmp_timer_expired(){
+  return etimer_expired(&tmp_mem.tmp_etimer);
+}
 
 /*----------------------------------*/
 
 void send_soil_tmp(char msg[]){
 
-  etimer_set(&tmp_mem.tmp_ctimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
+  etimer_set(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
 
   int tmp = (5 + random_rand()%35);
   tmp_mem.soil_temperature =  tmp;
@@ -89,12 +101,12 @@ static void tmp_get_handler(
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
-  int len = coap_get_query_variable(request, "value", value);
+  int len = coap_get_query_variable(request, "value", &value);
   sprintf(msg, "%s", (char*)value);
   if(len == 0)
     send_soil_tmp(reply);
-  else if(len > 0 and strcmp(value, "status") == 0)
-    send_tmp_status(reply)
+  else if(len > 0 && strcmp(value, "status") == 0)
+    send_tmp_status(reply);
   else{
     printf("[-] error unknown in get temperature sensor");
     return;
@@ -124,9 +136,9 @@ static void tmp_put_handler(
     }
     sprintf(msg, "%s", (char*)arg);
   
-    tmp_mem.tmp_timer = atoi(arguments[2]);
+    tmp_mem.tmp_timer = atoi(msg);
     //ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, send_soil_tmp, NULL);
-    etimer_set(&tmp_mem.tmp_ctimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
+    etimer_set(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
     send_tmp_status(reply);
     coap_set_header_content_format(response, TEXT_PLAIN);
     coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));

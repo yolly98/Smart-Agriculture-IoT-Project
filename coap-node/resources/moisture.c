@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "coap-engine.h"
-#include "coap-node.h"
+#include "resource.h"
 
 static void mst_get_handler(
   coap_message_t *request,
@@ -41,35 +37,40 @@ EVENT_RESOURCE(
 
 /*--------------------------------------------*/
 
+void save_mst_timer(int timer){
+  mst_mem.mst_timer = timer;
+}
+
+void get_mst_timer(unsigned int* timer){
+  timer = &mst_mem.mst_timer;
+}
+
+int get_mst_value(){
+  return mst_mem.soil_moisture;
+}
+
+void set_mst_timer(){
+  etimer_set(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
+}
+
+bool check_mst_timer_expired(){
+  return etimer_expired(&mst_mem.mst_etimer);
+}
+
+/*--------------------------------------------*/
+
 void send_soil_moisture(char msg[]){
-    
-    etimer_set(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
 
     int moisture = (15 + random_rand()%50);
     mst_mem.soil_moisture = moisture;
     printf("[+] soil moisture detected: %d\n", moisture);
 
-    sprintf(msg,"{ \"cmd\": \"%s\", \"value\": %d }".
+    sprintf(msg,"{ \"cmd\": \"%s\", \"value\": %d }",
         "mst",
         mst_mem.soil_moisture
       );
 
     printf(" >  %s\n", msg);
-
-  // TODO
-  //  bool irr_enabled = node_memory.configuration.irr_config.enabled;
-  //  int irr_limit = node_memory.configuration.irr_config.irr_limit;
-  //  if( irr_enabled && moisture < irr_limit){
-  //      node_memory.irr_status = true;
-  //      int irr_duration = node_memory.configuration.irr_config.irr_duration;
-  //      send_irrigation();
-  //      if(!node_timers.irr_timer_is_setted){
-  //          ctimer_set(&node_timers.irr_duration_ctimer, irr_duration * CLOCK_MINUTE, irr_stopping, NULL);
-  //          node_timers.irr_timer_is_setted = true;
-  //      }
-  //      else
-  //          ctimer_restart(&node_timers.irr_duration_ctimer);
-  //  }
 
 }
 
@@ -105,12 +106,12 @@ static void mst_get_handler(
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
-  int len = coap_get_query_variable(request, "value", value);
+  int len = coap_get_query_variable(request, "value", &value);
   sprintf(msg, "%s", (char*)value);
   if(len == 0)
     send_soil_moisture(reply);
-  else if(len > 0 and strcmp(value, "status") == 0)
-    send_mst_status(reply)
+  else if(len > 0 && strcmp(value, "status") == 0)
+    send_mst_status(reply);
   else{
     printf("[-] error unknown in get moisture sensor");
     return;
@@ -141,9 +142,8 @@ static void mst_put_handler(
   }
   sprintf(msg, "%s", (char*)arg);
   mst_mem.mst_timer = atoi(msg);
-  //ctimer_set(&node_timers.mst_ctimer, node_memory.configuration.mst_timer * CLOCK_MINUTE, send_soil_moisture, NULL);
   etimer_set(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
-  send_mst_status(reply) 
+  send_mst_status(reply); 
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }

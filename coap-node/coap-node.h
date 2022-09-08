@@ -7,7 +7,6 @@
 #include <sys/etimer.h>
 #include "os/dev/button-hal.h"
 #include "os/dev/leds.h"
-#include "random.h"
 #include "net/netstack.h"
 #include "net/routing/routing.h"
 #include "coap-engine.h"
@@ -20,42 +19,28 @@
 #include <strings.h>
 
 /*------------------------------------*/
-//COMMANDS
-
-#define CONFIG_RQST     "config_rqst"
-#define STATUS          "status"
-#define IRRIGATION      "irrigation"
-#define MOISTURE        "moisture"
-#define PH              "ph"
-#define LIGHT           "light"
-#define TMP             "tmp"
-#define IS_ALIVE_ACK    "is_alive_ack"
-
-#define IRR_CMD         "irr_cmd"
-#define GET_CONFIG      "get_config"
-#define ASSIGN_CONFIG   "assign_config"
-#define ERROR_LAND      "error_land"
-#define TIMER_CMD       "timer_cmd"
-#define GET_SENSOR      "get_sensor"
-#define IS_ALIVE        "is_alive"
-#define CLOCK_MINUTE    CLOCK_SECOND * 60
-#define MSG_SIZE        512
+#define SERVER_EP           "coap://[fd00::1]:5683"
+#define STATE_INITIALIZED   0
+#define STATE_CONFIGURED    1
+#define CLOCK_MINUTE        CLOCK_SECOND * 60
+#define MSG_SIZE            512
 
 /*------------------------------------*/
 //DATA STRUCTURES
-
-static struct timers{
-    struct etimer btn_etimer;
-    struct etimer led_etimer;
-    //struct ctimer mst_ctimer;
-    //struct ctimer ph_ctimer;
-    //struct ctimer light_ctimer;
-    //struct ctimer tmp_ctimer;
-    //struct ctimer irr_duration_ctimer;
-    //bool sensor_timer_are_setted;
-    //bool irr_timer_is_setted;
-}node_timers;
-
+static struct etimer btn_etimer;
+static struct etimer led_etimer;
+//static struct timers{
+//    struct etimer btn_etimer;
+//    struct etimer led_etimer;
+//    struct ctimer mst_ctimer;
+//    struct ctimer ph_ctimer;
+//    struct ctimer light_ctimer;
+//    struct ctimer tmp_ctimer;
+//    struct ctimer irr_duration_ctimer;
+//    bool sensor_timer_are_setted;
+//    bool irr_timer_is_setted;
+//}node_timers;
+//
 //struct irr_config_str{
 //    bool enabled;
 //    unsigned short irr_limit;
@@ -89,6 +74,15 @@ static struct timers{
 //} node_memory;
 //
 //
+
+static struct coap_module_str{
+    coap_endpoint_t server_ep;
+    coap_message_t request[1]; 
+}coap_module;
+
+static unsigned int STATE;
+
+
 extern coap_resource_t config_rsc;
 extern coap_resource_t irr_rsc;
 extern coap_resource_t is_alive_rsc;
@@ -106,10 +100,44 @@ void parse_json(char json[], int n_arguments, char arguments[][100]);
 //COAP
 void coap_init();
 void client_chunk_handler(coap_message_t *response);
-void copa_send(char msg[]);
 
-void assign_config(char msg[]);
+//CONFIGURATION RESOURCE FUNCTION
+void save_config(int land_id, int node_id);
+void get_config(unsigned int* land_id,unsigned int* node_id);
+
+//IRRIGATION RESOURCE FUNCTION
+void save_irr_config(bool enabled, unsigned int irr_limit, unsigned int irr_duration, bool irr_status);
+void get_irr_config(bool* enabled, unsigned int* irr_limit, unsigned int* irr_duration, bool* irr_status);
+void set_irr_timer();
+bool check_irr_timer_expired();
 void irr_stopping();
+void irr_starting(int moisture);
+
+//MOISTURE RESOURCE FUNCTION
+void save_mst_timer(int timer);
+void get_mst_timer(unsigned int* timer);
+int get_mst_value();
+void set_mst_timer();
+bool check_mst_timer_expired();
+
+//PH RESOURCE FUNCTION
+void save_ph_timer(int timer);
+void get_ph_timer(unsigned int* timer);
+void set_ph_timer();
+bool check_ph_timer_expired();
+
+//LIGHT RESOURCE FUNCTION
+void save_light_timer(int timer);
+void get_light_timer(unsigned int* timer);
+void set_light_timer();
+bool check_light_timer_expired();
+
+//TRMPERATURE RESOURCE FUNCTION
+void save_tmp_timer(int timer);
+void get_tmp_timer(unsigned int* timer);
+void set_tmp_timer();
+bool check_tmp_timer_expired();
+
 
 PROCESS(coap_node, "Coap node");
 AUTOSTART_PROCESSES(&coap_node);

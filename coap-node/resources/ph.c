@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "coap-engine.h"
-#include "coap-node.h"
+#include "resource.h"
 
 static void ph_get_handler(
   coap_message_t *request,
@@ -25,7 +21,7 @@ static void ph_event_handler(void);
 /*--------------------------------------------*/
 
 static struct ph_str{
-  unsigned int ph_raw;
+  unsigned int ph_level;
   unsigned int ph_timer;
   struct etimer ph_etimer;
 }ph_mem;
@@ -40,11 +36,28 @@ EVENT_RESOURCE(
     ph_event_handler
 );
 
+/*--------------------------------------------*/
+
+void save_ph_timer(int timer){
+  ph_mem.ph_timer = timer;
+}
+
+void get_ph_timer(unsigned int* timer){
+  timer = &ph_mem.ph_timer;
+}
+
+void set_ph_timer(){
+  etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
+}
+
+bool check_ph_timer_expired(){
+  return etimer_expired(&ph_mem.ph_etimer);
+}
 /*---------------------------------------*/
 
 void send_ph_level(char msg[]){
 
-    etimer_set(&ph_mem.ph_ctimer, ph_mem.timer * CLOCK_MINUTE);
+    etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
 
     int ph_level = (5 + random_rand()%5);
     ph_mem.ph_level =  ph_level;
@@ -90,12 +103,12 @@ static void ph_get_handler(
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
-  int len = coap_get_query_variable(request, "value", value);
+  int len = coap_get_query_variable(request, "value", &value);
   sprintf(msg, "%s", (char*)value);
   if(len == 0)
     send_ph_level(reply);
-  else if(len > 0 and strcmp(value, "status") == 0)
-    send_ph_status(reply)
+  else if(len > 0 && strcmp(value, "status") == 0)
+    send_ph_status(reply);
   else{
     printf("[-] error unknown in get ph sensor");
     return;
@@ -128,7 +141,7 @@ static void ph_put_handler(
   
   ph_mem.ph_timer = atoi(msg);
   //ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
-  etimer_set(&ph_mem.ph_ctimer, ph_mem.timer * CLOCK_MINUTE);
+  etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
   send_ph_status(reply); 
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));

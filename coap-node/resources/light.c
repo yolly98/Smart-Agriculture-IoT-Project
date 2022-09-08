@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "coap-engine.h"
-#include "coap-node.h"
+#include "resource.h"
 
 static void light_get_handler(
   coap_message_t *request,
@@ -42,9 +38,24 @@ EVENT_RESOURCE(
 
 /*-----------------------------------------*/
 
-void send_light_raw(char msg[]){
+void save_light_timer(int timer){
+  light_mem.light_timer = timer;
+}
 
-    etimer_set(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
+void get_light_timer(unsigned int* timer){
+  timer = &light_mem.light_timer;
+}
+
+void set_light_timer(){
+  etimer_set(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
+}
+
+bool check_light_timer_expired(){
+  return etimer_expired(&light_mem.light_etimer);
+}
+/*-----------------------------------------*/
+
+void send_light_raw(char msg[]){
 
     int light = random_rand()%28;
     light_mem.light_raw =  light;
@@ -89,12 +100,12 @@ static void light_get_handler(
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
-  int len = coap_get_query_variable(request, "value", value);
+  int len = coap_get_query_variable(request, "value", &value);
   sprintf(msg, "%s", (char*)value);
   if(len == 0)
     send_light_raw(reply);
-  else if(len > 0 and strcmp(value, "status") == 0)
-    send_light_status(reply)
+  else if(len > 0 && strcmp(value, "status") == 0)
+    send_light_status(reply);
   else{
     printf("[-] error unknown in get light sensor");
     return;

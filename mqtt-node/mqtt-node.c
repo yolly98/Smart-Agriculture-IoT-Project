@@ -137,7 +137,7 @@ bool elaborate_cmd(char msg[]){
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments );
 
-        node_memory.configuration.irr_config.enabled = arguments[1];
+        node_memory.configuration.irr_config.enabled = (strcmp(arguments[1], "true") == 0)?true:false;
         node_memory.configuration.irr_config.irr_limit = atoi(arguments[2]);
         node_memory.configuration.irr_config.irr_duration = atoi(arguments[3]);
         node_memory.configuration.mst_timer = atoi(arguments[4]);

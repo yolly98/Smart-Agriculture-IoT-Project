@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "coap-engine.h"
+#include "resource.h"
 
 static void config_get_handler(
   coap_message_t *request,
@@ -48,7 +45,19 @@ EVENT_RESOURCE(
 
 /*--------------------------------------*/
 
-void send_status(char msg[]){
+void save_config(int land_id, int node_id){
+  configuration.land_id = land_id;
+  configuration.node_id = node_id;
+}
+
+void get_config(unsigned int* land_id,unsigned int* node_id){
+  land_id = &configuration.land_id;
+  node_id = &configuration.node_id;
+}
+
+/*--------------------------------------*/
+
+void send_config_status(char msg[]){
 
     sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d } } ",
         "config-status",
@@ -71,23 +80,13 @@ static void config_get_handler(
   ){
 
     char msg[MSG_SIZE];
-    send_status(msg); 
+    send_config_status(msg); 
     coap_set_header_content_format(response, TEXT_PLAIN);
     coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", msg));
 }
 
 /*----------------------------------------------------------*/
 
-void assign_config(char msg[]){
-
-  int n_arguments = 2; 
-  char arguments[n_arguments][100];
-  parse_json(msg, n_arguments, arguments );
-
-  configuration.land_id = arguments[0];
-  configuration.node_id = arguments[1];
-  
-}
 
 static void config_put_handler(
   coap_message_t *request,
@@ -107,8 +106,11 @@ static void config_put_handler(
     }
     sprintf(msg, "%s", (char*)arg);
     
-    assign_config(msg);
-    send_status(reply);
+    int n_arguments = 2; 
+    char arguments[n_arguments][100];
+    parse_json(msg, n_arguments, arguments );
+    save_config( atoi(arguments[0]),  atoi(arguments[1]));
+    send_config_status(reply);
 
     coap_set_header_content_format(response, TEXT_PLAIN);
     coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
@@ -126,5 +128,7 @@ static void config_del_handler(
   ){
 
     printf("[!] ERROR_LAND received, reset the node\n");
-    process_exit(&coap_node);
+    //process_exit(&coap_node); TODO
+    configuration.land_id = 0;
+    configuration.node_id = 0;
 }

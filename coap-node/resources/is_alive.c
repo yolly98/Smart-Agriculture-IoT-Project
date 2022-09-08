@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "coap-engine.h"
-#include "coap-node.h"
+#include "resource.h"
 
 static void is_alive_get_handler(
   coap_message_t *request,

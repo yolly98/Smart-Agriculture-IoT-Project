@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "coap-engine.h"
+#include "coap-node.h"
 
 static void irr_get_handler(
   coap_message_t *request,
@@ -31,7 +32,7 @@ EVENT_RESOURCE(
     irr_put_handler,
     NULL,
     irr_event_handler
-)
+);
 
 /*-----------------------------------------------*/
 
@@ -80,10 +81,17 @@ static void irr_put_handler(
   int32_t *offset
   ){
 
-  const char msg[MSG_SIZE];
+  const char* arg:
+  char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
-  int len = coap_get_post_variable(request, "value", &msg);
+  int len = coap_get_post_variable(request, "value", &arg);
+  if (len <= 0){
+    printf("[-] no argument obteined from put request of irr_rsc");
+    return;
+  }
+  sprintf(msg, "%s", (char*)arg);
+  
 
   printf("[!] IRR_CMD command elaboration ...\n");
 

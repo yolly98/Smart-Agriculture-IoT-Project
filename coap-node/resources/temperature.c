@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "coap-engine.h"
+#include "coap-node.h"
 
 static void tmp_get_handler(
   coap_message_t *request,
@@ -31,7 +32,7 @@ EVENT_RESOURCE(
     tmp_put_handler,
     NULL,
     tmp_event_handler
-)
+);
 
 
 /*----------------------------------*/
@@ -80,7 +81,7 @@ static void tmp_get_handler(
 
 /*-------------------------------------------*/
 
-static void light_put_handler(
+static void tmp_put_handler(
   coap_message_t *request,
   coap_message_t *response,
   uint8_t *buffer,
@@ -88,9 +89,15 @@ static void light_put_handler(
   int32_t *offset
   ){
 
-    const char msg[MSG_SIZE];
+    const char *arg;
+    char msg[MSG_SIZE];
     char reply[MSG_SIZE];
-    int len = coap_get_post_variable(request, "value", &msg);
+    int len = coap_get_post_variable(request, "value", &arg);
+    if (len <= 0){
+      printf("[-] no argument obteined from put request of tmp_rsc");
+      return;
+    }
+    sprintf(msg, "%s", (char*)arg);
     printf("[!] TMP_CMD command elaboration ...\n");
     
     int n_arguments = 3;

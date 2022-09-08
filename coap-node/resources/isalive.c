@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "coap-engine.h"
+#include "coap-node.h"
 
-static void isalive_get_handler(
+static void is_alive_get_handler(
   coap_message_t *request,
   coap_message_t *response,
   uint8_t *buffer,
@@ -14,14 +15,14 @@ static void isalive_get_handler(
 /*--------------------------------------------*/
 
 EVENT_RESOURCE(
-    isalive_rsc,
+    is_alive_rsc,
     "title=\"Is Alive\"; rt = \"Text\"",
-    isalive_get_handler,
+    is_alive_get_handler,
     NULL,
     NULL,
     NULL,
     NULL
-)
+);
 
 /*------------------------------------------------*/
 
@@ -39,7 +40,7 @@ void send_is_alive_ack(char msg[]){
 /*----------------------------------------------*/
 
 
-static void isalive_get_handler(
+static void is_alive_get_handler(
   coap_message_t *request,
   coap_message_t *response,
   uint8_t *buffer,

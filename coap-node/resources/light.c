@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "coap-engine.h"
+#include "coap-node.h"
 
 static void light_get_handler(
   coap_message_t *request,
@@ -31,7 +32,7 @@ EVENT_RESOURCE(
     light_put_handler,
     NULL,
     light_event_handler
-)
+);
 
 /*-----------------------------------------*/
 
@@ -87,21 +88,27 @@ static void light_put_handler(
   int32_t *offset
   ){
 
-    const char msg[MSG_SIZE];
-    char reply[MSG_SIZE];
-    int len = coap_get_post_variable(request, "value", &msg);
-    printf("[!] LIGHT_CMD command elaboration ...\n");
-    
-    int n_arguments = 3;
-    char arguments[n_arguments][100];
-    parse_json(msg, n_arguments, arguments);
+  const char *arg;
+  char msg[MSG_SIZE];
+  char reply[MSG_SIZE];
+  int len = coap_get_post_variable(request, "value", &arg);
+  if (len <= 0){
+    printf("[-] no argument obteined from put request of light_rsc");
+    return;
+  }
+  sprintf(msg, "%s", (char*)arg);    
+  printf("[!] LIGHT_CMD command elaboration ...\n");
   
-    node_memory.configuration.light_timer = atoi(arguments[2]);
-    ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_raw, NULL);
-    
-    send_status(reply); //TODO
-    printf("[+] LIGHT_CMD command elaborated with success\n");
-    
-    coap_set_header_content_format(response, TEXT_PLAIN);
-    coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
+  int n_arguments = 3;
+  char arguments[n_arguments][100];
+  parse_json(msg, n_arguments, arguments);
+
+  node_memory.configuration.light_timer = atoi(arguments[2]);
+  ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_raw, NULL);
+  
+  send_status(reply); //TODO
+  printf("[+] LIGHT_CMD command elaborated with success\n");
+  
+  coap_set_header_content_format(response, TEXT_PLAIN);
+  coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }

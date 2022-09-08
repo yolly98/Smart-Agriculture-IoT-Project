@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "coap-engine.h"
+#include "coap-node.h"
 
 static void ph_get_handler(
   coap_message_t *request,
@@ -31,7 +32,7 @@ EVENT_RESOURCE(
     ph_put_handler,
     NULL,
     ph_event_handler
-)
+);
 
 /*---------------------------------------*/
 
@@ -88,21 +89,27 @@ static void ph_put_handler(
   int32_t *offset
   ){
 
-    const char msg[MSG_SIZE];
-    char reply[MSG_SIZE];
-    int len = coap_get_post_variable(request, "value", &msg);
-    printf("[!] PH_CMD command elaboration ...\n");
-    
-    int n_arguments = 3;
-    char arguments[n_arguments][100];
-    parse_json(msg, n_arguments, arguments);
+  const char* arg;
+  char msg[MSG_SIZE];
+  char reply[MSG_SIZE];
+  int len = coap_get_post_variable(request, "value", &arg);
+  if (len <= 0){
+    printf("[-] no argument obteined from put request of ph_rsc");
+    return;
+  }
+  sprintf(msg, "%s", (char*)arg);
+  printf("[!] PH_CMD command elaboration ...\n");
   
-    node_memory.configuration.ph_timer = atoi(arguments[2]);
-    ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
+  int n_arguments = 3;
+  char arguments[n_arguments][100];
+  parse_json(msg, n_arguments, arguments);
 
-    send_status(reply); //TODO
-    printf("[+] PH_CMD command elaborated with success\n");
-    
-    coap_set_header_content_format(response, TEXT_PLAIN);
-    coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
+  node_memory.configuration.ph_timer = atoi(arguments[2]);
+  ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
+
+  send_status(reply); //TODO
+  printf("[+] PH_CMD command elaborated with success\n");
+  
+  coap_set_header_content_format(response, TEXT_PLAIN);
+  coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }

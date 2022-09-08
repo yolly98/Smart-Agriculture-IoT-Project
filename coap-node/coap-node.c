@@ -1,4 +1,4 @@
-#include "coap_module.c"
+#include "coap-module.c"
 
 /*------------------------UTILITY------------------------------------------*/
 
@@ -188,15 +188,6 @@ PROCESS_THREAD(coap_node, ev, data){
 
 
     printf("[!] intialization ended\n");
-
-    coap_activate_resource(&config_rsc);
-    coap_activate_resource(&irr_rsc);
-    coap_activate_resource(&isalive_rsc);
-    coap_activate_resource(&mst_rsc);
-    coap_activate_resource(&ph_rsc);
-    coap_activate_resource(&light_rsc);
-    coap_activate_resource(&tmp_rsc);
-    
     coap_init();
     /*---------------CONFIGURATION-------------------*/
     
@@ -218,10 +209,10 @@ PROCESS_THREAD(coap_node, ev, data){
     light_rsc.trigger();
     tmp_rsc.trigger();
 
-    ctimer_set(&node_timers.mst_ctimer, node_memory.configuration.mst_timer * CLOCK_MINUTE, get_soil_moisture, NULL);
-    ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
-    ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_raw, NULL);
-    ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, get_soil_tmp, NULL);
+    ctimer_set(&node_timers.mst_ctimer, node_memory.configuration.mst_timer * CLOCK_MINUTE, (void*)mst_rsc.trigger, NULL);
+    ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, (void*)ph_rsc.trigger, NULL);
+    ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, (void*)light_rsc.trigger, NULL);
+    ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, (void*)tmp_rsc.trigger, NULL);
 
     node_timers.sensor_timer_are_setted = true;
 
@@ -233,6 +224,7 @@ PROCESS_THREAD(coap_node, ev, data){
         //if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
         //    printf("the border router is not reachable yet\n");
         //}
+        COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
     }
 
     PROCESS_END();

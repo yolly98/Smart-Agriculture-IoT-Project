@@ -15,13 +15,13 @@ static struct coap_module_str{
 void coap_init(){
 
     coap_endpoint_parse(SERVER_EP, strlen(SERVER_EP), &coap_module.server_ep);
-//    coap_activate_resource(&config_rsc);
-//    coap_activate_resource(&irr_rsc);
-//    coap_activate_resource(&isalive_rsc);
-//    coap_activate_resource(&mst_rsc);
-//    coap_activate_resource(&ph_rsc);
-//    coap_activate_resource(&light_rsc);
-//    coap_activate_resource(&tmp_rsc);
+    coap_activate_resource(&config_rsc, "/status");
+    coap_activate_resource(&irr_rsc, "/irrigation");
+    coap_activate_resource(&is_alive_rsc, "/is_alive");
+    coap_activate_resource(&mst_rsc, "/sensor/mst");
+    coap_activate_resource(&ph_rsc, "/sensor/ph");
+    coap_activate_resource(&light_rsc, "/sensor/light");
+    coap_activate_resource(&tmp_rsc, "/sensor/tmp");
     coap_module.state = STATE_INITIALIZED;
 }
 
@@ -54,7 +54,7 @@ void coap_send(char msg[]){
 
     coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg) - 1);
 
-    COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
+    //COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
 
 }
 

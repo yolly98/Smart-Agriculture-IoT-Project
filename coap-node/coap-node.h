@@ -88,6 +88,15 @@ static struct node_str{
     struct measurements_str measurements;
 } node_memory;
 
+
+extern coap_resource_t config_rsc;
+extern coap_resource_t irr_rsc;
+extern coap_resource_t is_alive_rsc;
+extern coap_resource_t mst_rsc;
+extern coap_resource_t ph_rsc;
+extern coap_resource_t light_rsc;
+extern coap_resource_t tmp_rsc;
+
 //UTILITY
 bool isNumber(char *text);
 void print_config();

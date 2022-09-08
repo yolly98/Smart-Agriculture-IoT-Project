@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "coap-engine.h"
-#include "coap-node.h"
 
 static void config_get_handler(
   coap_message_t *request,
@@ -29,6 +28,14 @@ static void config_del_handler(
 );
 /*--------------------------------------------*/
 
+
+struct configuration_str{
+
+    unsigned int land_id;
+    unsigned int node_id;
+} configuration;
+
+
 EVENT_RESOURCE(
     config_rsc,
     "title=\"Configuration\"; rt = \"Text\"",
@@ -43,17 +50,10 @@ EVENT_RESOURCE(
 
 void send_status(char msg[]){
 
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"irr_config\": { \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d }, \"mst_timer\": %d, \"ph_timer\": %d, \"light_timer\": %d, \"tmp_timer\": %d } } ",
-        STATUS,
-        node_memory.configuration.land_id,
-        node_memory.configuration.node_id,
-        node_memory.configuration.irr_config.enabled?"true":"false",
-        node_memory.configuration.irr_config.irr_limit,
-        node_memory.configuration.irr_config.irr_duration,
-        node_memory.configuration.mst_timer,
-        node_memory.configuration.ph_timer,
-        node_memory.configuration.light_timer,
-        node_memory.configuration.tmp_timer
+    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d } } ",
+        "config-status",
+        configuration.land_id,
+        configuration.node_id
         );
     
     printf(" >  %s \n", msg);
@@ -80,21 +80,12 @@ static void config_get_handler(
 
 void assign_config(char msg[]){
 
-  printf("[!] ASSIGN_CONFIG command elaboration ...\n");
-
-  int n_arguments = 8; 
+  int n_arguments = 2; 
   char arguments[n_arguments][100];
   parse_json(msg, n_arguments, arguments );
 
-  node_memory.configuration.irr_config.enabled = arguments[1];
-  node_memory.configuration.irr_config.irr_limit = atoi(arguments[2]);
-  node_memory.configuration.irr_config.irr_duration = atoi(arguments[3]);
-  node_memory.configuration.mst_timer = atoi(arguments[4]);
-  node_memory.configuration.ph_timer = atoi(arguments[5]);
-  node_memory.configuration.light_timer = atoi(arguments[6]);
-  node_memory.configuration.tmp_timer = atoi(arguments[7]);
-
-  printf("[+] ASSIGN_CONFIG command elaborated with success\n");
+  configuration.land_id = arguments[0];
+  configuration.node_id = arguments[1];
   
 }
 

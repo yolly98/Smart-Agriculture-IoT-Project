@@ -24,6 +24,14 @@ static void irr_event_handler(void);
 
 /*--------------------------------------------*/
 
+struct irr_config_str{
+    bool enabled;
+    unsigned short irr_limit;
+    unsigned int irr_duration;
+    bool irr_status;
+    struct etimer irr_duration_etimer;
+}irr_mem;
+
 EVENT_RESOURCE(
     irr_rsc,
     "title=\"Irrigation\"; rt = \"Text\"",
@@ -35,14 +43,25 @@ EVENT_RESOURCE(
 );
 
 /*-----------------------------------------------*/
+void send_status(char msg[]){
+
+  sprintf(msg, "{ \"cmd\": \"%s\" \"body\": { \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d, \"status\": \"%s\" } }",
+      "irr-status",
+      irr_mem.enabled?"true":"false",
+      irr_mem.irr_limit,
+      irr_mem.irr_duration,
+      irr_mem.irr_status?"on":"off"
+      );
+  printf(" >  %s \n", msg);
+}
+
+/*----------------------------------------------*/
 
 void send_irrigation(char msg[]){
 
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"status\": \"%s\" } }",
-        IRRIGATION,
-        node_memory.configuration.land_id,
-        node_memory.configuration.node_id,
-        node_memory.irr_status?"on":"off"
+    sprintf(msg, "{ \"cmd\": \"%s\" \"status\": \"%s\" }",
+        "irrigation",
+        irr_mem.irr_status?"on":"off"
         );
     printf(" >  %s \n", msg);
 }
@@ -65,10 +84,22 @@ static void irr_get_handler(
   int32_t *offset
   ){
 
+  const char* value;
   char msg[MSG_SIZE];
-  send_irrigation(msg); 
+  char reply[MSG_SIZE];
+
+  int len = coap_get_query_variable(request, "value", value);
+  sprintf(msg, "%s", (char*)value);
+  if(len == 0)
+    send_irrigation(reply);
+  else if(len > 0 and strcmp(value, "status") == 0)
+    send_status(reply)
+  else{
+    printf("[-] error unknown in get irr_rsc");
+    return;
+  } 
   coap_set_header_content_format(response, TEXT_PLAIN);
-  coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", msg));
+  coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }
 
 /*----------------------------------------------*/
@@ -95,20 +126,20 @@ static void irr_put_handler(
 
   printf("[!] IRR_CMD command elaboration ...\n");
 
-  int n_arguments = 5;
+  int n_arguments = 4;
   char arguments[n_arguments][100];
   parse_json(msg, n_arguments, arguments);
 
+  if(strcmp(arguments[0], "null") != 0)
+      node_memory.configuration.irr_config.enabled = ((strcmp(arguments[0], "true") == 0)?true:false);
   if(strcmp(arguments[1], "null") != 0)
-      node_memory.configuration.irr_config.enabled = ((strcmp(arguments[2], "true") == 0)?true:false);
-  if(strcmp(arguments[2], "null") != 0)
-      node_memory.irr_status = ((strcmp(arguments[3], "on") == 0)?true:false);
+      node_memory.irr_status = ((strcmp(arguments[1], "on") == 0)?true:false);
+  if(isNumber(arguments[2]) && atoi(arguments[2]) != 0)
+      node_memory.configuration.irr_config.irr_limit = atoi(arguments[2]);
   if(isNumber(arguments[3]) && atoi(arguments[3]) != 0)
-      node_memory.configuration.irr_config.irr_limit = atoi(arguments[3]);
-  if(isNumber(arguments[4]) && atoi(arguments[4]) != 0)
-      node_memory.configuration.irr_config.irr_duration = atoi(arguments[4]);
+      node_memory.configuration.irr_config.irr_duration = atoi(arguments[3]);
 
-  send_irrigation(reply);
+  send_status(reply);
   printf("[+] IRR_CMD command elaborated with success\n");
 
   coap_set_header_content_format(response, TEXT_PLAIN);

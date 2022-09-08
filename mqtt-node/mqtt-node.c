@@ -86,9 +86,9 @@ bool elaborate_cmd(char msg[]){
         parse_json(msg, n_arguments, arguments);
 
         if(strcmp(arguments[1], "null") != 0)
-            node_memory.configuration.irr_config.enabled = ((strcmp(arguments[2], "true") == 0)?true:false);
+            node_memory.configuration.irr_config.enabled = ((strcmp(arguments[1], "true") == 0)?true:false);
         if(strcmp(arguments[2], "null") != 0)
-            node_memory.irr_status = ((strcmp(arguments[3], "on") == 0)?true:false);
+            node_memory.irr_status = ((strcmp(arguments[2], "on") == 0)?true:false);
         if(isNumber(arguments[3]) && atoi(arguments[3]) != 0)
             node_memory.configuration.irr_config.irr_limit = atoi(arguments[3]);
         if(isNumber(arguments[4]) && atoi(arguments[4]) != 0)

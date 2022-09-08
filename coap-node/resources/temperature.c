@@ -23,6 +23,11 @@ static void tmp_put_handler(
 static void tmp_event_handler(void);
 
 /*--------------------------------------------*/
+static struct tmp_str{
+  int soil_temperature;
+  unsigned int tmp_timer;
+  struct etimer tmp_etimer;
+}tmp_mem;
 
 EVENT_RESOURCE(
     tmp_rsc,
@@ -37,22 +42,29 @@ EVENT_RESOURCE(
 
 /*----------------------------------*/
 
-void get_soil_tmp(char msg[]){
+void send_soil_tmp(char msg[]){
 
-    if(node_timers.sensor_timer_are_setted)
-        ctimer_restart(&node_timers.tmp_ctimer);
+  etimer_set(&tmp_mem.tmp_ctimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
 
-    int tmp = (5 + random_rand()%35);
-    node_memory.measurements.soil_temperature =  tmp;
-    printf("[+] soil temperature detected: %d\n", tmp);
+  int tmp = (5 + random_rand()%35);
+  tmp_mem.soil_temperature =  tmp;
+  printf("[+] soil temperature detected: %d\n", tmp);
 
-    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
-        TMP,
-        node_memory.configuration.land_id,
-        node_memory.configuration.node_id,
-        tmp
-        );
-    printf(" >  %s\n", msg);
+  sprintf(msg,"{ \"cmd\": \"%s\", \"value\": %d }",
+      "tmp",
+      tmp_mem.soil_temperature
+      );
+  printf(" >  %s\n", msg);
+}
+
+/*------------------------------------------*/
+
+void send_tmp_status(char msg[]){
+  sprintf(msg,"{ \"cmd\": \"%s\", \"timer\": %d }",
+      "tmp-status",
+      tmp_mem.tmp_timer
+      );
+  printf(" >  %s\n", msg);
 }
 
 /*------------------------------------------*/
@@ -73,10 +85,23 @@ static void tmp_get_handler(
   int32_t *offset
   ){
 
-    char msg[MSG_SIZE];
-    get_soil_tmp(msg); 
-    coap_set_header_content_format(response, TEXT_PLAIN);
-    coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", msg));
+  const char* value;
+  char msg[MSG_SIZE];
+  char reply[MSG_SIZE];
+
+  int len = coap_get_query_variable(request, "value", value);
+  sprintf(msg, "%s", (char*)value);
+  if(len == 0)
+    send_soil_tmp(reply);
+  else if(len > 0 and strcmp(value, "status") == 0)
+    send_tmp_status(reply)
+  else{
+    printf("[-] error unknown in get temperature sensor");
+    return;
+  } 
+
+  coap_set_header_content_format(response, TEXT_PLAIN);
+  coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }
 
 /*-------------------------------------------*/
@@ -98,18 +123,11 @@ static void tmp_put_handler(
       return;
     }
     sprintf(msg, "%s", (char*)arg);
-    printf("[!] TMP_CMD command elaboration ...\n");
-    
-    int n_arguments = 3;
-    char arguments[n_arguments][100];
-    parse_json(msg, n_arguments, arguments);
   
-    node_memory.configuration.tmp_timer = atoi(arguments[2]);
-    ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, get_soil_tmp, NULL);
-    
-    send_status(reply); //TODO
-    printf("[+] TMP_CMD command elaborated with success\n");
-    
+    tmp_mem.tmp_timer = atoi(arguments[2]);
+    //ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, send_soil_tmp, NULL);
+    etimer_set(&tmp_mem.tmp_ctimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
+    send_tmp_status(reply);
     coap_set_header_content_format(response, TEXT_PLAIN);
     coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }

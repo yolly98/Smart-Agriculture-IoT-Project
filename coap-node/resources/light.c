@@ -24,6 +24,12 @@ static void light_event_handler(void);
 
 /*--------------------------------------------*/
 
+static struct light_str{
+  unsigned int light_raw;
+  unsigned int light_timer;
+  struct etimer light_etimer;
+}light_mem;
+
 EVENT_RESOURCE(
     light_rsc,
     "title=\"Light\"; rt = \"Text\"",
@@ -36,23 +42,30 @@ EVENT_RESOURCE(
 
 /*-----------------------------------------*/
 
-void get_lihght_raw(char msg[]){
+void send_light_raw(char msg[]){
 
-    if(node_timers.sensor_timer_are_setted)
-        ctimer_restart(&node_timers.light_ctimer);
+    etimer_set(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
 
     int light = random_rand()%28;
-    node_memory.measurements.light_raw =  light;
+    light_mem.light_raw =  light;
     printf("[+] light raw detected: %d\n", light);
 
-    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
-        LIGHT,
-        node_memory.configuration.land_id,
-        node_memory.configuration.node_id,
-        light
+    sprintf(msg,"{ \"cmd\": \"%s\", \"value\": %d }",
+        "light",
+        light_mem.light_raw
         );
     printf(" >  %s\n", msg);
 } 
+
+/*------------------------------------------*/
+
+void send_light_status(char msg[]){
+  sprintf(msg,"{ \"cmd\": \"%s\", \"timer\": %d }",
+      "light-status",
+      light_mem.light_timer
+      );
+  printf(" >  %s\n", msg);
+}
 
 /*------------------------------------------*/
 
@@ -72,10 +85,23 @@ static void light_get_handler(
   int32_t *offset
   ){
 
-    char msg[MSG_SIZE];
-    get_lihght_raw(msg); 
-    coap_set_header_content_format(response, TEXT_PLAIN);
-    coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", msg));
+  const char* value;
+  char msg[MSG_SIZE];
+  char reply[MSG_SIZE];
+
+  int len = coap_get_query_variable(request, "value", value);
+  sprintf(msg, "%s", (char*)value);
+  if(len == 0)
+    send_light_raw(reply);
+  else if(len > 0 and strcmp(value, "status") == 0)
+    send_light_status(reply)
+  else{
+    printf("[-] error unknown in get light sensor");
+    return;
+  } 
+
+  coap_set_header_content_format(response, TEXT_PLAIN);
+  coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }
 
 /*-------------------------------------------*/
@@ -97,18 +123,10 @@ static void light_put_handler(
     return;
   }
   sprintf(msg, "%s", (char*)arg);    
-  printf("[!] LIGHT_CMD command elaboration ...\n");
-  
-  int n_arguments = 3;
-  char arguments[n_arguments][100];
-  parse_json(msg, n_arguments, arguments);
-
-  node_memory.configuration.light_timer = atoi(arguments[2]);
-  ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_raw, NULL);
-  
-  send_status(reply); //TODO
-  printf("[+] LIGHT_CMD command elaborated with success\n");
-  
+  light_mem.light_timer = atoi(msg);
+  //ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, send_light_raw, NULL);
+  etimer_set(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
+  send_light_status(reply); 
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }

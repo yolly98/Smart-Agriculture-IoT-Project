@@ -28,12 +28,7 @@ EVENT_RESOURCE(
 
 void send_is_alive_ack(char msg[]){
 
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d } }",
-        IS_ALIVE_ACK,
-        node_memory.configuration.land_id,
-        node_memory.configuration.node_id
-        );
-    
+    sprintf(msg, "{ \"cmd\": \"%s\" }", "is_alive_ack");  
     printf(" >  %s \n", msg);
 }
 

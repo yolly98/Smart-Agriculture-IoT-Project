@@ -47,48 +47,48 @@
 static struct timers{
     struct etimer btn_etimer;
     struct etimer led_etimer;
-    struct ctimer mst_ctimer;
-    struct ctimer ph_ctimer;
-    struct ctimer light_ctimer;
-    struct ctimer tmp_ctimer;
-    struct ctimer irr_duration_ctimer;
-    bool sensor_timer_are_setted;
-    bool irr_timer_is_setted;
+    //struct ctimer mst_ctimer;
+    //struct ctimer ph_ctimer;
+    //struct ctimer light_ctimer;
+    //struct ctimer tmp_ctimer;
+    //struct ctimer irr_duration_ctimer;
+    //bool sensor_timer_are_setted;
+    //bool irr_timer_is_setted;
 }node_timers;
 
-struct irr_config_str{
-    bool enabled;
-    unsigned short irr_limit;
-    unsigned int irr_duration;
-};
-
-struct measurements_str{
-
-    unsigned short soil_moisture;
-    short soil_temperature;
-    unsigned int light_raw;
-    unsigned short ph_level;
-};
-
-struct configuration_str{
-
-    unsigned int land_id;
-    unsigned int node_id;
-    struct irr_config_str irr_config;
-    unsigned int mst_timer;
-    unsigned int ph_timer;
-    unsigned int light_timer;
-    unsigned int tmp_timer;
-};
-
-static struct node_str{
-
-    struct configuration_str configuration;
-    bool irr_status;
-    struct measurements_str measurements;
-} node_memory;
-
-
+//struct irr_config_str{
+//    bool enabled;
+//    unsigned short irr_limit;
+//    unsigned int irr_duration;
+//};
+//
+//struct measurements_str{
+//
+//    unsigned short soil_moisture;
+//    short soil_temperature;
+//    unsigned int light_raw;
+//    unsigned short ph_level;
+//};
+//
+//struct configuration_str{
+//
+//    unsigned int land_id;
+//    unsigned int node_id;
+//    struct irr_config_str irr_config;
+//    unsigned int mst_timer;
+//    unsigned int ph_timer;
+//    unsigned int light_timer;
+//    unsigned int tmp_timer;
+//};
+//
+//static struct node_str{
+//
+//    struct configuration_str configuration;
+//    bool irr_status;
+//    struct measurements_str measurements;
+//} node_memory;
+//
+//
 extern coap_resource_t config_rsc;
 extern coap_resource_t irr_rsc;
 extern coap_resource_t is_alive_rsc;

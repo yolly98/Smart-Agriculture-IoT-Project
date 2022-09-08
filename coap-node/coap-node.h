@@ -19,61 +19,16 @@
 #include <strings.h>
 
 /*------------------------------------*/
-#define SERVER_EP           "coap://[fd00::1]:5683"
+#define SERVER_EP           "coap://[fd00::201:1:1:1]:5683"
 #define STATE_INITIALIZED   0
 #define STATE_CONFIGURED    1
 #define CLOCK_MINUTE        CLOCK_SECOND * 60
 #define MSG_SIZE            512
 
 /*------------------------------------*/
-//DATA STRUCTURES
+
 static struct etimer btn_etimer;
 static struct etimer led_etimer;
-//static struct timers{
-//    struct etimer btn_etimer;
-//    struct etimer led_etimer;
-//    struct ctimer mst_ctimer;
-//    struct ctimer ph_ctimer;
-//    struct ctimer light_ctimer;
-//    struct ctimer tmp_ctimer;
-//    struct ctimer irr_duration_ctimer;
-//    bool sensor_timer_are_setted;
-//    bool irr_timer_is_setted;
-//}node_timers;
-//
-//struct irr_config_str{
-//    bool enabled;
-//    unsigned short irr_limit;
-//    unsigned int irr_duration;
-//};
-//
-//struct measurements_str{
-//
-//    unsigned short soil_moisture;
-//    short soil_temperature;
-//    unsigned int light_raw;
-//    unsigned short ph_level;
-//};
-//
-//struct configuration_str{
-//
-//    unsigned int land_id;
-//    unsigned int node_id;
-//    struct irr_config_str irr_config;
-//    unsigned int mst_timer;
-//    unsigned int ph_timer;
-//    unsigned int light_timer;
-//    unsigned int tmp_timer;
-//};
-//
-//static struct node_str{
-//
-//    struct configuration_str configuration;
-//    bool irr_status;
-//    struct measurements_str measurements;
-//} node_memory;
-//
-//
 
 static struct coap_module_str{
     coap_endpoint_t server_ep;
@@ -81,7 +36,6 @@ static struct coap_module_str{
 }coap_module;
 
 static unsigned int STATE;
-
 
 extern coap_resource_t config_rsc;
 extern coap_resource_t irr_rsc;
@@ -95,7 +49,6 @@ extern coap_resource_t tmp_rsc;
 bool isNumber(char *text);
 void print_config();
 void parse_json(char json[], int n_arguments, char arguments[][100]);
-
 
 //COAP
 void coap_init();
@@ -115,26 +68,26 @@ void irr_starting(int moisture);
 
 //MOISTURE RESOURCE FUNCTION
 void save_mst_timer(int timer);
-void get_mst_timer(unsigned int* timer);
+int get_mst_timer();
 int get_mst_value();
 void set_mst_timer();
 bool check_mst_timer_expired();
 
 //PH RESOURCE FUNCTION
 void save_ph_timer(int timer);
-void get_ph_timer(unsigned int* timer);
+int get_ph_timer();
 void set_ph_timer();
 bool check_ph_timer_expired();
 
 //LIGHT RESOURCE FUNCTION
 void save_light_timer(int timer);
-void get_light_timer(unsigned int* timer);
+int get_light_timer();
 void set_light_timer();
 bool check_light_timer_expired();
 
 //TRMPERATURE RESOURCE FUNCTION
 void save_tmp_timer(int timer);
-void get_tmp_timer(unsigned int* timer);
+int get_tmp_timer();
 void set_tmp_timer();
 bool check_tmp_timer_expired();
 

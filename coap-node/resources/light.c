@@ -42,8 +42,8 @@ void save_light_timer(int timer){
   light_mem.light_timer = timer;
 }
 
-void get_light_timer(unsigned int* timer){
-  timer = &light_mem.light_timer;
+int get_light_timer(){
+  return light_mem.light_timer;
 }
 
 void set_light_timer(){
@@ -96,6 +96,7 @@ static void light_get_handler(
   int32_t *offset
   ){
 
+  printf(" <  get sensor/light\n");
   const char* value;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
@@ -125,6 +126,7 @@ static void light_put_handler(
   int32_t *offset
   ){
 
+  printf(" <  put sensor/light\n");
   const char *arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];

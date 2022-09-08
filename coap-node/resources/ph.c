@@ -42,8 +42,8 @@ void save_ph_timer(int timer){
   ph_mem.ph_timer = timer;
 }
 
-void get_ph_timer(unsigned int* timer){
-  timer = &ph_mem.ph_timer;
+int get_ph_timer(){
+  return ph_mem.ph_timer;
 }
 
 void set_ph_timer(){
@@ -99,6 +99,7 @@ static void ph_get_handler(
   int32_t *offset
   ){
 
+  printf(" <  get sensor/ph\n");
   const char* value;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
@@ -129,6 +130,7 @@ static void ph_put_handler(
   int32_t *offset
   ){
 
+  printf(" <  put sensor/ph\n");
   const char* arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];

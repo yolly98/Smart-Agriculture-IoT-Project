@@ -41,8 +41,8 @@ void save_mst_timer(int timer){
   mst_mem.mst_timer = timer;
 }
 
-void get_mst_timer(unsigned int* timer){
-  timer = &mst_mem.mst_timer;
+int get_mst_timer(){
+  return mst_mem.mst_timer;
 }
 
 int get_mst_value(){
@@ -102,6 +102,7 @@ static void mst_get_handler(
   int32_t *offset
   ){
 
+  printf(" <  get sensor/mst\n");
   const char* value;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
@@ -132,6 +133,7 @@ static void mst_put_handler(
   int32_t *offset
   ){
 
+  printf(" <  get sensor/put\n");
   const char* arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];

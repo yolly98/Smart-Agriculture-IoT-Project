@@ -51,8 +51,8 @@ void save_config(int land_id, int node_id){
 }
 
 void get_config(unsigned int* land_id,unsigned int* node_id){
-  land_id = &configuration.land_id;
-  node_id = &configuration.node_id;
+  *land_id = configuration.land_id;
+  *node_id = configuration.node_id;
 }
 
 /*--------------------------------------*/
@@ -79,6 +79,7 @@ static void config_get_handler(
   int32_t *offset
   ){
 
+    printf(" <  get config\n");
     char msg[MSG_SIZE];
     send_config_status(msg); 
     coap_set_header_content_format(response, TEXT_PLAIN);
@@ -96,6 +97,7 @@ static void config_put_handler(
   int32_t *offset
   ){
 
+    printf(" <  put config\n");
     const char* arg;
     char msg[MSG_SIZE];
     char reply[MSG_SIZE];

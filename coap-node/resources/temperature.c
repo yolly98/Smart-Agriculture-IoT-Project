@@ -41,8 +41,8 @@ void save_tmp_timer(int timer){
   tmp_mem.tmp_timer = timer;
 }
 
-void get_tmp_timer(unsigned int* timer){
-  timer = &tmp_mem.tmp_timer;
+int get_tmp_timer(){
+  return tmp_mem.tmp_timer;
 }
 void set_tmp_timer(){
   etimer_set(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
@@ -97,6 +97,7 @@ static void tmp_get_handler(
   int32_t *offset
   ){
 
+  printf(" <  get sensor/tmp\n");
   const char* value;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
@@ -126,6 +127,7 @@ static void tmp_put_handler(
   int32_t *offset
   ){
 
+    printf(" <  put sensor/tmp\n");
     const char *arg;
     char msg[MSG_SIZE];
     char reply[MSG_SIZE];

@@ -39,6 +39,7 @@ static void is_alive_get_handler(
   int32_t *offset
   ){
 
+    printf(" <  get is alive\n");
     char msg[MSG_SIZE];
     send_is_alive_ack(msg); 
     coap_set_header_content_format(response, TEXT_PLAIN);

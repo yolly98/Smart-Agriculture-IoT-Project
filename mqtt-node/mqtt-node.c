@@ -539,8 +539,8 @@ PROCESS_THREAD(mqtt_node, ev, data){
     leds_single_off(LEDS_RED);
     led_status = false;
 
-    printf("[+] land %d selected: \n", node_memory.configuration.land_id);
-    printf("[+] id %d selected: \n", node_memory.configuration.node_id);
+    printf("[+] land %d selected \n", node_memory.configuration.land_id);
+    printf("[+] id %d selected \n", node_memory.configuration.node_id);
 
 
     printf("[!] intialization ended\n");

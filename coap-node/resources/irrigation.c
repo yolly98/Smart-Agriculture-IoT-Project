@@ -50,10 +50,10 @@ void save_irr_config(bool enabled, unsigned int irr_limit, unsigned int irr_dura
 }
 
 void get_irr_config(bool* enabled, unsigned int* irr_limit, unsigned int* irr_duration, bool* irr_status){
-  enabled = &irr_mem.enabled;
-  irr_limit = &irr_mem.irr_limit;
-  irr_duration = &irr_mem.irr_duration;
-  irr_status = &irr_mem.irr_status;
+  *enabled = irr_mem.enabled;
+  *irr_limit = irr_mem.irr_limit;
+  *irr_duration = irr_mem.irr_duration;
+  *irr_status = irr_mem.irr_status;
 }
 
 void set_irr_timer(){
@@ -125,6 +125,7 @@ static void irr_get_handler(
   int32_t *offset
   ){
 
+  printf(" <  get irrigation\n");
   const char* value;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
@@ -153,6 +154,8 @@ static void irr_put_handler(
   int32_t *offset
   ){
 
+
+  printf(" <  put irrigation\n");
   const char* arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];

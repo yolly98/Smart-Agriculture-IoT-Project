@@ -9,6 +9,7 @@ from view import add_vw
 from view import update_vw
 from view import delete_vw
 from protocol import mqtt_module
+from protocol import coap_module
 
 # ------------MAIN-----------
 
@@ -60,6 +61,7 @@ def server_console():
             print("--------- OTHERS ------------------")
             print(".[28]    test received messages")
             print(".[29]    exit")
+            print(".[30]    test coap")
             cmd = log.log_input("$ Type a number or help: ")
 
         if cmd.isdigit() and int(cmd) == 1:
@@ -155,11 +157,13 @@ def server_console():
             log.log_info("typed 'exit'")
             log.log_info("Press Ctrl+c two time in order to stop the other threads")
             exit()
+        elif cmd.isdigit() and int(cmd) == 30:
+            coap_module.send_msg("fd00::202:2:2:2", "/irrigation")
         else:
             log.log_err(f"command not valid!")
 
 #functino for thread 2 (daemon)
-def server_check_node():
+def mqtt_server_check_node():
 
     #[REAL]
     end_timer =  60 * 60 * 3    # 3 hours
@@ -176,20 +180,27 @@ def server_check_node():
 
         time.sleep(0.1)
             
-def server_listener():
+def mqtt_server_listener():
     mqtt_module.mqtt_subscribe()
 
+def coap_server_listener():
+    coap_module.listener()
+
+
 t1 = threading.Thread(target = server_console, args = (), daemon = False)
-t2 = threading.Thread(target = server_check_node, args = (), daemon = True) 
-t3 = threading.Thread(target = server_listener, args = (), daemon = True) 
+t2 = threading.Thread(target = mqtt_server_check_node, args = (), daemon = True) 
+t3 = threading.Thread(target = mqtt_server_listener, args = (), daemon = True) 
+t4 = threading.Thread(target = coap_server_listener, args = (), daemon = True)
 
 t1.start()
 t2.start()
 t3.start()
+t4.start()
 
 t1.join()
 t2.join()
 t3.join()
+t4.join()
 
 
 

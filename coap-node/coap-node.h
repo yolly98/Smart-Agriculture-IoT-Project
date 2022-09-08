@@ -18,8 +18,9 @@
 #include "lib/sensors.h"
 #include <strings.h>
 
+
 /*------------------------------------*/
-#define SERVER_EP           "coap://[fd00::201:1:1:1]:5683"
+#define SERVER_EP           "coap://[fd00::1]:5683"
 #define STATE_INITIALIZED   0
 #define STATE_CONFIGURED    1
 #define CLOCK_MINUTE        CLOCK_SECOND * 60

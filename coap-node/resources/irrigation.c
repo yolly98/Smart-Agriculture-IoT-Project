@@ -100,7 +100,7 @@ void send_irr_status(char msg[]){
 
 void send_irrigation(char msg[]){
 
-    sprintf(msg, "{ \"cmd\": \"%s\" \"status\": \"%s\" }",
+    sprintf(msg, "{ \"cmd\": \"%s\", \"status\": \"%s\" }",
         "irrigation",
         irr_mem.irr_status?"on":"off"
         );
@@ -128,7 +128,9 @@ static void irr_get_handler(
   const char* value;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
-
+  coap_endpoint_print(coap_get_src_endpoint(request));
+  printf("\n");
+  
   int len = coap_get_query_variable(request, "value", &value);
   if(len == 0){
     printf(" <  get irrigation\n");

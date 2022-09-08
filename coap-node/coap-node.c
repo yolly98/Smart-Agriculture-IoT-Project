@@ -271,7 +271,7 @@ PROCESS_THREAD(coap_node, ev, data){
     printf("[+] land %d selected \n", land_id);
     printf("[+] id %d selected \n", node_id);
 
-    save_config(land_id, node_id); //TODO mettere land_id al posto dello 0
+    save_config(land_id, node_id); 
     
     printf("[!] intialization ended\n");
     coap_endpoint_parse(SERVER_EP, strlen(SERVER_EP), &coap_module.server_ep);
@@ -287,17 +287,17 @@ PROCESS_THREAD(coap_node, ev, data){
     
     printf("[!] configuration ... \n");
 
-//    char msg[MSG_SIZE];
-//    coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_POST, 0);
-//    coap_set_header_uri_path(coap_module.request, "/new_config");
-//    coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg) - 1);
-//
-//    while(true){
-//        
-//        COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
-//        if(STATE == STATE_CONFIGURED)
-//            break;
-//    }
+    char msg[MSG_SIZE];
+    sprintf(msg, "{ \"land_id\": %d, \"node_id\": %d }", land_id, node_id);
+    
+    //coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_PUT, 0);
+    //coap_set_header_uri_path(coap_module.request, "/new_config");
+    //coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg) - 1);
+    //while(true){
+    //    COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
+    //    if(STATE == STATE_CONFIGURED)
+    //        break;
+    //}
     assign_config_received_sim(); //simulation
     print_config();
     printf("[+] configuration ended\n");
@@ -323,9 +323,15 @@ PROCESS_THREAD(coap_node, ev, data){
 
         PROCESS_YIELD();
         
-        //if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
-        //    printf("the border router is not reachable yet\n");
-        //}
+        if(ev == serial_line_event_message){
+            char * msg = (char*)data;
+            printf("[!] recevived '%s' by serial\n", msg);
+            coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_PUT, 0);
+            coap_set_header_uri_path(coap_module.request, "/new_config");
+            coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg) - 1);
+            COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
+        }
+
         if(check_mst_timer_expired()){
             mst_rsc.trigger();
             set_mst_timer();

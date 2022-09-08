@@ -99,20 +99,24 @@ static void ph_get_handler(
   int32_t *offset
   ){
 
-  printf(" <  get sensor/ph\n");
   const char* value;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
   int len = coap_get_query_variable(request, "value", &value);
-  sprintf(msg, "%s", (char*)value);
-  if(len == 0)
+  if(len == 0){
+    printf(" <  get sensor/ph\n");
     send_ph_level(reply);
-  else if(len > 0 && strcmp(value, "status") == 0)
-    send_ph_status(reply);
-  else{
-    printf("[-] error unknown in get ph sensor");
-    return;
+  }
+  else if(len > 0){
+    printf(" <  get sensor/ph-status\n");
+    snprintf(msg, len + 1, "%s", (char*)value);
+    if(strcmp(msg, "status") == 0)
+      send_ph_status(reply);
+    else{
+      printf("[-] error unknown in get ph sensor [value: %s] \n", msg);
+      return;
+    }
   } 
 
   coap_set_header_content_format(response, TEXT_PLAIN);
@@ -136,7 +140,7 @@ static void ph_put_handler(
   char reply[MSG_SIZE];
   int len = coap_get_post_variable(request, "value", &arg);
   if (len <= 0){
-    printf("[-] no argument obteined from put request of ph_rsc");
+    printf("[-] no argument obteined from put request of ph_rsc\n");
     return;
   }
   sprintf(msg, "%s", (char*)arg);

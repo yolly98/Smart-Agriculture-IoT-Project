@@ -2,6 +2,7 @@
 <simconf>
   <simulation>
     <title>My simulation</title>
+    <speedlimit>1.0</speedlimit>
     <randomseed>123456</randomseed>
     <motedelay_us>1000000</motedelay_us>
     <radiomedium>
@@ -16,7 +17,7 @@
     </events>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype218755729</identifier>
+      <identifier>mtype524511004</identifier>
       <description>Cooja Mote Type #1</description>
       <source>[CONTIKI_DIR]/smart_agricolture_IoT_project/border-router/border-router.c</source>
       <commands>make -j$(CPUS) border-router.cooja TARGET=cooja</commands>
@@ -40,7 +41,7 @@
     </motetype>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype133987508</identifier>
+      <identifier>mtype75621884</identifier>
       <description>Cooja Mote Type #2</description>
       <source>[CONTIKI_DIR]/smart_agricolture_IoT_project/coap-node/coap-node.c</source>
       <commands>make -j$(CPUS) coap-node.cooja TARGET=cooja</commands>
@@ -78,7 +79,7 @@
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype218755729</motetype_identifier>
+      <motetype_identifier>mtype524511004</motetype_identifier>
     </mote>
     <mote>
       <interface_config>
@@ -96,13 +97,13 @@
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype133987508</motetype_identifier>
+      <motetype_identifier>mtype75621884</motetype_identifier>
     </mote>
   </simulation>
   <plugin>
     org.contikios.cooja.plugins.SimControl
     <width>280</width>
-    <z>8</z>
+    <z>0</z>
     <height>160</height>
     <location_x>400</location_x>
     <location_y>0</location_y>
@@ -118,7 +119,7 @@
       <viewport>2.2499888408126534 0.0 0.0 2.2499888408126534 166.03764406639328 14.097055712608162</viewport>
     </plugin_config>
     <width>400</width>
-    <z>1</z>
+    <z>5</z>
     <height>400</height>
     <location_x>1</location_x>
     <location_y>1</location_y>
@@ -131,7 +132,7 @@
       <coloring />
     </plugin_config>
     <width>773</width>
-    <z>7</z>
+    <z>8</z>
     <height>240</height>
     <location_x>400</location_x>
     <location_y>160</location_y>
@@ -147,7 +148,7 @@
       <zoomfactor>500.0</zoomfactor>
     </plugin_config>
     <width>1173</width>
-    <z>6</z>
+    <z>7</z>
     <height>166</height>
     <location_x>0</location_x>
     <location_y>656</location_y>
@@ -159,7 +160,7 @@
       <decorations>true</decorations>
     </plugin_config>
     <width>493</width>
-    <z>5</z>
+    <z>6</z>
     <height>160</height>
     <location_x>680</location_x>
     <location_y>0</location_y>
@@ -169,7 +170,7 @@
     <mote_arg>0</mote_arg>
     <plugin_config>
       <port>60001</port>
-      <bound>false</bound>
+      <bound>true</bound>
     </plugin_config>
     <width>362</width>
     <z>4</z>
@@ -185,7 +186,7 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>350</width>
-    <z>2</z>
+    <z>1</z>
     <height>141</height>
     <location_x>14</location_x>
     <location_y>397</location_y>
@@ -198,7 +199,7 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>350</width>
-    <z>3</z>
+    <z>2</z>
     <height>96</height>
     <location_x>8</location_x>
     <location_y>548</location_y>
@@ -211,7 +212,7 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>768</width>
-    <z>0</z>
+    <z>3</z>
     <height>257</height>
     <location_x>404</location_x>
     <location_y>400</location_y>

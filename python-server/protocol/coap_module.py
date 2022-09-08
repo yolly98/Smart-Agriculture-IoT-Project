@@ -46,7 +46,7 @@ def send_msg(addr, path):
     client = HelperClient(server=(host, port))
     response = client.get(path)
     print(response.pretty_print())
-     #client.stop()
+    #client.stop()
 
 def client_callback(response):
     log.log_receive(response)
@@ -76,7 +76,6 @@ class ConfigurationRes(Resource):
         #config = { "land_id": 4, "node_id": 5}
         #self.payload = "{"\"
         self.payload = "ciao"
-        print(self)
         return self
 
     def render_PUT(self, request):
@@ -97,7 +96,7 @@ class ConfigurationRes(Resource):
 class CoAPServer(CoAP):
     def __init__(self, host, port):
         CoAP.__init__(self, (host, port), False)
-        self.add_resource("new_config/", ConfigurationRes())
+        self.add_resource("new_config", ConfigurationRes())
 
 
 def listener():

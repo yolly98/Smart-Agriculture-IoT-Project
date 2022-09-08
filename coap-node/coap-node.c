@@ -119,8 +119,9 @@ void client_chunk_handler(coap_message_t *response){
     int len = coap_get_payload(response, &chunk);
     char msg[MSG_SIZE];
     sprintf(msg,"%s",chunk);
+    printf("[!] received %s [%d]\n", msg, len);
     
-    printf("[!] ASSIGN_CONFIG command elaboration ...\n");
+    /*printf("[!] ASSIGN_CONFIG command elaboration ...\n");
     STATE = STATE_CONFIGURED;
     int n_arguments = 9; 
     char arguments[n_arguments][100];
@@ -143,7 +144,7 @@ void client_chunk_handler(coap_message_t *response){
     printf("[+] ASSIGN_CONFIG command elaborated with success\n");
 
     config_rsc.trigger();
-    printf(" <  %.*s", len, (char *)chunk);
+    printf(" <  %.*s", len, (char *)chunk);*/
 }
 
 /*-------------------------------------------------------*/
@@ -326,9 +327,9 @@ PROCESS_THREAD(coap_node, ev, data){
         if(ev == serial_line_event_message){
             char * msg = (char*)data;
             printf("[!] recevived '%s' by serial\n", msg);
-            coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_PUT, 0);
+            coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
             coap_set_header_uri_path(coap_module.request, "/new_config");
-            coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg) - 1);
+            //coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg) - 1);
             COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
         }
 

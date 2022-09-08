@@ -9,7 +9,7 @@ from coapthon.client.helperclient import HelperClient
 from coapthon.utils import parse_uri
 
 nodes = dict()
-my_ip = "0.0.0.0"
+my_ip = "fd00::1"
 port = 5683
 
 # --------------- CLIENT---------------- #
@@ -62,6 +62,14 @@ def client_observe(addr, path):
 
 # ------------ SERVER ---------------- #
 
+def extract_addr(request):
+    addr = str(request)
+    addr = addr.split(",")
+    addr = addr[0].split("(")
+    addr = addr[1].split(",")
+    addr = addr[0].replace("\'", "")
+    return addr
+
 class ConfigurationRes(Resource):
 
     def __init__(self, name="Config Portal", coap_server=None):
@@ -75,23 +83,14 @@ class ConfigurationRes(Resource):
     def render_GET(self, request):
         #config = { "land_id": 4, "node_id": 5}
         #self.payload = "{"\"
-        self.payload = "ciao"
-        return self
-
-    def render_PUT(self, request):
         msg = request.payload
-        addr = str(request)
-        addr = addr.split(",")
-        addr = addr[0].split("(")
-        addr = addr[1].split(",")
-        addr = addr[0].replace("\'", "")
+        addr = extract_addr(request)
         to_print = "received " + str(msg) + " from " + addr
         log.log_info(to_print)
+        self.payload = "config_rqst_ack"
         #TODO inserire add_addr(land_id, node_id, addr)
         #TODO fare l'observing
-        self.payload = "config_rqst_ack"
         return self
-
 
 class CoAPServer(CoAP):
     def __init__(self, host, port):

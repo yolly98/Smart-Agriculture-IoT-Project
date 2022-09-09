@@ -72,11 +72,11 @@ def send_msg(land_id, node_id, path, mode, msg):
     log.log_info(f"received (coap) {response.payload}")
 
     doc = json.loads(response.payload)
-    if doc['cmd'].find("status"):
+    if doc['cmd'].find("status") >= 0:
         coapStatus(land_id, node_id, doc)
     elif doc['cmd'] == "irrigation":
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
-        from_node.irrigatino(msg)
+        from_node.irrigation(msg)
     elif doc['cmd'] == "mst":
         msg = { 'cmd':'moisture', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'moisture', 'value': doc['value'] } }
         from_node.moisture(msg)
@@ -113,11 +113,11 @@ def client_callback(response):
     if response.payload == None:
         log.log_err("received Non from observing")
     doc = json.loads(response.payload)
-    if doc['cmd'].find("status"):
+    if doc['cmd'].find("status") >= 0:
         coapStatus(land_id, node_id, doc)
     elif doc['cmd'] == "irrigation":
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
-        from_node.irrigatino(msg)
+        from_node.irrigation(msg)
     elif doc['cmd'] == "mst":
         msg = { 'cmd':'moisture', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'moisture', 'value': doc['value'] } }
         from_node.moisture(msg)

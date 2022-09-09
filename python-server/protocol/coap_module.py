@@ -3,6 +3,8 @@ import sys
 import socket
 import sys
 import log
+import json
+import to_node
 from coapthon.server.coap import CoAP
 from coapthon.resources.resource import Resource
 from coapthon.client.helperclient import HelperClient
@@ -28,7 +30,7 @@ def add_nodes(land_id, node_id, addr):
         client_observe(addr, "/sensor/tmp")
 
 
-def send_msg(land_id, node_id, path):
+def send_msg(land_id, node_id, path, mode, msg):
     index = "NODE/" + land_id + "/" + node_id
     if not nodes[index]:
         log.log_err("Node address uknown")
@@ -36,8 +38,13 @@ def send_msg(land_id, node_id, path):
     
     host = nodes[index]
     client = HelperClient(server=(host, port))
-    response = client.get(path)
-    print(response.pretty_print())
+    if mode == "GET":
+        response = client.get(path)
+    elif mode == "PUT":
+        response = client.put(path, msg)
+    log_info(response.pretty_print())
+    doc = json.loads(response.payload)
+    #TODO smistare i comandi
     #client.stop()
 
 def send_msg(addr, path):
@@ -81,15 +88,12 @@ class ConfigurationRes(Resource):
         self.interface_type = "if1"
 
     def render_GET(self, request):
-        #config = { "land_id": 4, "node_id": 5}
-        #self.payload = "{"\"
-        msg = request.payload
+        msg = json.loads(request.payload)
         addr = extract_addr(request)
         to_print = "received " + str(msg) + " from " + addr
         log.log_info(to_print)
-        self.payload = "config_rqst_ack"
-        #TODO inserire add_addr(land_id, node_id, addr)
-        #TODO fare l'observing
+        self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP")
+        add_nodes(msg['land_id'], msg['node_id'], addr)
         return self
 
 class CoAPServer(CoAP):

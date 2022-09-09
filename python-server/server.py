@@ -15,7 +15,8 @@ from protocol import coap_module
 
 log.log_init()
 mqtt_module.mqtt_init()
-to_node.get_config(True)
+to_node.get_config(True, "MQTT")
+to_node.get_config(True, "COAP")
 
 #functinon for thread 1(console)
 def server_console():
@@ -61,7 +62,6 @@ def server_console():
             print("--------- OTHERS ------------------")
             print(".[28]    test received messages")
             print(".[29]    exit")
-            print(".[30]    test coap")
             cmd = log.log_input("$ Type a number or help: ")
 
         if cmd.isdigit() and int(cmd) == 1:
@@ -157,8 +157,6 @@ def server_console():
             log.log_info("typed 'exit'")
             log.log_info("Press Ctrl+c two time in order to stop the other threads")
             exit()
-        elif cmd.isdigit() and int(cmd) == 30:
-            coap_module.send_msg("fd00::202:2:2:2", "/irrigation")
         else:
             log.log_err(f"command not valid!")
 
@@ -174,7 +172,8 @@ def mqtt_server_check_node():
         
         #check if nodes are online
         if (time.time() - start_timer) >= end_timer:
-            to_node.is_alive(True)
+            to_node.is_alive(True, "MQTT")
+            to_node.is_alive(True, "COAP")
             update_vw.set_all_node_offline_vw()
             start_timer = time.time()
 

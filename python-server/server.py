@@ -155,6 +155,7 @@ def server_console():
                 log.log_err(f"command non valid!")
         elif cmd.isdigit() and int(cmd) == 29:
             coap_module.show_coap_nodes()
+            mqtt_module.show_mqtt_nodes()
         elif cmd.isdigit() and int(cmd) == 30:
             log.log_info("typed 'exit'")
             log.log_info("Press Ctrl+c two time in order to stop the other threads")

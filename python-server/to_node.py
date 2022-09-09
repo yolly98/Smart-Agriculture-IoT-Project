@@ -77,8 +77,14 @@ def irr_cmd():
 
     msg = ""
     if protocol == "MQTT":
+        if not mqtt_module.check_node(land_id, node_id):
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
         msg = { 'cmd': 'irr_cmd', 'body': { 'enable': enabled, 'status': status, 'limit': int(limit), 'irr_duration': int(irr_duration) } }
     elif protocol == "COAP":
+        if not coap_module.check_node(land_id, node_id):
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
         msg = { 'enable': enabled, 'status': status, 'limit': int(limit), 'irr_duration': int(irr_duration) }
     
     json_msg = json.dumps(msg)
@@ -135,8 +141,14 @@ def get_config(broadcast):
         topic = f"NODE/{land_id}/{node_id}"
         log.log_send(f"[{topic}] {json_msg}")
         if protocol == "MQTT":
+            if not mqtt_module.check_node(land_id, node_id):
+                log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+                return
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
+            if not coap_module.check_node(land_id, node_id):
+                log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+                return
             result = coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
             if not result:
                 return
@@ -171,6 +183,7 @@ def get_config(broadcast):
                 coap_module.add_nodes(land_id, node_id, address)
                 result = coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
                 if not result:
+                    coap_module.delete_node(land_id, node_id)
                     continue
                 coap_module.send_msg(land_id, node_id, "irrigation", "PUT", "status")
                 coap_module.send_msg(land_id, node_id, "sensor/mst", "PUT", "status")
@@ -231,6 +244,15 @@ def assign_config_cmd():
             break
         else:
             log.log_err(f"invalid value")
+
+    if protocol == "MQTT":
+        if not mqtt_module.check_node(land_id, node_id):
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
+    elif protocol == "COAP":
+        if not coap_module.check_node(land_id, node_id):
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
     assign_config(land_id, node_id, protocol, address, True)
 
 
@@ -249,8 +271,8 @@ def assign_config(land_id, node_id, protocol, address, cmd):
             msg = { 'cmd': 'error_land'}
         else:
             #save the new config
-            add_mysql_db.add_configuration(land_id, node_id, protocol, address, "online", config[6], config[7], config[8], config[9], config[10], config[11], config[12])
-            msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
+            add_mysql_db.add_configuration(land_id, node_id, protocol, address, "online", "true", config[7], config[8], config[9], config[10], config[11], config[12])
+            msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': 'true', 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
     else:
         if config[2] != protocol or config[3] != address:
             update_mysql_db.update_address_in_configuration(land_id, node_id, protocol, address)
@@ -274,6 +296,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
             coap_module.reset_config(land_id, node_id)
             result = coap_module.send_msg(land_id, node_id, "irrigation", "PUT", json.dumps(msg['body']['irr_config']))
             if not result:
+                coap_module.delete_node(land_id, node_id)
                 return
             coap_module.send_msg(land_id, node_id, "sensor/mst", "PUT", str(msg['body']['mst_timer']))
             coap_module.send_msg(land_id, node_id, "sensor/ph", "PUT", str(msg['body']['ph_timer']))
@@ -346,8 +369,14 @@ def timer_cmd():
 
     msg = ""
     if protocol == "MQTT":
+        if not mqtt_module.check_node(land_id, node_id):
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
         msg = { 'cmd': 'timer_cmd', 'body': { 'sensor': sensor, 'timer': int(timer) } }
     elif protocol == "COAP":
+        if not coap_module.check_node(land_id, node_id):
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
         if sensor == "mst":
             path = "sensor/mst"
         elif sensor == "ph":
@@ -420,8 +449,14 @@ def get_sensor():
     log.log_send(f"[{topic}] {json_msg}")
 
     if protocol == "MQTT":
+        if not mqtt_module.check_node(land_id, node_id):
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
         mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
+        if not coap_module.check_node(land_id, node_id):
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
         path = ""
         if sensor == "mst":
             path = "sensor/mst"
@@ -478,8 +513,14 @@ def is_alive(broadcast):
         topic = f"NODE/{land_id}/{node_id}"
         log.log_send(f"[{topic}] {json_msg}")
         if protocol == "MQTT":
+            if not mqtt_module.check_node(land_id, node_id):
+                log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+                return
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
+            if not coap_module.check_node(land_id, node_id):
+                log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+                return
             coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")
         else:
             log.log_err("protocol not recognized")

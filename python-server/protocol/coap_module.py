@@ -56,17 +56,27 @@ def add_nodes(land_id, node_id, addr):
         nodes[index] = dict()
         nodes[index]['addr'] = addr
         nodes[index]['host'] = new_client(addr)
+        return
 
 #----------------------
 
 def show_coap_nodes():
 
-    log.log_info("List of known nodes")
+    log.log_info("List of known coap nodes")
     keys = [ key for key, val in nodes.items()]
     for key in keys:
         print(f"index: {key} addr: {nodes[key]['addr']}")
     print("-----------------------")
         
+#----------------------
+
+def check_node(land_id, node_id):
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if index in nodes:
+        return True
+    else:
+        return False
+
 #----------------------
 
 def delete_node(land_id, node_id):
@@ -147,6 +157,10 @@ def client_callback(response):
         log.log_err(f"received None from ({land_id}, {node_id})")
         return False
 
+    if response.payload == "TooManyObservers":
+        log.log_err(f"error too many oberservers in node ({land_id}, {node_id})")
+        return False
+    
     log.log_info(f"received {response.payload} from ({land_id}, {node_id})")
     doc = json.loads(response.payload)
     if doc['cmd'].find("status") >= 0:

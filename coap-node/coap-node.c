@@ -241,7 +241,6 @@ PROCESS_THREAD(coap_node, ev, data){
                     node_id = btn_count;
                     break;
                 }
-                
             }
         }
         if(ev == serial_line_event_message){
@@ -275,7 +274,6 @@ PROCESS_THREAD(coap_node, ev, data){
             else    
                 etimer_restart(&btn_etimer);
         }
-
     }
 
     leds_single_off(LEDS_RED);

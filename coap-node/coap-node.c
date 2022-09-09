@@ -121,6 +121,13 @@ void client_chunk_handler(coap_message_t *response){
     sprintf(msg,"%s",(char*)chunk);
     
     printf("[!] ASSIGN_CONFIG command elaboration ...\n");
+
+    if(strcmp(msg, "error_land") == 0){
+        printf("[-] land selected doesn't exist\n");
+        STATE = STATE_ERROR;
+        return;
+    }
+
     STATE = STATE_CONFIGURED;
     int n_arguments = 8; 
     char arguments[n_arguments][100];
@@ -303,6 +310,8 @@ PROCESS_THREAD(coap_node, ev, data){
         COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
         if(STATE == STATE_CONFIGURED)
             break;
+        else if(STATE == STATE_ERROR)
+            process_exit(&coap_node);;
     }
     //assign_config_received_sim(); //simulation
     print_config();

@@ -39,6 +39,7 @@
 * [x] fare attenzione ai problemi di visibilità delle funzioni
 * [ ] controllare se tutte le librerie servono
 * [x] capire perchè all'assign config fa crashare il nodo su cooja
+* [ ] gestire caso land non trovata
 
 ### COAP SERVER
 * [x] inserire COAP nel server
@@ -48,12 +49,14 @@
 * [x] capire perchè non invia il payload con il put e get (funzionano solo richieste vuote)
 * [x] capire come contattare i nodi all'avvio se questi sono già configurati
 * [x] risolvere tutti i problemi di configurazione (server si avvia quando già il nodo è attivo e configurato)
-* [ ] capire perchè non riesco a mandare comandi (es. semplice get sensor)
+* [x] capire perchè non riesco a mandare comandi (es. semplice get sensor)
 * [x] capire perchè ricevo duplicati alla lettura sensori
 * [x] capire perchè a volte assegna configurazione a 0
 * [x] capire perchè il timer non viene resettato quando lo modifico
-* [ ] capire perchè a volte il server non riceve
+* [x] capire perchè a volte il server non riceve
 * [x] Se è attivo il nodo e il server si attiva dopo, poi non posso fargli l'osserving
 * [x] perchè quando invio un comando ricevo dall'observing?
+* [x] gestire caso land non trovata
+* [ ] capire perchè da errore l'mst-status quando lo ricevo
 
 

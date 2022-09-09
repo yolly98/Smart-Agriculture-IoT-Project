@@ -16,13 +16,6 @@ static void config_put_handler(
   int32_t *offset
 );
 
-static void config_del_handler(
-  coap_message_t *request,
-  coap_message_t *response,
-  uint8_t *buffer,
-  uint16_t preferred_size,
-  int32_t *offset
-);
 /*--------------------------------------------*/
 
 
@@ -39,7 +32,7 @@ EVENT_RESOURCE(
     config_get_handler,
     NULL,
     config_put_handler,
-    config_del_handler,
+    NULL,
     NULL
 );
 
@@ -121,16 +114,3 @@ static void config_put_handler(
 /*----------------------------------------------*/
 
 
-static void config_del_handler(
-  coap_message_t *request,
-  coap_message_t *response,
-  uint8_t *buffer,
-  uint16_t preferred_size,
-  int32_t *offset
-  ){
-
-    printf("[!] ERROR_LAND received, reset the node\n");
-    //process_exit(&coap_node); TODO
-    configuration.land_id = 0;
-    configuration.node_id = 0;
-}

@@ -264,8 +264,12 @@ def assign_config(land_id, node_id, protocol, address, cmd):
         mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
         if cmd == False:
+            if msg['cmd'] == 'error_land':
+                json_msg = 'error_land'
             return json_msg
         else:
+            if msg['cmd'] == 'error_land':
+                return
             coap_module.add_nodes(land_id, node_id, address)
             coap_module.reset_config(land_id, node_id)
             result = coap_module.send_msg(land_id, node_id, "irrigation", "PUT", json.dumps(msg['body']['irr_config']))

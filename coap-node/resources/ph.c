@@ -139,6 +139,7 @@ static void ph_put_handler(
   if(strcmp(msg, "status") == 0){
     printf(" <  get sensor/ph-status\n");
     send_ph_status(reply);
+    coap_remove_observer_by_uri(NULL, ph_rsc.url); //remove observer
   }
   else{
     ph_mem.ph_timer = atoi(msg);

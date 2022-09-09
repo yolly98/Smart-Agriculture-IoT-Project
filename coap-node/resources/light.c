@@ -136,6 +136,7 @@ static void light_put_handler(
   if(strcmp(msg, "status") == 0){
     printf(" <  get sensor/light-satus\n");
     send_light_status(reply);
+    coap_remove_observer_by_uri(NULL, light_rsc.url); //remove observer
   }   
   else{
     light_mem.light_timer = atoi(msg);

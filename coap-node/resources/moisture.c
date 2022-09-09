@@ -144,6 +144,7 @@ static void mst_put_handler(
   if(strcmp(msg, "status") == 0){
     printf(" <  get sensor/mst-status\n");
     send_mst_status(reply);
+    coap_remove_observer_by_uri(NULL, mst_rsc.url); //remove observer
   } 
   else{
     mst_mem.mst_timer = atoi(msg);

@@ -168,6 +168,7 @@ static void irr_put_handler(
   if(strcmp(msg, "status") == 0){
     printf(" <  get irrigation-status\n");
     send_irr_status(reply);
+    coap_remove_observer_by_uri(NULL, irr_rsc.url); //remove observer
   } 
   else{
     printf("[!] IRR_CMD command elaboration ...\n");

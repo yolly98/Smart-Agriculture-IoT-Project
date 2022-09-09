@@ -138,6 +138,7 @@ static void tmp_put_handler(
     if(strcmp(msg, "status") == 0){
       printf(" <  get sensor/tmp-status\n");
       send_tmp_status(reply);
+      coap_remove_observer_by_uri(NULL, tmp_rsc.url); //remove observer
     } 
     else{
       tmp_mem.tmp_timer = atoi(msg);

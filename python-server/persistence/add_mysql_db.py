@@ -73,6 +73,16 @@ def add_measurement_event(land_id, node_id, sensor, value):
     )
     mycursor = mydb.cursor(prepared=True)
 
+    sql = "SELECT * FROM measurement \
+        WHERE land_id = %s and node_id = %s \
+        and sensor = %s and m_timestamp = CURRENT_TIMESTAMP \
+        LIMIT 1"
+    mycursor.execute(sql, (land_id, node_id, sensor))
+    last_value = mycursor.fetchone()
+    if last_value:
+        log.log_err(f"duplicated value from ({land_id}, {node_id}, {sensor})")
+        return
+    
     sql = "INSERT INTO measurement (land_id, node_id, sensor, m_value) \
         VALUES (%s, %s, %s, %s)"
     mycursor.execute(sql, (land_id, node_id, sensor, value))

@@ -41,7 +41,9 @@ def new_client(addr):
 
 #----------------------
 
-def client_observe(client, path):
+def client_observe(land_id, node_id, path):
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    client = nodes[index]['host']
     client.observe(path, client_callback)
 
 #----------------------
@@ -165,7 +167,8 @@ def send_msg(land_id, node_id, path, mode, msg):
 
 def client_callback(response):
 
-    if response == None:
+    if response == None or response.payload == None:
+        log.log_err("received None from observing")
         return
     addr = extract_addr(response)
     index = [ key for key in nodes.items() if key[1]['addr'] == addr][0][0]
@@ -175,8 +178,6 @@ def client_callback(response):
     node_id = index[1]
 
     log.log_info(f"received from observing {response.payload}")
-    if response.payload == None:
-        log.log_err("received None from observing")
     doc = json.loads(response.payload)
     if doc['cmd'].find("status") >= 0:
         coapStatus(land_id, node_id, doc)
@@ -222,12 +223,11 @@ class ConfigurationRes(Resource):
         log.log_info(to_print)
         self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr, False)
         add_nodes(msg['land_id'], msg['node_id'], addr)
-        index = f"NODE/{msg['land_id']}/{msg['node_id']}"
-        client_observe(nodes[index]['host'], "/irrigation")
-        client_observe(nodes[index]['host'], "/sensor/mst")
-        client_observe(nodes[index]['host'], "/sensor/ph")
-        client_observe(nodes[index]['host'], "/sensor/light")
-        client_observe(nodes[index]['host'], "/sensor/tmp")
+        client_observe(msg['land_id'], msg['node_id'], "/irrigation")
+        client_observe(msg['land_id'], msg['node_id'], "/sensor/mst")
+        client_observe(msg['land_id'], msg['node_id'], "/sensor/ph")
+        client_observe(msg['land_id'], msg['node_id'], "/sensor/light")
+        client_observe(msg['land_id'], msg['node_id'], "/sensor/tmp")
         return self
 
 #----------------------

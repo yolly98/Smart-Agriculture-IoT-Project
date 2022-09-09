@@ -53,7 +53,6 @@
 * [x] capire perchè a volte assegna configurazione a 0
 * [x] capire perchè il timer non viene resettato quando lo modifico
 * [ ] capire perchè a volte il server non riceve
-
-Se è attivo il nodo e il server si attiva dopo, poi non posso fargli l'osserving
+* [x] Se è attivo il nodo e il server si attiva dopo, poi non posso fargli l'osserving
 
 

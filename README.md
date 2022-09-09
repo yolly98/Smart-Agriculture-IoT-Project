@@ -38,11 +38,12 @@
 * [x] eliminare i rimasugli del modulo mqtt
 * [x] fare attenzione ai problemi di visibilità delle funzioni
 * [ ] controllare se tutte le librerie servono
-* [ ] capire perchè all'assign config fa crashare il nodo su cooja
+* [x] capire perchè all'assign config fa crashare il nodo su cooja
 
 ### COAP SERVER
 * [x] inserire COAP nel server
 * [ ] vedere se i file.h sono aggiornati con tutte le funzioni
 * [x] capire perchè con cooja non ricevo nulla (vedere il border router!)
+* [ ] capire perchè l'observing lato server da delle eccezioni
 
 

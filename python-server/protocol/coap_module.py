@@ -5,6 +5,7 @@ import sys
 import log
 import json
 import to_node
+import from_node
 from coapthon.server.coap import CoAP
 from coapthon.resources.resource import Resource
 from coapthon.client.helperclient import HelperClient
@@ -72,7 +73,7 @@ def send_msg(land_id, node_id, path, mode, msg):
 
     doc = json.loads(response.payload)
     if doc['cmd'].find("status"):
-        from_node.coapStatus(doc)
+        coapStatus(land_id, node_id, doc)
     elif doc['cmd'] == "irrigation":
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
         from_node.irrigatino(msg)
@@ -103,9 +104,17 @@ def send_msg(land_id, node_id, path, mode, msg):
 
 def client_callback(response):
     log.log_info(f"received from observing {response.payload}")
+    addr = extract_addr(response)
+    index = [ key for key in nodes.items() if key[1] == addr][0][0]
+    index = index.replace("NODE/","")
+    index = index.split("/")
+    land_id = index[0]
+    node_id = index[1]
+    if response.payload == None:
+        log.log_err("received Non from observing")
     doc = json.loads(response.payload)
     if doc['cmd'].find("status"):
-        from_node.coapStatus(doc)
+        coapStatus(land_id, node_id, doc)
     elif doc['cmd'] == "irrigation":
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
         from_node.irrigatino(msg)
@@ -125,13 +134,11 @@ def client_callback(response):
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
         from_node.is_alive_ack(msg)
 
-
 def client_observe(addr, path):
     
     host = addr
     client = HelperClient(server=(host, port))
-    cmd = "coap://" + host + ":" + str(port) + path
-    client.observe(cmd, client_callback)
+    client.observe(path, client_callback)
 
 
 # ------------ SERVER ---------------- #

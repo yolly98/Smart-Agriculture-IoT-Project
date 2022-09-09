@@ -136,6 +136,7 @@ def get_config(broadcast):
         if protocol == "MQTT":
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
+            coap_module.add_nodes(land_id, node_id, address)
             coap_module.send_msg(land_id, node_id, "configuration", "GET", "status")
             coap_module.send_msg(land_id, node_id, "irrigation", "GET", "status")
             coap_module.send_msg(land_id, node_id, "sensor/mst", "GET", "status")

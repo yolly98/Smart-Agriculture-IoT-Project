@@ -17,6 +17,58 @@ port = 5683
 
 configs = dict()
 
+#----------------------
+
+def extract_addr(request):
+    addr = str(request)
+#    addr = addr.split(",")
+#    addr = addr[0].split("(")
+#    addr = addr[1].split(",")
+#    addr = addr[0].replace("\'", "")
+    addr = addr.split("(")
+    addr = addr[1].split(")")
+    addr = addr[0].split(',')
+    addr = addr[0].replace("\'","")
+    return addr
+
+#----------------------
+
+def new_client(addr):
+    host = addr
+    client = HelperClient(server=(host, port))
+    return client
+
+#----------------------
+
+def client_observe(client, path):
+    client.observe(path, client_callback)
+
+#----------------------
+
+def add_nodes(land_id, node_id, addr):
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if (index in nodes) and nodes[index]['addr'] == addr:
+        return
+    else:
+        nodes[index] = dict()
+        nodes[index]['addr'] = addr
+        nodes[index]['host'] = new_client(addr)
+        client_observe(nodes[index]['host'], "/irrigation")
+        client_observe(nodes[index]['host'], "/sensor/mst")
+        client_observe(nodes[index]['host'], "/sensor/ph")
+        client_observe(nodes[index]['host'], "/sensor/light")
+        client_observe(nodes[index]['host'], "/sensor/tmp")
+
+#----------------------
+
+def delete_node(land_id, node_id):
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if index in nodes:
+        nodes[index]['host'].stop()
+        nodes.pop(index)
+
+#----------------------
+
 def coapStatus(land_id, node_id, doc):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     if  not (index in configs):
@@ -42,33 +94,23 @@ def coapStatus(land_id, node_id, doc):
 
 # --------------- CLIENT---------------- #
 
-
-def add_nodes(land_id, node_id, addr):
-    index = "NODE/" + str(land_id) + "/" + str(node_id)
-    if (index in nodes) and nodes[index] == addr:
-        return
-    else:
-        nodes[index] = addr
-        client_observe(addr, "/irrigation")
-        client_observe(addr, "/sensor/mst")
-        client_observe(addr, "/sensor/ph")
-        client_observe(addr, "/sensor/light")
-        client_observe(addr, "/sensor/tmp")
-
-
 def send_msg(land_id, node_id, path, mode, msg):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     if not (index in nodes):
-        log.log_err("Node address uknown")
+        log.log_err(f"{index} address uknown")
         return
     
-    host = nodes[index]
-    client = HelperClient(server=(host, port))
+    client = nodes[index]['host']
     if mode == "GET":
         response = client.get(path, msg)
     elif mode == "PUT":
         response = client.put(path, msg)
     
+    if response == None or response.payload == "" or response.payload == None:
+        log.log_err(f"node {index} doesn't respond")
+        delete_node(land_id, node_id)
+        return
+
     log.log_info(f"received (coap) {response.payload}")
 
     doc = json.loads(response.payload)
@@ -102,14 +144,20 @@ def send_msg(land_id, node_id, path, mode, msg):
 #    print(response.pretty_print())
 #    #client.stop()
 
+#----------------------
+
 def client_callback(response):
-    log.log_info(f"received from observing {response.payload}")
+
+    if response == None:
+        return
     addr = extract_addr(response)
-    index = [ key for key in nodes.items() if key[1] == addr][0][0]
+    index = [ key for key in nodes.items() if key[1]['addr'] == addr][0][0]
     index = index.replace("NODE/","")
     index = index.split("/")
     land_id = index[0]
     node_id = index[1]
+
+    log.log_info(f"received from observing {response.payload}")
     if response.payload == None:
         log.log_err("received Non from observing")
     doc = json.loads(response.payload)
@@ -134,22 +182,11 @@ def client_callback(response):
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
         from_node.is_alive_ack(msg)
 
-def client_observe(addr, path):
-    
-    host = addr
-    client = HelperClient(server=(host, port))
-    client.observe(path, client_callback)
 
 
 # ------------ SERVER ---------------- #
 
-def extract_addr(request):
-    addr = str(request)
-    addr = addr.split(",")
-    addr = addr[0].split("(")
-    addr = addr[1].split(",")
-    addr = addr[0].replace("\'", "")
-    return addr
+
 
 class ConfigurationRes(Resource):
 
@@ -170,11 +207,14 @@ class ConfigurationRes(Resource):
         add_nodes(msg['land_id'], msg['node_id'], addr)
         return self
 
+#----------------------
+
 class CoAPServer(CoAP):
     def __init__(self, host, port):
         CoAP.__init__(self, (host, port), False)
         self.add_resource("new_config", ConfigurationRes())
 
+#----------------------
 
 def listener():
 

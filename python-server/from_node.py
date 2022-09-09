@@ -20,7 +20,7 @@ def config_request(protocol, address, doc):
     if msg == "":
         msg = config_request_sim()
 
-    to_node.assign_config(msg['body']['land_id'], msg['body']['node_id'], protocol, address)
+    to_node.assign_config(msg['body']['land_id'], msg['body']['node_id'], protocol, address, False)
 
 
 #------------

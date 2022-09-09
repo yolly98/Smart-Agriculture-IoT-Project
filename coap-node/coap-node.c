@@ -299,7 +299,7 @@ PROCESS_THREAD(coap_node, ev, data){
     coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
     coap_set_header_uri_path(coap_module.request, "/new_config");
     coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg));
-    while(true){ //TODO capire se il while è necessario
+    while(true){
         COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
         if(STATE == STATE_CONFIGURED)
             break;
@@ -342,22 +342,22 @@ PROCESS_THREAD(coap_node, ev, data){
             mst_rsc.trigger();
             int moisture = get_mst_value(); 
             irr_starting(moisture);
-            set_mst_timer();
+            restart_mst_timer();
         }
 
         if(check_ph_timer_expired()){
             ph_rsc.trigger();
-            set_ph_timer();
+            restart_ph_timer();
         }
 
         if(check_light_timer_expired()){
             light_rsc.trigger();
-            set_light_timer();
+            restart_light_timer();
         }
 
         if(check_tmp_timer_expired()){
             tmp_rsc.trigger();
-            set_tmp_timer();
+            restart_tmp_timer();
         }
 
         if(check_irr_timer_expired())

@@ -50,6 +50,14 @@ void set_light_timer(){
   etimer_set(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
 }
 
+void reset_light_timer(){
+  etimer_reset_with_new_interval(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
+}
+
+void restart_light_timer(){
+  etimer_restart(&light_mem.light_etimer);
+}
+
 bool check_light_timer_expired(){
   return etimer_expired(&light_mem.light_etimer);
 }
@@ -131,7 +139,7 @@ static void light_put_handler(
   }   
   else{
     light_mem.light_timer = atoi(msg);
-    etimer_set(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
+    reset_light_timer();
     send_light_status(reply); 
   }
   coap_set_header_content_format(response, TEXT_PLAIN);

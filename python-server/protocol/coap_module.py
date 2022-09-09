@@ -76,6 +76,16 @@ def delete_node(land_id, node_id):
 
 #----------------------
 
+def reset_config(land_id, node_id):
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if index not in configs:
+        return
+    configs[index].pop('irr-status')
+    configs[index].pop('mst-status')
+    configs[index].pop('ph-status')
+    configs[index].pop('light-status')
+    configs[index].pop('tmp-status')
+
 def coapStatus(land_id, node_id, doc):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     if not (index in configs):
@@ -122,11 +132,12 @@ def send_msg(land_id, node_id, path, mode, msg):
     doc = json.loads(response.payload)
     if doc['cmd'].find("status") >= 0:
         if doc['cmd'] == 'config-status':
-            if doc['body']['land_id'] != int(land_id) or doc['body']['node_id'] != int(node_id):
+            if int(doc['body']['land_id']) != int(land_id) or int(doc['body']['node_id']) != int(node_id):
                 log.log_err(f"node {index} address is changed")
                 update_mysql_db.update_address_in_configuration(land_id, node_id, "null", "null")
                 delete_node(land_id, node_id)
-                return
+                return False
+
         coapStatus(land_id, node_id, doc)
     elif doc['cmd'] == "irrigation":
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
@@ -209,7 +220,7 @@ class ConfigurationRes(Resource):
         addr = extract_addr(request)
         to_print = "received " + str(msg) + " from " + addr
         log.log_info(to_print)
-        self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr)
+        self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr, False)
         add_nodes(msg['land_id'], msg['node_id'], addr)
         index = f"NODE/{msg['land_id']}/{msg['node_id']}"
         client_observe(nodes[index]['host'], "/irrigation")

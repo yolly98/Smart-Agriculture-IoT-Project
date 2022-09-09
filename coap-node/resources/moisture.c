@@ -53,6 +53,14 @@ void set_mst_timer(){
   etimer_set(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
 }
 
+void reset_mst_timer(){
+  etimer_reset_with_new_interval(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
+}
+
+void restart_mst_timer(){
+  etimer_restart(&mst_mem.mst_etimer);
+}
+
 bool check_mst_timer_expired(){
   return etimer_expired(&mst_mem.mst_etimer);
 }
@@ -139,7 +147,7 @@ static void mst_put_handler(
   } 
   else{
     mst_mem.mst_timer = atoi(msg);
-    etimer_set(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
+    reset_mst_timer();
     send_mst_status(reply); 
   }
   coap_set_header_content_format(response, TEXT_PLAIN);

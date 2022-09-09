@@ -168,10 +168,10 @@ def get_config(broadcast):
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
-                result = coap_module.add_nodes(land_id, node_id, address)
+                coap_module.add_nodes(land_id, node_id, address)
+                result = coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
                 if not result:
                     continue
-                coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
                 coap_module.send_msg(land_id, node_id, "irrigation", "PUT", "status")
                 coap_module.send_msg(land_id, node_id, "sensor/mst", "PUT", "status")
                 coap_module.send_msg(land_id, node_id, "sensor/ph", "PUT", "status")
@@ -191,6 +191,7 @@ def assign_config_cmd():
     node_id = ""
     protocol = ""
     address = ""
+
     log.log_info("Type the arguments or 'cancel'")
     while True:
         land_id = log.log_input("land_id: ")
@@ -224,10 +225,10 @@ def assign_config_cmd():
             break
         else:
             log.log_err(f"invalid value")
-    assign_config(land_id, node_id, protocol, address)
+    assign_config(land_id, node_id, protocol, address, True)
 
 
-def assign_config(land_id, node_id, protocol, address):
+def assign_config(land_id, node_id, protocol, address, cmd):
 
     log.log_info("assign_config command")
     config = get_mysql_db.get_config(land_id, node_id, True)
@@ -256,7 +257,18 @@ def assign_config(land_id, node_id, protocol, address):
     if protocol == "MQTT":
         mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
-        return json_msg
+        if cmd == False:
+            return json_msg
+        else:
+            coap_module.add_nodes(land_id, node_id, address)
+            coap_module.reset_config(land_id, node_id)
+            result = coap_module.send_msg(land_id, node_id, "irrigation", "PUT", json.dumps(msg['body']['irr_config']))
+            if not result:
+                return
+            coap_module.send_msg(land_id, node_id, "sensor/mst", "PUT", str(msg['body']['mst_timer']))
+            coap_module.send_msg(land_id, node_id, "sensor/ph", "PUT", str(msg['body']['ph_timer']))
+            coap_module.send_msg(land_id, node_id, "sensor/light", "PUT", str(msg['body']['light_timer']))
+            coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", str(msg['body']['tmp_timer']))
     else:
         log.log_err("protocol not recognized")
         

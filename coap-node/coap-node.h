@@ -63,6 +63,8 @@ void get_config(unsigned int* land_id,unsigned int* node_id);
 void save_irr_config(bool enabled, unsigned int irr_limit, unsigned int irr_duration, bool irr_status);
 void get_irr_config(bool* enabled, unsigned int* irr_limit, unsigned int* irr_duration, bool* irr_status);
 void set_irr_timer();
+void reset_irr_timer();
+void restart_irr_timer();
 bool check_irr_timer_expired();
 void irr_stopping();
 void irr_starting(int moisture);
@@ -72,26 +74,33 @@ void save_mst_timer(int timer);
 int get_mst_timer();
 int get_mst_value();
 void set_mst_timer();
+void reset_mst_timer();
+void restart_mst_timer();
 bool check_mst_timer_expired();
 
 //PH RESOURCE FUNCTION
 void save_ph_timer(int timer);
 int get_ph_timer();
 void set_ph_timer();
+void reset_ph_timer();
+void restart_ph_timer();
 bool check_ph_timer_expired();
 
 //LIGHT RESOURCE FUNCTION
 void save_light_timer(int timer);
 int get_light_timer();
 void set_light_timer();
+void reset_light_timer();
+void restart_light_timer();
 bool check_light_timer_expired();
 
 //TRMPERATURE RESOURCE FUNCTION
 void save_tmp_timer(int timer);
 int get_tmp_timer();
 void set_tmp_timer();
+void reset_tmp_timer();
+void restart_tmp_timer();
 bool check_tmp_timer_expired();
-
 
 PROCESS(coap_node, "Coap node");
 AUTOSTART_PROCESSES(&coap_node);

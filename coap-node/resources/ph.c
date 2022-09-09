@@ -50,6 +50,14 @@ void set_ph_timer(){
   etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
 }
 
+void reset_ph_timer(){
+  etimer_reset_with_new_interval(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
+}
+
+void restart_ph_timer(){
+  etimer_restart(&ph_mem.ph_etimer);
+}
+
 bool check_ph_timer_expired(){
   return etimer_expired(&ph_mem.ph_etimer);
 }
@@ -134,7 +142,7 @@ static void ph_put_handler(
   }
   else{
     ph_mem.ph_timer = atoi(msg);
-    etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
+    reset_ph_timer();
     send_ph_status(reply); 
   }
   coap_set_header_content_format(response, TEXT_PLAIN);

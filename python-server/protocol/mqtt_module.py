@@ -20,7 +20,7 @@ def on_message(client, userdata, msg):
     if doc['cmd'] == 'config_rqst':
         from_node.config_request("MQTT", doc, "")
     elif doc['cmd'] == 'status':
-        from_node.status("MQTT", doc)
+        from_node.status("MQTT", "", doc)
     elif doc['cmd'] == 'irrigation':
         from_node.irrigation(doc)
     elif doc['cmd'] == 'moisture':

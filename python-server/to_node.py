@@ -2,6 +2,7 @@ import json
 import log
 from persistence import get_mysql_db
 from persistence import add_mysql_db
+from persistence import update_mysql_db
 from protocol import mqtt_module
 from protocol import coap_module
 
@@ -66,7 +67,7 @@ def irr_cmd():
         else:
             log.log_err(f"invalid value, has to be > 0")
     while True:
-        protocol = log.log_input("protocolo(MQTT/COAP): ")
+        protocol = log.log_input("protocol(MQTT/COAP): ")
         if protocol == "cancel":
             return
         if protocol == "MQTT" or protocol == "COAP":
@@ -123,7 +124,7 @@ def get_config(broadcast):
             else:
                 log.log_err(f"invalid value, has to be > 0")
         while True:
-            protocol = log.log_input("protocolo(MQTT/COAP): ")
+            protocol = log.log_input("protocol(MQTT/COAP): ")
             if protocol == "cancel":
                 return
             if protocol == "MQTT" or protocol == "COAP":
@@ -136,13 +137,12 @@ def get_config(broadcast):
         if protocol == "MQTT":
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
-            coap_module.add_nodes(land_id, node_id, address)
-            coap_module.send_msg(land_id, node_id, "configuration", "GET", "status")
-            coap_module.send_msg(land_id, node_id, "irrigation", "GET", "status")
-            coap_module.send_msg(land_id, node_id, "sensor/mst", "GET", "status")
-            coap_module.send_msg(land_id, node_id, "sensor/ph", "GET", "status")
-            coap_module.send_msg(land_id, node_id, "sensor/light", "GET", "status")
-            coap_module.send_msg(land_id, node_id, "sensor/tmp", "GET", "status")
+            coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
+            coap_module.send_msg(land_id, node_id, "irrigation", "PUT", "status")
+            coap_module.send_msg(land_id, node_id, "sensor/mst", "PUT", "status")
+            coap_module.send_msg(land_id, node_id, "sensor/ph", "PUT", "status")
+            coap_module.send_msg(land_id, node_id, "sensor/light", "PUT", "status")
+            coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", "status")
         else:
             log.log_err("protocol not recognized")
             return
@@ -167,15 +167,15 @@ def get_config(broadcast):
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
                 coap_module.add_nodes(land_id, node_id, address)
-                coap_module.send_msg(land_id, node_id, "configuration", "GET", "status")
-                coap_module.send_msg(land_id, node_id, "irrigation", "GET", "status")
-                coap_module.send_msg(land_id, node_id, "sensor/mst", "GET", "status")
-                coap_module.send_msg(land_id, node_id, "sensor/ph", "GET", "status")
-                coap_module.send_msg(land_id, node_id, "sensor/light", "GET", "status")
-                coap_module.send_msg(land_id, node_id, "sensor/tmp", "GET", "status")
+                coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
+                coap_module.send_msg(land_id, node_id, "irrigation", "PUT", "status")
+                coap_module.send_msg(land_id, node_id, "sensor/mst", "PUT", "status")
+                coap_module.send_msg(land_id, node_id, "sensor/ph", "PUT", "status")
+                coap_module.send_msg(land_id, node_id, "sensor/light", "PUT", "status")
+                coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", "status")
             else:
                 log.log_err("protocol not recognized")
-                return
+                continue
         
     
 
@@ -205,7 +205,7 @@ def assign_config_cmd():
         else:
             log.log_err(f"invalid value")
     while True:
-        protocol = log.log_input("protocolo(MQTT/COAP): ")
+        protocol = log.log_input("protocol(MQTT/COAP): ")
         if protocol == "cancel":
             return
         if protocol == "MQTT" or protocol == "COAP":
@@ -241,8 +241,8 @@ def assign_config(land_id, node_id, protocol, address):
             add_mysql_db.add_configuration(land_id, node_id, protocol, address, "online", config[6], config[7], config[8], config[9], config[10], config[11], config[12])
             msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
     else:
-        if config[3] != address:
-            update_mysql_db.update_configuration(land_id, node_id, protocol, address, config[6], config[7], config[8], config[9], config[10], config[11], config[12])
+        if config[2] != protocol or config[3] != address:
+            update_mysql_db.update_address_in_configuration(land_id, node_id, protocol, address)
         msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
     
     json_msg = json.dumps(msg)
@@ -292,7 +292,7 @@ def timer_cmd():
         sensor = log.log_input("sensor (mst/ph/light/tmp): ")
         if sensor == "cancel":
             return
-        if sensor == "moisture" or sensor == "ph" or sensor == 'light' or sensor == "tmp":
+        if sensor == "mst" or sensor == "ph" or sensor == 'light' or sensor == "tmp":
             break
         else:
             log.log_err(f"invalid value")
@@ -310,7 +310,7 @@ def timer_cmd():
         timer = 0
 
     while True:
-        protocol = log.log_input("protocolo(MQTT/COAP): ")
+        protocol = log.log_input("protocol(MQTT/COAP): ")
         if protocol == "cancel":
             return
         if protocol == "MQTT" or protocol == "COAP":
@@ -339,7 +339,7 @@ def timer_cmd():
     if protocol == "MQTT":
         mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
-        coap_module.send_msg(land_id, node_id, path, "PUT", json_msg)
+        coap_module.send_msg(land_id, node_id, path, "PUT", timer)
 
 #-------
 
@@ -374,13 +374,13 @@ def get_sensor():
         sensor = log.log_input("sensor (mst/ph/light/tmp): ")
         if sensor == "cancel":
             return
-        if sensor == "moisture" or sensor == "ph" or sensor == 'light' or sensor == "tmp":
+        if sensor == "mst" or sensor == "ph" or sensor == 'light' or sensor == "tmp":
             break
         else:
             log.log_err(f"invalid value")
 
     while True:
-        protocol = log.log_input("protocolo(MQTT/COAP): ")
+        protocol = log.log_input("protocol(MQTT/COAP): ")
         if protocol == "cancel":
             return
         if protocol == "MQTT" or protocol == "COAP":
@@ -412,7 +412,7 @@ def get_sensor():
 
 #-------
 
-def is_alive(broadcast, protocol):
+def is_alive(broadcast):
 
     log.log_info("is_alive command selected")
     msg = { 'cmd': 'is_alive' }
@@ -441,7 +441,7 @@ def is_alive(broadcast, protocol):
             else:
                 log.log_err(f"invalid value, has to be > 0")
         while True:
-            protocol = log.log_input("protocolo(MQTT/COAP): ")
+            protocol = log.log_input("protocol(MQTT/COAP): ")
             if protocol == "cancel":
                 return
             if protocol == "MQTT" or protocol == "COAP":
@@ -467,15 +467,20 @@ def is_alive(broadcast, protocol):
         for config in configs:
             land_id = config[0]
             node_id = config[1]
+            protocol = config[2]
+            address = config[3]
+
             if node_id == 0:
                 continue
             topic = f"NODE/{land_id}/{node_id}"
             log.log_send(f"[{topic}] {json_msg}")
+            
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
+                coap_module.add_nodes(land_id, node_id, address)
                 coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")
             else:
                 log.log_err("protocol not recognized")
-                return
+                continue
 

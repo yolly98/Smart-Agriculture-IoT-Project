@@ -6,6 +6,7 @@ import log
 import json
 import to_node
 import from_node
+from persistence import update_mysql_db
 from coapthon.server.coap import CoAP
 from coapthon.resources.resource import Resource
 from coapthon.client.helperclient import HelperClient
@@ -53,12 +54,7 @@ def add_nodes(land_id, node_id, addr):
         nodes[index] = dict()
         nodes[index]['addr'] = addr
         nodes[index]['host'] = new_client(addr)
-        client_observe(nodes[index]['host'], "/irrigation")
-        client_observe(nodes[index]['host'], "/sensor/mst")
-        client_observe(nodes[index]['host'], "/sensor/ph")
-        client_observe(nodes[index]['host'], "/sensor/light")
-        client_observe(nodes[index]['host'], "/sensor/tmp")
-
+        
 #----------------------
 
 def delete_node(land_id, node_id):
@@ -71,18 +67,19 @@ def delete_node(land_id, node_id):
 
 def coapStatus(land_id, node_id, doc):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
-    if  not (index in configs):
+    if not (index in configs):
         configs[index] = dict()
 
     configs[index][doc['cmd']] = doc
-    if (configs[index]['config-status'] 
-        and configs[index]['irr-status'] 
-        and configs[index]['mst-status']
-        and configs[index]['ph-status']
-        and configs[index]['light-status']
-        and configs[index]['tmp-status']):
+    if ('config-status' in configs[index] and
+        'irr-status' in configs[index] and
+        'mst-status' in configs[index] and
+        'ph-status' in configs[index] and
+        'light-status' in configs[index] and
+        'tmp-status'in configs[index] 
+        ):
 
-        irr_config = configs[index]['irr-status']
+        irr_config = configs[index]['irr-status']['body']
         mst_timer = configs[index]['mst-status']['timer']
         ph_timer = configs[index]['ph-status']['timer']
         light_timer = configs[index]['light-status']['timer']
@@ -90,19 +87,19 @@ def coapStatus(land_id, node_id, doc):
 
         msg = { 'cmd': 'status', 'body': { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': irr_config['enabled'], 'irr_limit': irr_config['irr_limit'], 'irr_duration': irr_config['irr_duration'] }, 'mst_timer': mst_timer, 'ph_timer': ph_timer, 'light_timer': light_timer, 'tmp_timer': tmp_timer } } 
         configs[index] = dict()
-        from_node.status("COAP", msg)
+        from_node.status("COAP", nodes[index]['addr'], msg)
 
 # --------------- CLIENT---------------- #
 
 def send_msg(land_id, node_id, path, mode, msg):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     if not (index in nodes):
-        log.log_err(f"{index} address uknown")
+        log.log_err(f"{index} address unknown")
         return
     
     client = nodes[index]['host']
     if mode == "GET":
-        response = client.get(path, msg)
+        response = client.get(path)
     elif mode == "PUT":
         response = client.put(path, msg)
     
@@ -115,6 +112,12 @@ def send_msg(land_id, node_id, path, mode, msg):
 
     doc = json.loads(response.payload)
     if doc['cmd'].find("status") >= 0:
+        if doc['cmd'] == 'config-status':
+            if doc['body']['land_id'] != land_id or doc['body']['node_id'] != node_id:
+                log.log_err(f"node {index} address is changed")
+                update_mysql_db.update_address_in_configuration(land_id, node_id, "null", "null")
+                delete_node(land_id, node_id)
+                return
         coapStatus(land_id, node_id, doc)
     elif doc['cmd'] == "irrigation":
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
@@ -132,6 +135,7 @@ def send_msg(land_id, node_id, path, mode, msg):
         msg = { 'cmd':'tmp', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'tmp', 'value': doc['value'] } }
         from_node.tmp(msg)
     elif doc['cmd'] == "is_alive_ack":
+        log.log_success(f"node {index} online")
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
         from_node.is_alive_ack(msg)
     #client.stop()
@@ -159,7 +163,7 @@ def client_callback(response):
 
     log.log_info(f"received from observing {response.payload}")
     if response.payload == None:
-        log.log_err("received Non from observing")
+        log.log_err("received None from observing")
     doc = json.loads(response.payload)
     if doc['cmd'].find("status") >= 0:
         coapStatus(land_id, node_id, doc)
@@ -205,6 +209,12 @@ class ConfigurationRes(Resource):
         log.log_info(to_print)
         self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr)
         add_nodes(msg['land_id'], msg['node_id'], addr)
+        index = f"NODE/{msg['land_id']}/{msg['node_id']}"
+        client_observe(nodes[index]['host'], "/irrigation")
+        client_observe(nodes[index]['host'], "/sensor/mst")
+        client_observe(nodes[index]['host'], "/sensor/ph")
+        client_observe(nodes[index]['host'], "/sensor/light")
+        client_observe(nodes[index]['host'], "/sensor/tmp")
         return self
 
 #----------------------

@@ -42,7 +42,7 @@ def status_sim():
     msg = { 'cmd': 'status', 'body': { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': enable, 'irr_limit': irr_limit, 'irr_duration': irr_duration}, 'mst_timer': mst_timer, 'ph_timer': ph_timer, 'light_timer': light_timer, 'tmp_timer': tmp_timer } }
     return msg
 
-def status(protocol, doc):
+def status(protocol, address, doc):
 
     msg = doc
     if msg == "":
@@ -58,7 +58,7 @@ def status(protocol, doc):
     light_timer = msg['body']['light_timer']
     tmp_timer = msg['body']['tmp_timer']
 
-    update_mysql_db.update_configuration(land_id, node_id, protocol, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
+    update_mysql_db.update_configuration(land_id, node_id, protocol, address, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
     
 
 #------------

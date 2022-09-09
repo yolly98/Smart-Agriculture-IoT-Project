@@ -100,7 +100,7 @@ static void ph_get_handler(
   ){
 
   const char* value;
-  char msg[MSG_SIZE];
+  //char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
   int len = coap_get_query_variable(request, "value", &value);
@@ -108,7 +108,7 @@ static void ph_get_handler(
     printf(" <  get sensor/ph\n");
     send_ph_level(reply);
   }
-  else if(len > 0){
+  /*else if(len > 0){
     printf(" <  get sensor/ph-status\n");
     snprintf(msg, len + 1, "%s", (char*)value);
     if(strcmp(msg, "status") == 0)
@@ -117,7 +117,7 @@ static void ph_get_handler(
       printf("[-] error unknown in get ph sensor [value: %s] \n", msg);
       return;
     }
-  } 
+  } */
 
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
@@ -135,20 +135,26 @@ static void ph_put_handler(
   ){
 
   printf(" <  put sensor/ph\n");
-  const char* arg;
+  const uint8_t* arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
-  int len = coap_get_post_variable(request, "value", &arg);
+  int len = coap_get_payload(request, &arg);
   if (len <= 0){
     printf("[-] no argument obteined from put request of ph_rsc\n");
     return;
   }
   sprintf(msg, "%s", (char*)arg);
   
-  ph_mem.ph_timer = atoi(msg);
-  //ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
-  etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
-  send_ph_status(reply); 
+  if(strcmp(msg, "status") == 0){
+    printf(" <  get sensor/ph-status\n");
+    send_ph_status(reply);
+  }
+  else{
+    ph_mem.ph_timer = atoi(msg);
+    //ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
+    etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
+    send_ph_status(reply); 
+  }
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }

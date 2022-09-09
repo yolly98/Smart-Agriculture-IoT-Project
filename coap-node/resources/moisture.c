@@ -103,7 +103,7 @@ static void mst_get_handler(
   ){
 
   const char* value;
-  char msg[MSG_SIZE];
+  //char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
   int len = coap_get_query_variable(request, "value", &value);
@@ -111,7 +111,7 @@ static void mst_get_handler(
     printf(" <  get sensor/mst\n");
     send_soil_moisture(reply);
   }
-  else if(len > 0){
+  /*else if(len > 0){
     printf(" <  get sensor/mst-status\n");
     snprintf(msg, len + 1, "%s", (char*)value);
     if(strcmp(msg, "status") == 0)
@@ -120,7 +120,7 @@ static void mst_get_handler(
       printf("[-] error unknown in get moisture sensor [value: %s] \n", msg);
       return;
     }
-  } 
+  } */
 
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
@@ -138,18 +138,25 @@ static void mst_put_handler(
   ){
 
   printf(" <  get sensor/put\n");
-  const char* arg;
+  const uint8_t* arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
-  int len = coap_get_post_variable(request, "value", &arg);
+  int len = coap_get_payload(request, &arg);
   if (len <= 0){
     printf("[-] no argument obteined from put request of mst_rsc\n");
     return;
   }
+
   sprintf(msg, "%s", (char*)arg);
-  mst_mem.mst_timer = atoi(msg);
-  etimer_set(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
-  send_mst_status(reply); 
+  if(strcmp(msg, "status") == 0){
+    printf(" <  get sensor/mst-status\n");
+    send_mst_status(reply);
+  } 
+  else{
+    mst_mem.mst_timer = atoi(msg);
+    etimer_set(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
+    send_mst_status(reply); 
+  }
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }

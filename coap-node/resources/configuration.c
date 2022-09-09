@@ -98,10 +98,10 @@ static void config_put_handler(
   ){
 
     printf(" <  put config\n");
-    const char* arg;
+    const uint8_t* arg;
     char msg[MSG_SIZE];
     char reply[MSG_SIZE];
-    int len = coap_get_post_variable(request, "value", &arg);
+    int len = coap_get_payload(request, &arg);
     if (len <= 0){
       printf("[-] no argument obteined from put request of config_rsc");
       return;

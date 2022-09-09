@@ -23,6 +23,23 @@ def update_configuration(land_id, node_id, protocol, address, irr_enabled, irr_l
         WHERE land_id = %s AND node_id = %s "
     mycursor.execute(sql, (protocol, address, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer, land_id, node_id))
     mydb.commit()
+    
+def update_address_in_configuration(land_id, node_id, protocol, address):
+
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "password",
+        database = "iot_project_db"
+    )
+    mycursor = mydb.cursor(prepared=True)
+
+    sql = "UPDATE configuration \
+        SET  protocol = %s, \
+        address = %s \
+        WHERE land_id = %s AND node_id = %s "
+    mycursor.execute(sql, (protocol, address, land_id, node_id))
+    mydb.commit()
 
 #-----------------------------
 

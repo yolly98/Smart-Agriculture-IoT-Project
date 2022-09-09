@@ -137,7 +137,7 @@ def server_console():
             elif cmd.isdigit() and int(cmd) == 1:
                 from_node.config_request("MQTT", "", "")
             elif cmd.isdigit() and int(cmd) == 2:
-                from_node.status("MQTT", "")
+                from_node.status("MQTT", "null", "")
             elif cmd.isdigit() and int(cmd) == 3:
                 from_node.irrigation("")
             elif cmd.isdigit() and int(cmd) == 4:

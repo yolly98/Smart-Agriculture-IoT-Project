@@ -306,10 +306,10 @@ PROCESS_THREAD(coap_node, ev, data){
 
     printf("[!] first sensor detection ...\n");
 
-    mst_rsc.trigger();
-    ph_rsc.trigger();
-    light_rsc.trigger();
-    tmp_rsc.trigger();
+    //mst_rsc.trigger();
+    //ph_rsc.trigger();
+    //light_rsc.trigger();
+    //tmp_rsc.trigger();
 
     set_mst_timer();
     set_ph_timer();

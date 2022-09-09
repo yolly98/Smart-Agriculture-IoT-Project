@@ -65,7 +65,7 @@ def send_msg(land_id, node_id, path, mode, msg):
     host = nodes[index]
     client = HelperClient(server=(host, port))
     if mode == "GET":
-        response = client.get(path)
+        response = client.get(path, msg)
     elif mode == "PUT":
         response = client.put(path, msg)
     

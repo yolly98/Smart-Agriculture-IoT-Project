@@ -2,5 +2,6 @@
 #define PROJECT_CONF_H_
 
 #define COAP_MAX_CHUNK_SIZE 200
+#define COAP_MAX_OPEN_TRANSACTIONS 6
 
 #endif /* PROJECT_CONF_H_ */

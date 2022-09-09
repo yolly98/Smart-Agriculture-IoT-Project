@@ -44,6 +44,8 @@
 * [x] inserire COAP nel server
 * [ ] vedere se i file.h sono aggiornati con tutte le funzioni
 * [x] capire perchè con cooja non ricevo nulla (vedere il border router!)
-* [ ] capire perchè l'observing lato server da delle eccezioni
+* [x] capire perchè l'observing lato server da delle eccezioni
+* [ ] capire perchè non invia il payload con il put
+* [ ] capire come contattare i nodi all'avvio se questi sono già configurati
 
 

@@ -174,8 +174,7 @@ def mqtt_server_check_node():
         
         #check if nodes are online
         if (time.time() - start_timer) >= end_timer:
-            to_node.is_alive(True, "MQTT")
-            to_node.is_alive(True, "COAP")
+            to_node.is_alive(True)
             update_vw.set_all_node_offline_vw()
             start_timer = time.time()
 

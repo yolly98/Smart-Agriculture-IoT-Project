@@ -49,5 +49,11 @@
 * [x] capire come contattare i nodi all'avvio se questi sono già configurati
 * [x] risolvere tutti i problemi di configurazione (server si avvia quando già il nodo è attivo e configurato)
 * [ ] capire perchè non riesco a mandare comandi (es. semplice get sensor)
+* [x] capire perchè ricevo duplicati alla lettura sensori
+* [x] capire perchè a volte assegna configurazione a 0
+* [ ] capire perchè il timer non viene resettato quando lo modifico
+* [ ] capire perchè a volte il server non riceve
+
+Se è attivo il nodo e il server si attiva dopo, poi non posso fargli l'osserving
 
 

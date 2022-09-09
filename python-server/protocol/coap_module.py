@@ -15,7 +15,7 @@ from coapthon.utils import parse_uri
 nodes = dict()
 my_ip = "fd00::1"
 port = 5683
-
+SEND_TIMEOUT = 3.0
 configs = dict()
 
 #----------------------
@@ -97,7 +97,6 @@ def coapStatus(land_id, node_id, doc):
         tmp_timer = configs[index]['tmp-status']['timer']
 
         msg = { 'cmd': 'status', 'body': { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': irr_config['enabled'], 'irr_limit': irr_config['irr_limit'], 'irr_duration': irr_config['irr_duration'] }, 'mst_timer': mst_timer, 'ph_timer': ph_timer, 'light_timer': light_timer, 'tmp_timer': tmp_timer } } 
-        configs[index] = dict()
         from_node.status("COAP", nodes[index]['addr'], msg)
 
 # --------------- CLIENT---------------- #
@@ -106,25 +105,24 @@ def send_msg(land_id, node_id, path, mode, msg):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     if not (index in nodes):
         log.log_err(f"{index} address unknown")
-        return
+        return False
     
     client = nodes[index]['host']
     if mode == "GET":
-        response = client.get(path)
+        response = client.get(path, timeout=SEND_TIMEOUT)
     elif mode == "PUT":
-        response = client.put(path, msg)
+        response = client.put(path, msg, timeout=SEND_TIMEOUT)
     
     if response == None or response.payload == "" or response.payload == None:
         log.log_err(f"node {index} doesn't respond")
-        delete_node(land_id, node_id)
-        return
+        return False
 
     log.log_info(f"received (coap) {response.payload}")
 
     doc = json.loads(response.payload)
     if doc['cmd'].find("status") >= 0:
         if doc['cmd'] == 'config-status':
-            if doc['body']['land_id'] != land_id or doc['body']['node_id'] != node_id:
+            if doc['body']['land_id'] != int(land_id) or doc['body']['node_id'] != int(node_id):
                 log.log_err(f"node {index} address is changed")
                 update_mysql_db.update_address_in_configuration(land_id, node_id, "null", "null")
                 delete_node(land_id, node_id)
@@ -149,15 +147,8 @@ def send_msg(land_id, node_id, path, mode, msg):
         log.log_success(f"node {index} online")
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
         from_node.is_alive_ack(msg)
-    #client.stop()
 
-#def send_msg(addr, path):
-#    
-#    host = addr
-#    client = HelperClient(server=(host, port))
-#    response = client.get(path)
-#    print(response.pretty_print())
-#    #client.stop()
+    return True
 
 #----------------------
 

@@ -125,27 +125,11 @@ static void irr_get_handler(
   int32_t *offset
   ){
 
-  const char* value;
-  //char msg[MSG_SIZE];
   char reply[MSG_SIZE];
-  //coap_endpoint_print(coap_get_src_endpoint(request));
-  printf("\n");
-  
-  int len = coap_get_query_variable(request, "value", &value);
-  if(len == 0){
-    printf(" <  get irrigation\n");
-    send_irrigation(reply);
-  }
-/*  else if(len > 0 && strcmp(msg, "irrigation-status") == 0){
-    printf(" <  get irrigation-status\n");
-    snprintf(msg, len + 1, "%s", (char*)value);
-    if(strcmp(msg, "status") == 0)
-      send_irr_status(reply);
-    else{
-      printf("[-] error unknown in get irr_rsc [value: %s]\n", msg);
-      return;
-    }
-  } */
+
+  printf(" <  get irrigation\n");
+  send_irrigation(reply);
+
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }

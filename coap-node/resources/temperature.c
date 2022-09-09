@@ -56,8 +56,6 @@ bool check_tmp_timer_expired(){
 
 void send_soil_tmp(char msg[]){
 
-  etimer_set(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
-
   int tmp = (5 + random_rand()%35);
   tmp_mem.soil_temperature =  tmp;
   printf("[+] soil temperature detected: %d\n", tmp);
@@ -97,26 +95,11 @@ static void tmp_get_handler(
   int32_t *offset
   ){
 
-  const char* value;
-  //char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
-  int len = coap_get_query_variable(request, "value", &value);
-  if(len == 0){
-    printf(" <  get sensor/tmp\n");
-    send_soil_tmp(reply);
-  }
-  /*else if(len > 0){
-    printf(" <  get sensor/tmp-status\n");
-    snprintf(msg, len + 1, "%s", (char*)value);
-    if(strcmp(msg, "status") == 0)
-      send_tmp_status(reply);
-    else{
-      printf("[-] error unknown in get temperature sensor [value: %s] \n", msg);
-      return;
-    }
-  } */
-
+  printf(" <  get sensor/tmp\n");
+  send_soil_tmp(reply);
+  
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 }
@@ -149,7 +132,6 @@ static void tmp_put_handler(
     } 
     else{
       tmp_mem.tmp_timer = atoi(msg);
-      //ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, send_soil_tmp, NULL);
       etimer_set(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
       send_tmp_status(reply);
     }

@@ -137,7 +137,9 @@ def get_config(broadcast):
         if protocol == "MQTT":
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
-            coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
+            result = coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
+            if not result:
+                return
             coap_module.send_msg(land_id, node_id, "irrigation", "PUT", "status")
             coap_module.send_msg(land_id, node_id, "sensor/mst", "PUT", "status")
             coap_module.send_msg(land_id, node_id, "sensor/ph", "PUT", "status")
@@ -166,7 +168,9 @@ def get_config(broadcast):
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
-                coap_module.add_nodes(land_id, node_id, address)
+                result = coap_module.add_nodes(land_id, node_id, address)
+                if not result:
+                    continue
                 coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
                 coap_module.send_msg(land_id, node_id, "irrigation", "PUT", "status")
                 coap_module.send_msg(land_id, node_id, "sensor/mst", "PUT", "status")
@@ -322,7 +326,7 @@ def timer_cmd():
     if protocol == "MQTT":
         msg = { 'cmd': 'timer_cmd', 'body': { 'sensor': sensor, 'timer': int(timer) } }
     elif protocol == "COAP":
-        if sensor == "moisture":
+        if sensor == "mst":
             path = "sensor/mst"
         elif sensor == "ph":
             path = "sensor/ph"
@@ -334,7 +338,7 @@ def timer_cmd():
 
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_send(f"[{topic}] {json_msg}")
+    log.log_send(f"[{topic}] {sensor} {json_msg}")
 
     if protocol == "MQTT":
         mqtt_module.mqtt_publish(topic, json_msg)
@@ -397,7 +401,7 @@ def get_sensor():
         mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
         path = ""
-        if sensor == "moisture":
+        if sensor == "mst":
             path = "sensor/mst"
         elif sensor == "ph":
             path = "sensor/ph"

@@ -102,25 +102,10 @@ static void mst_get_handler(
   int32_t *offset
   ){
 
-  const char* value;
-  //char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
-  int len = coap_get_query_variable(request, "value", &value);
-  if(len == 0){
-    printf(" <  get sensor/mst\n");
-    send_soil_moisture(reply);
-  }
-  /*else if(len > 0){
-    printf(" <  get sensor/mst-status\n");
-    snprintf(msg, len + 1, "%s", (char*)value);
-    if(strcmp(msg, "status") == 0)
-      send_mst_status(reply);
-    else{
-      printf("[-] error unknown in get moisture sensor [value: %s] \n", msg);
-      return;
-    }
-  } */
+  printf(" <  get sensor/mst\n");
+  send_soil_moisture(reply);
 
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));

@@ -96,25 +96,10 @@ static void light_get_handler(
   int32_t *offset
   ){
 
-  const char* value;
-  //char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
-  int len = coap_get_query_variable(request, "value", &value);
-  if(len == 0){
-    printf(" <  get sensor/light\n");
-    send_light_raw(reply);
-  }
-  /*else if(len > 0){
-    printf(" <  get sensor/light-satus\n");
-    snprintf(msg, len + 1, "%s", (char*)value);
-    if(strcmp(msg, "status") == 0)
-      send_light_status(reply);
-    else{
-      printf("[-] error unknown in get light sensor [value: %s] \n", msg);
-      return;
-    }
-  } */
+  printf(" <  get sensor/light\n");
+  send_light_raw(reply);
 
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
@@ -146,7 +131,6 @@ static void light_put_handler(
   }   
   else{
     light_mem.light_timer = atoi(msg);
-    //ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, send_light_raw, NULL);
     etimer_set(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
     send_light_status(reply); 
   }

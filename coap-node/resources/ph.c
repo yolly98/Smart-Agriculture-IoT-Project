@@ -57,8 +57,6 @@ bool check_ph_timer_expired(){
 
 void send_ph_level(char msg[]){
 
-    etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
-
     int ph_level = (5 + random_rand()%5);
     ph_mem.ph_level =  ph_level;
     printf("[+] ph level detected: %d\n", ph_level);
@@ -99,25 +97,10 @@ static void ph_get_handler(
   int32_t *offset
   ){
 
-  const char* value;
-  //char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
-  int len = coap_get_query_variable(request, "value", &value);
-  if(len == 0){
-    printf(" <  get sensor/ph\n");
-    send_ph_level(reply);
-  }
-  /*else if(len > 0){
-    printf(" <  get sensor/ph-status\n");
-    snprintf(msg, len + 1, "%s", (char*)value);
-    if(strcmp(msg, "status") == 0)
-      send_ph_status(reply);
-    else{
-      printf("[-] error unknown in get ph sensor [value: %s] \n", msg);
-      return;
-    }
-  } */
+  printf(" <  get sensor/ph\n");
+  send_ph_level(reply);
 
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
@@ -151,7 +134,6 @@ static void ph_put_handler(
   }
   else{
     ph_mem.ph_timer = atoi(msg);
-    //ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
     etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
     send_ph_status(reply); 
   }

@@ -201,6 +201,13 @@ PROCESS_THREAD(coap_node, ev, data){
     land_id = 0;
     node_id = 0;
 
+    //default configuration
+    save_irr_config(true, 0, 60, false);
+    save_mst_timer(60);
+    save_ph_timer(60);
+    save_light_timer(60);
+    save_tmp_timer(60);
+
     while(1){
         PROCESS_YIELD();
 
@@ -322,20 +329,20 @@ PROCESS_THREAD(coap_node, ev, data){
 
         PROCESS_YIELD();
         
-        if(ev == serial_line_event_message){
+        /*if(ev == serial_line_event_message){
             char * msg = (char*)data;
             printf("[!] recevived '%s' by serial\n", msg);
             coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
             coap_set_header_uri_path(coap_module.request, "/new_config");
             //coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg) - 1);
             COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
-        }
+        }*/
 
         if(check_mst_timer_expired()){
             mst_rsc.trigger();
-            set_mst_timer();
-            int moisture = get_mst_value(); //TODO
+            int moisture = get_mst_value(); 
             irr_starting(moisture);
+            set_mst_timer();
         }
 
         if(check_ph_timer_expired()){

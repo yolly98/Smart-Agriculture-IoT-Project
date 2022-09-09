@@ -39,7 +39,7 @@
 * [x] fare attenzione ai problemi di visibilità delle funzioni
 * [ ] controllare se tutte le librerie servono
 * [x] capire perchè all'assign config fa crashare il nodo su cooja
-* [ ] gestire caso land non trovata
+* [x] gestire caso land non trovata
 
 ### COAP SERVER
 * [x] inserire COAP nel server
@@ -57,6 +57,10 @@
 * [x] Se è attivo il nodo e il server si attiva dopo, poi non posso fargli l'osserving
 * [x] perchè quando invio un comando ricevo dall'observing?
 * [x] gestire caso land non trovata
-* [ ] capire perchè da errore l'mst-status quando lo ricevo
+
+* [ ] fare test con 4 nodi coap
+* [ ] rifare test mqtt (cooja)
+* [ ] fare test con 4 nodi mqtt
+* [ ] fare test con 2 nodi coap e 2 mqtt
 
 

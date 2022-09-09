@@ -9,6 +9,7 @@ def update_configuration_vw():
     land_id = ""
     node_id = ""
     protocol = ""
+    address = ""
     status = ""
     irr_enabled = ""
     irr_limit = ""
@@ -53,11 +54,22 @@ def update_configuration_vw():
         else:
             log.log_err(f"invalid value")
     while True:
+        address = log.log_input("address: ")
+        if address == "cancel":
+            return
+        if address == 'x':
+            address = old_configuration[3]
+            break
+        if not protocol.isdigit():
+            break
+        else:
+            log.log_err(f"invalid value")
+    while True:
         status = log.log_input("status: ")
         if status == "cancel":
             return
         if status == 'x':
-            status = old_configuration[3]
+            status = old_configuration[4]
             break
         if status == 'online' or status == 'offline' or status == 'null':
             break
@@ -68,7 +80,7 @@ def update_configuration_vw():
         if irr_enabled == "cancel":
             return
         if irr_enabled == 'x':
-            irr_enabled = old_configuration[5]
+            irr_enabled = old_configuration[6]
             break
         if irr_enabled == 'true' or irr_enabled == 'false':
             break
@@ -79,7 +91,7 @@ def update_configuration_vw():
         if irr_limit == "cancel":
             return
         if irr_limit == 'x':
-            irr_limit = old_configuration[6]
+            irr_limit = old_configuration[7]
             break
         if irr_limit.isdigit():
             break
@@ -90,7 +102,7 @@ def update_configuration_vw():
         if irr_duration == "cancel":
             return
         if irr_duration == 'x':
-            irr_duration = old_configuration[7]
+            irr_duration = old_configuration[8]
             break
         if irr_duration.isdigit():
             break
@@ -101,7 +113,7 @@ def update_configuration_vw():
         if mst_timer == "cancel":
             return
         if mst_timer == 'x':
-            mst_timer = old_configuration[8]
+            mst_timer = old_configuration[9]
             break
         if mst_timer.isdigit():
             break
@@ -112,7 +124,7 @@ def update_configuration_vw():
         if ph_timer == "cancel":
             return
         if ph_timer == 'x':
-            ph_timer = old_configuration[9]
+            ph_timer = old_configuration[10]
             break
         if ph_timer.isdigit():
             break
@@ -123,7 +135,7 @@ def update_configuration_vw():
         if light_timer == "cancel":
             return
         if light_timer == 'x':
-            light_timer = old_configuration[10]
+            light_timer = old_configuration[11]
             break
         if light_timer.isdigit():
             break
@@ -134,7 +146,7 @@ def update_configuration_vw():
         if tmp_timer == "cancel":
             return
         if tmp_timer == 'x':
-            tmp_timer = old_configuration[11]
+            tmp_timer = old_configuration[12]
             break
         if tmp_timer.isdigit():
             break

@@ -92,7 +92,7 @@ def irr_cmd():
 
 #---------
 
-def get_config(broadcast, protocol):
+def get_config(broadcast):
 
     log.log_info("get_config command selected")
     
@@ -155,6 +155,9 @@ def get_config(broadcast, protocol):
         for config in configs:
             land_id = config[0]
             node_id = config[1]
+            protocol = config[2]
+            address = config[3]
+
             if node_id == 0:
                 continue
             topic = f"NODE/{land_id}/{node_id}"
@@ -162,6 +165,7 @@ def get_config(broadcast, protocol):
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
+                coap_module.add_nodes(land_id, node_id, address)
                 coap_module.send_msg(land_id, node_id, "configuration", "GET", "status")
                 coap_module.send_msg(land_id, node_id, "irrigation", "GET", "status")
                 coap_module.send_msg(land_id, node_id, "sensor/mst", "GET", "status")
@@ -181,6 +185,7 @@ def assign_config_cmd():
     land_id = ""
     node_id = ""
     protocol = ""
+    address = ""
     log.log_info("Type the arguments or 'cancel'")
     while True:
         land_id = log.log_input("land_id: ")
@@ -206,10 +211,18 @@ def assign_config_cmd():
             break
         else:
             log.log_err(f"invalid value")
-    assign_config(land_id, node_id, protocol)
+    while True:
+        address = log.log_input("address(fd00::20?:?:?:?): ")
+        if address == "cancel":
+            return
+        if not address.isdigit():
+            break
+        else:
+            log.log_err(f"invalid value")
+    assign_config(land_id, node_id, protocol, address)
 
 
-def assign_config(land_id, node_id, protocol):
+def assign_config(land_id, node_id, protocol, address):
 
     log.log_info("assign_config command")
     config = get_mysql_db.get_config(land_id, node_id, True)
@@ -224,10 +237,12 @@ def assign_config(land_id, node_id, protocol):
             msg = { 'cmd': 'error_land'}
         else:
             #save the new config
-            add_mysql_db.add_configuration(land_id, node_id, protocol, "online", config[5], config[6], config[7], config[8], config[9], config[10], config[11])
-            msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[5], 'irr_limit':  config[6], 'irr_duration': config[7]}, 'mst_timer': config[8], 'ph_timer': config[9], 'light_timer': config[10], 'tmp_timer': config[11] } }
+            add_mysql_db.add_configuration(land_id, node_id, protocol, address, "online", config[6], config[7], config[8], config[9], config[10], config[11], config[12])
+            msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
     else:
-        msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[5], 'irr_limit':  config[6], 'irr_duration': config[7]}, 'mst_timer': config[8], 'ph_timer': config[9], 'light_timer': config[10], 'tmp_timer': config[11] } }
+        if config[3] != address:
+            update_mysql_db.update_configuration(land_id, node_id, protocol, address, config[6], config[7], config[8], config[9], config[10], config[11], config[12])
+        msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
     
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"

@@ -18,7 +18,7 @@ def on_message(client, userdata, msg):
     doc = parse_json(payload)
     log.log_receive(doc)
     if doc['cmd'] == 'config_rqst':
-        from_node.config_request("MQTT", doc)
+        from_node.config_request("MQTT", doc, "")
     elif doc['cmd'] == 'status':
         from_node.status("MQTT", doc)
     elif doc['cmd'] == 'irrigation':

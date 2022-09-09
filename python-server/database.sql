@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS configuration (
     land_id int(11) NOT NULL,
     node_id int(11) NOT NULL,
     protocol varchar(100) DEFAULT NULL,
+    address varchar(100) NOT NULL,
     status varchar(100) NOT NULL DEFAULT "online",
     last_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     irr_enabled varchar(100) NOT NULL,
@@ -25,12 +26,12 @@ CREATE TABLE IF NOT EXISTS configuration (
     PRIMARY KEY (land_id, node_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO configuration (land_id, node_id, protocol, status, last_timestamp, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer) VALUES
-(1, 0, 'null', 'online', CURRENT_TIMESTAMP, 'null', 22, 20, 720, 720, 30, 60),
-(2, 0, 'null', 'online', CURRENT_TIMESTAMP, 'null', 25, 25, 720, 1440, 60, 120),
-(3, 0, 'null', 'online', CURRENT_TIMESTAMP, 'null', 20, 20, 1440, 1440, 120, 120),
-(4, 0, 'null', 'online', CURRENT_TIMESTAMP, 'null', 20, 15, 1440, 720, 60, 60),
-(5, 0, 'null', 'online', CURRENT_TIMESTAMP, 'null', 15, 20, 720, 2880, 60, 120);
+INSERT INTO configuration (land_id, node_id, protocol, address, status, last_timestamp, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer) VALUES
+(1, 0, 'null', 'null', 'online', CURRENT_TIMESTAMP, 'null', 22, 20, 720, 720, 30, 60),
+(2, 0, 'null', 'null', 'online', CURRENT_TIMESTAMP, 'null', 25, 25, 720, 1440, 60, 120),
+(3, 0, 'null', 'null', 'online', CURRENT_TIMESTAMP, 'null', 20, 20, 1440, 1440, 120, 120),
+(4, 0, 'null', 'null', 'online', CURRENT_TIMESTAMP, 'null', 20, 15, 1440, 720, 60, 60),
+(5, 0, 'null', 'null', 'online', CURRENT_TIMESTAMP, 'null', 15, 20, 720, 2880, 60, 120);
 
 CREATE TABLE IF NOT EXISTS land (
     id int(11) NOT NULL,
@@ -69,7 +70,7 @@ CREATE TABLE IF NOT EXISTS violation (
     v_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sensor varchar(100) NOT NULL,
     v_value int(11) NOT NULL,
-    PRIMARY KEY(land_id, node_id, v_timestamp)
+    PRIMARY KEY(land_id, node_id, v_timestamp, sensor)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS irrigation (

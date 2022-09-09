@@ -7,6 +7,7 @@ def add_configuration_vw():
     land_id = ""
     node_id = ""
     protocol = ""
+    address = ""
     status = ""
     irr_enabled = ""
     irr_limit = ""
@@ -37,6 +38,14 @@ def add_configuration_vw():
         if protocol == "cancel":
             return
         if protocol == 'COAP' or protocol == 'MQTT':
+            break
+        else:
+            log.log_err(f"invalid value")
+    while True:
+        address = log.log_input("address: ")
+        if address == "cancel":
+            return
+        if not address.isdigit():
             break
         else:
             log.log_err(f"invalid value")
@@ -105,7 +114,7 @@ def add_configuration_vw():
         else:
             log.log_err(f"invalid value")
 
-    add_mysql_db.add_configuration(land_id, node_id, protocol, status, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
+    add_mysql_db.add_configuration(land_id, node_id, protocol, address, status, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
     new_config = get_mysql_db.get_config(land_id, node_id, True)
     if new_config:
         log.log_success(f"new configuration: {new_config}")

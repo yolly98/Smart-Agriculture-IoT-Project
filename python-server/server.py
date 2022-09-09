@@ -15,8 +15,7 @@ from protocol import coap_module
 
 log.log_init()
 mqtt_module.mqtt_init()
-to_node.get_config(True, "MQTT")
-to_node.get_config(True, "COAP")
+to_node.get_config(True)
 
 #functinon for thread 1(console)
 def server_console():
@@ -136,7 +135,7 @@ def server_console():
             if cmd.isdigit() and int(cmd) == 9:
                 continue
             elif cmd.isdigit() and int(cmd) == 1:
-                from_node.config_request("MQTT", "")
+                from_node.config_request("MQTT", "", "")
             elif cmd.isdigit() and int(cmd) == 2:
                 from_node.status("MQTT", "")
             elif cmd.isdigit() and int(cmd) == 3:

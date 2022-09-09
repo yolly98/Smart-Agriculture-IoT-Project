@@ -14,13 +14,13 @@ def config_request_sim():
     msg = { 'cmd': 'config_rqst', 'body': { 'land_id': land_id, 'node_id': node_id } }
     return msg
 
-def config_request(protocol, doc):
+def config_request(protocol, address, doc):
 
     msg = doc
     if msg == "":
         msg = config_request_sim()
 
-    to_node.assign_config(msg['body']['land_id'], msg['body']['node_id'], protocol)
+    to_node.assign_config(msg['body']['land_id'], msg['body']['node_id'], protocol, address)
 
 
 #------------

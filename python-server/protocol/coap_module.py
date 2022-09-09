@@ -166,7 +166,7 @@ class ConfigurationRes(Resource):
         addr = extract_addr(request)
         to_print = "received " + str(msg) + " from " + addr
         log.log_info(to_print)
-        self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP")
+        self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr)
         add_nodes(msg['land_id'], msg['node_id'], addr)
         return self
 

@@ -54,11 +54,22 @@ def add_nodes(land_id, node_id, addr):
         nodes[index] = dict()
         nodes[index]['addr'] = addr
         nodes[index]['host'] = new_client(addr)
+
+#----------------------
+
+def show_coap_nodes():
+
+    log.log_info("List of known nodes")
+    keys = [ key for key, val in nodes.items()]
+    for key in keys:
+        print(f"index: {key} addr: {nodes[key]['addr']}")
+    print("-----------------------")
         
 #----------------------
 
 def delete_node(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
+    log.log_info(f"deleting node {index} from cache")
     if index in nodes:
         nodes[index]['host'].stop()
         nodes.pop(index)

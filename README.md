@@ -47,6 +47,7 @@
 * [x] capire perchè l'observing lato server da delle eccezioni
 * [ ] capire perchè non invia il payload con il put e get (funzionano solo richieste vuote)
 * [x] capire come contattare i nodi all'avvio se questi sono già configurati
-* [ ] risolvere tutti i problemi di configurazione (server si avvia quando già il nodo è attivo e configurato)
+* [x] risolvere tutti i problemi di configurazione (server si avvia quando già il nodo è attivo e configurato)
+* [ ] capire perchè non riesco a mandare comandi (es. semplice get sensor)
 
 

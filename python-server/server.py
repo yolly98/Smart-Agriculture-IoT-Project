@@ -60,7 +60,8 @@ def server_console():
             print(".[27]    delete one violation")
             print("--------- OTHERS ------------------")
             print(".[28]    test received messages")
-            print(".[29]    exit")
+            print(".[29]    list of coap nodes in cache")
+            print(".[30]    exit")
             cmd = log.log_input("$ Type a number or help: ")
 
         if cmd.isdigit() and int(cmd) == 1:
@@ -153,6 +154,8 @@ def server_console():
             else:
                 log.log_err(f"command non valid!")
         elif cmd.isdigit() and int(cmd) == 29:
+            coap_module.show_coap_nodes()
+        elif cmd.isdigit() and int(cmd) == 30:
             log.log_info("typed 'exit'")
             log.log_info("Press Ctrl+c two time in order to stop the other threads")
             exit()

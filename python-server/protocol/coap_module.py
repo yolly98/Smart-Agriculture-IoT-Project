@@ -14,12 +14,37 @@ nodes = dict()
 my_ip = "fd00::1"
 port = 5683
 
+configs = dict()
+
+def coapStatus(land_id, node_id, doc):
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if  not (index in configs):
+        configs[index] = dict()
+
+    configs[index][doc['cmd']] = doc
+    if (configs[index]['config-status'] 
+        and configs[index]['irr-status'] 
+        and configs[index]['mst-status']
+        and configs[index]['ph-status']
+        and configs[index]['light-status']
+        and configs[index]['tmp-status']):
+
+        irr_config = configs[index]['irr-status']
+        mst_timer = configs[index]['mst-status']['timer']
+        ph_timer = configs[index]['ph-status']['timer']
+        light_timer = configs[index]['light-status']['timer']
+        tmp_timer = configs[index]['tmp-status']['timer']
+
+        msg = { 'cmd': 'status', 'body': { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': irr_config['enabled'], 'irr_limit': irr_config['irr_limit'], 'irr_duration': irr_config['irr_duration'] }, 'mst_timer': mst_timer, 'ph_timer': ph_timer, 'light_timer': light_timer, 'tmp_timer': tmp_timer } } 
+        configs[index] = dict()
+        from_node.status("COAP", msg)
+
 # --------------- CLIENT---------------- #
 
 
 def add_nodes(land_id, node_id, addr):
-    index = "NODE/" + land_id + "/" + node_id
-    if nodes[index] and nodes[index] == addr:
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if (index in nodes) and nodes[index] == addr:
         return
     else:
         nodes[index] = addr
@@ -31,8 +56,8 @@ def add_nodes(land_id, node_id, addr):
 
 
 def send_msg(land_id, node_id, path, mode, msg):
-    index = "NODE/" + land_id + "/" + node_id
-    if not nodes[index]:
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if not (index in nodes):
         log.log_err("Node address uknown")
         return
     
@@ -42,21 +67,63 @@ def send_msg(land_id, node_id, path, mode, msg):
         response = client.get(path)
     elif mode == "PUT":
         response = client.put(path, msg)
-    log_info(response.pretty_print())
+    
+    log.log_info(f"received (coap) {response.payload}")
+
     doc = json.loads(response.payload)
-    #TODO smistare i comandi
+    if doc['cmd'].find("status"):
+        from_node.coapStatus(doc)
+    elif doc['cmd'] == "irrigation":
+        msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
+        from_node.irrigatino(msg)
+    elif doc['cmd'] == "mst":
+        msg = { 'cmd':'moisture', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'moisture', 'value': doc['value'] } }
+        from_node.moisture(msg)
+    elif doc['cmd'] == "ph":
+        msg = { 'cmd':'ph', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'ph', 'value': doc['value'] } }
+        from_node.ph(msg)
+    elif doc['cmd'] == "light":
+        msg = { 'cmd':'light', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'light', 'value': doc['value'] } }
+        from_node.light(msg)
+    elif doc['cmd'] == "tmp":
+        msg = { 'cmd':'tmp', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'tmp', 'value': doc['value'] } }
+        from_node.tmp(msg)
+    elif doc['cmd'] == "is_alive_ack":
+        msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
+        from_node.is_alive_ack(msg)
     #client.stop()
 
-def send_msg(addr, path):
-    
-    host = addr
-    client = HelperClient(server=(host, port))
-    response = client.get(path)
-    print(response.pretty_print())
-    #client.stop()
+#def send_msg(addr, path):
+#    
+#    host = addr
+#    client = HelperClient(server=(host, port))
+#    response = client.get(path)
+#    print(response.pretty_print())
+#    #client.stop()
 
 def client_callback(response):
-    log.log_receive(response)
+    log.log_info(f"received from observing {response.payload}")
+    doc = json.loads(response.payload)
+    if doc['cmd'].find("status"):
+        from_node.coapStatus(doc)
+    elif doc['cmd'] == "irrigation":
+        msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
+        from_node.irrigatino(msg)
+    elif doc['cmd'] == "mst":
+        msg = { 'cmd':'moisture', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'moisture', 'value': doc['value'] } }
+        from_node.moisture(msg)
+    elif doc['cmd'] == "ph":
+        msg = { 'cmd':'ph', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'ph', 'value': doc['value'] } }
+        from_node.ph(msg)
+    elif doc['cmd'] == "light":
+        msg = { 'cmd':'light', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'light', 'value': doc['value'] } }
+        from_node.light(msg)
+    elif doc['cmd'] == "tmp":
+        msg = { 'cmd':'tmp', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'tmp', 'value': doc['value'] } }
+        from_node.tmp(msg)
+    elif doc['cmd'] == "is_alive_ack":
+        msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
+        from_node.is_alive_ack(msg)
 
 
 def client_observe(addr, path):

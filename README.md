@@ -29,17 +29,20 @@
 
 ### NODO COAP
 
-* [ ] capire problema con la funzione COAP_BLOCKING_REQUEST
-* [ ] ridfinizione protocolli coap
-* [ ] controllare i protocolli negli handler delle risorse
-* [ ] inserire i trigger delle risorse nei posti corretti
-* [ ] scrivere le funzioni da client coap
-* [ ] adattare il processo
-* [ ] eliminare i rimasugli del modulo mqtt
-* [ ] fare attenzione ai problemi di visibilità delle funzioni
+* [x] capire problema con la funzione COAP_BLOCKING_REQUEST
+* [x] ridfinizione protocolli coap
+* [x] controllare i protocolli negli handler delle risorse
+* [x] inserire i trigger delle risorse nei posti corretti
+* [x] scrivere le funzioni da client coap
+* [x] adattare il processo
+* [x] eliminare i rimasugli del modulo mqtt
+* [x] fare attenzione ai problemi di visibilità delle funzioni
 * [ ] controllare se tutte le librerie servono
+* [ ] capire perchè all'assign config fa crashare il nodo su cooja
 
 ### COAP SERVER
-* [ ] inserire COAP nel server
+* [x] inserire COAP nel server
 * [ ] vedere se i file.h sono aggiornati con tutte le funzioni
-* [ ] capire perchè con cooja non ricevo nulla (vedere il border router!)
+* [x] capire perchè con cooja non ricevo nulla (vedere il border router!)
+
+

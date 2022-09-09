@@ -118,33 +118,33 @@ void client_chunk_handler(coap_message_t *response){
 
     int len = coap_get_payload(response, &chunk);
     char msg[MSG_SIZE];
-    sprintf(msg,"%s",chunk);
+    sprintf(msg,"%s",(char*)chunk);
     printf("[!] received %s [%d]\n", msg, len);
     
-    printf("[!] ASSIGN_CONFIG command elaboration ...\n");
-    STATE = STATE_CONFIGURED;
-    int n_arguments = 9; 
-    char arguments[n_arguments][100];
-    parse_json(msg, n_arguments, arguments );
-
-    bool enabled = (strcmp(arguments[2], "true") == 0)?true:false;
-    int irr_limit = atoi(arguments[3]);
-    int irr_duration = atoi(arguments[4]);
-    int mst_timer = atoi(arguments[5]);
-    int ph_timer = atoi(arguments[6]);
-    int light_timer = atoi(arguments[7]);
-    int tmp_timer = atoi(arguments[8]);
-
-    save_irr_config(enabled, irr_limit, irr_duration, false);
-    save_mst_timer(mst_timer);
-    save_ph_timer(ph_timer);
-    save_light_timer(light_timer);
-    save_tmp_timer(tmp_timer);
-
-    printf("[+] ASSIGN_CONFIG command elaborated with success\n");
-
-    config_rsc.trigger();
-    printf(" <  %.*s", len, (char *)chunk);
+//    printf("[!] ASSIGN_CONFIG command elaboration ...\n");
+//    STATE = STATE_CONFIGURED;
+//    int n_arguments = 9; 
+//    char arguments[n_arguments][100];
+//    parse_json(msg, n_arguments, arguments );
+//
+//    bool enabled = (strcmp(arguments[2], "true") == 0)?true:false;
+//    int irr_limit = atoi(arguments[3]);
+//    int irr_duration = atoi(arguments[4]);
+//    int mst_timer = atoi(arguments[5]);
+//    int ph_timer = atoi(arguments[6]);
+//    int light_timer = atoi(arguments[7]);
+//    int tmp_timer = atoi(arguments[8]);
+//
+//    save_irr_config(enabled, irr_limit, irr_duration, false);
+//    save_mst_timer(mst_timer);
+//    save_ph_timer(ph_timer);
+//    save_light_timer(light_timer);
+//    save_tmp_timer(tmp_timer);
+//
+//    printf("[+] ASSIGN_CONFIG command elaborated with success\n");
+//
+//    config_rsc.trigger();
+//    printf(" <  %.*s", len, (char *)chunk);
 }
 
 /*-------------------------------------------------------*/
@@ -293,7 +293,7 @@ PROCESS_THREAD(coap_node, ev, data){
     
     coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
     coap_set_header_uri_path(coap_module.request, "/new_config");
-    coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg) - 1);
+    coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg));
     while(true){ //TODO capire se il while è necessario
         COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
         if(STATE == STATE_CONFIGURED)

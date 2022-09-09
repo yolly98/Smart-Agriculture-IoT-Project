@@ -307,8 +307,8 @@ def timer_cmd():
         msg = { 'cmd': 'timer_cmd', 'body': { 'sensor': sensor, 'timer': int(timer) } }
     elif protocol == "COAP":
         if sensor == "moisture":
-            path = "sensor/mst
-        elif sensor == "ph"
+            path = "sensor/mst"
+        elif sensor == "ph":
             path = "sensor/ph"
         elif sensor == "light":
             path = "sensor/light"
@@ -334,6 +334,7 @@ def get_sensor():
     land_id = ""
     node_id = ""
     sensor = ""
+    protocol = ""
     
     while True:
         land_id = log.log_input("land_id: ")
@@ -362,19 +363,27 @@ def get_sensor():
         else:
             log.log_err(f"invalid value")
 
+    while True:
+        protocol = log.log_input("protocolo(MQTT/COAP): ")
+        if protocol == "cancel":
+            return
+        if protocol == "MQTT" or protocol == "COAP":
+            break
+        else:
+            log.log_err(f"invalid value")
 
     msg = { 'cmd': 'get_sensor', 'type': sensor }
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
     log.log_send(f"[{topic}] {json_msg}")
 
-     if protocol == "MQTT":
+    if protocol == "MQTT":
         mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
         path = ""
         if sensor == "moisture":
-            path = "sensor/mst
-        elif sensor == "ph"
+            path = "sensor/mst"
+        elif sensor == "ph":
             path = "sensor/ph"
         elif sensor == "light":
             path = "sensor/light"

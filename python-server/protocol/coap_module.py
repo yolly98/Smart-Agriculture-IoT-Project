@@ -119,18 +119,72 @@ def send_msg(land_id, node_id, path, mode, msg):
         log.log_err(f"{index} address unknown")
         return False
     
-    client = nodes[index]['host']
+    client = new_client(nodes[index]['addr'])
+    response = None
     if mode == "GET":
         response = client.get(path, timeout=SEND_TIMEOUT)
     elif mode == "PUT":
         response = client.put(path, msg, timeout=SEND_TIMEOUT)
     
-    if response == None or response.payload == "" or response.payload == None:
-        log.log_err(f"node {index} doesn't respond")
+    client.stop()
+    return client_callback(response)
+#    if response == None or response.payload == "" or response.payload == None:
+#        log.log_err(f"node {index} doesn't respond [{path}]")
+#        return False
+#
+#    log.log_info(f"received (coap) {response.payload}")
+#
+#    doc = json.loads(response.payload)
+#    if doc['cmd'].find("status") >= 0:
+#        if doc['cmd'] == 'config-status':
+#            if int(doc['body']['land_id']) != int(land_id) or int(doc['body']['node_id']) != int(node_id):
+#                log.log_err(f"node {index} address is changed")
+#                update_mysql_db.update_address_in_configuration(land_id, node_id, "null", "null")
+#                delete_node(land_id, node_id)
+#                return False
+#
+#        coapStatus(land_id, node_id, doc)
+#    elif doc['cmd'] == "irrigation":
+#        msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
+#        from_node.irrigation(msg)
+#    elif doc['cmd'] == "mst":
+#        msg = { 'cmd':'moisture', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'moisture', 'value': doc['value'] } }
+#        from_node.moisture(msg)
+#    elif doc['cmd'] == "ph":
+#        msg = { 'cmd':'ph', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'ph', 'value': doc['value'] } }
+#        from_node.ph(msg)
+#    elif doc['cmd'] == "light":
+#        msg = { 'cmd':'light', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'light', 'value': doc['value'] } }
+#        from_node.light(msg)
+#    elif doc['cmd'] == "tmp":
+#        msg = { 'cmd':'tmp', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'tmp', 'value': doc['value'] } }
+#        from_node.tmp(msg)
+#    elif doc['cmd'] == "is_alive_ack":
+#        log.log_success(f"node {index} online")
+#        msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
+#        from_node.is_alive_ack(msg)
+#
+#    return True
+
+#----------------------
+
+def client_callback(response):
+
+    if response == None:
+        log.log_err("received None")
+        return False
+    addr = extract_addr(response)
+    index = [ key for key in nodes.items() if key[1]['addr'] == addr][0][0]
+    index = index.replace("NODE/","")
+    index = index.split("/")
+    land_id = index[0]
+    node_id = index[1]
+
+    if response.payload == None or response.payload == "":
+        log.log_err(f"received None from ({land_id}, {node_id})")
         return False
 
-    log.log_info(f"received (coap) {response.payload}")
-
+    log.log_info(f"received {response.payload} from ({land_id}, {node_id})")
     doc = json.loads(response.payload)
     if doc['cmd'].find("status") >= 0:
         if doc['cmd'] == 'config-status':
@@ -157,48 +211,10 @@ def send_msg(land_id, node_id, path, mode, msg):
         msg = { 'cmd':'tmp', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'tmp', 'value': doc['value'] } }
         from_node.tmp(msg)
     elif doc['cmd'] == "is_alive_ack":
-        log.log_success(f"node {index} online")
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
         from_node.is_alive_ack(msg)
 
     return True
-
-#----------------------
-
-def client_callback(response):
-
-    if response == None or response.payload == None:
-        log.log_err("received None from observing")
-        return
-    addr = extract_addr(response)
-    index = [ key for key in nodes.items() if key[1]['addr'] == addr][0][0]
-    index = index.replace("NODE/","")
-    index = index.split("/")
-    land_id = index[0]
-    node_id = index[1]
-
-    log.log_info(f"received from observing {response.payload}")
-    doc = json.loads(response.payload)
-    if doc['cmd'].find("status") >= 0:
-        coapStatus(land_id, node_id, doc)
-    elif doc['cmd'] == "irrigation":
-        msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
-        from_node.irrigation(msg)
-    elif doc['cmd'] == "mst":
-        msg = { 'cmd':'moisture', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'moisture', 'value': doc['value'] } }
-        from_node.moisture(msg)
-    elif doc['cmd'] == "ph":
-        msg = { 'cmd':'ph', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'ph', 'value': doc['value'] } }
-        from_node.ph(msg)
-    elif doc['cmd'] == "light":
-        msg = { 'cmd':'light', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'light', 'value': doc['value'] } }
-        from_node.light(msg)
-    elif doc['cmd'] == "tmp":
-        msg = { 'cmd':'tmp', 'body': { 'land_id': land_id, 'node_id': node_id, 'type': 'tmp', 'value': doc['value'] } }
-        from_node.tmp(msg)
-    elif doc['cmd'] == "is_alive_ack":
-        msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
-        from_node.is_alive_ack(msg)
 
 
 

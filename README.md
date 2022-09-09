@@ -54,5 +54,6 @@
 * [x] capire perchè il timer non viene resettato quando lo modifico
 * [ ] capire perchè a volte il server non riceve
 * [x] Se è attivo il nodo e il server si attiva dopo, poi non posso fargli l'osserving
+* [x] perchè quando invio un comando ricevo dall'observing?
 
 

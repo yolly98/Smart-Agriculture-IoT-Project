@@ -55,6 +55,16 @@ def add_irrigation_event(land_id, node_id, status):
     )
     mycursor = mydb.cursor(prepared=True)
 
+    sql = "SELECT * FROM irrigation \
+        WHERE land_id = %s and node_id = %s \
+        and i_timestamp = CURRENT_TIMESTAMP \
+        LIMIT 1"
+    mycursor.execute(sql, (land_id, node_id))
+    last_value = mycursor.fetchone()
+    if last_value:
+        log.log_err(f"duplicated value from ({land_id}, {node_id}, irrigation)")
+        return
+
     sql = "INSERT INTO irrigation (land_id, node_id, irr_status) \
         VALUES (%s, %s, %s)"
     mycursor.execute(sql, (land_id, node_id, status))

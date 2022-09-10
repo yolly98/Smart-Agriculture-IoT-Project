@@ -19,6 +19,9 @@ static void mst_put_handler(
 static void mst_event_handler(void);
 
 /*--------------------------------------------*/
+
+int STATE;
+
 static struct mst_str{
   unsigned int soil_moisture;
   unsigned int mst_timer;
@@ -39,6 +42,11 @@ EVENT_RESOURCE(
 
 void save_mst_timer(int timer){
   mst_mem.mst_timer = timer;
+  STATE = STATE_CONFIGURED;
+}
+
+void mst_error(){
+  STATE = STATE_ERROR;
 }
 
 int get_mst_timer(){
@@ -101,7 +109,6 @@ static void mst_event_handler(void)
 
 /*----------------------------------------------*/
 
-
 static void mst_get_handler(
   coap_message_t *request,
   coap_message_t *response,
@@ -109,6 +116,9 @@ static void mst_get_handler(
   uint16_t preferred_size,
   int32_t *offset
   ){
+
+  if(STATE == STATE_ERROR)
+      return;
 
   char reply[MSG_SIZE];
 

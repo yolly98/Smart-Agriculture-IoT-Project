@@ -10,6 +10,8 @@ static void is_alive_get_handler(
 
 /*--------------------------------------------*/
 
+int STATE;
+
 EVENT_RESOURCE(
     is_alive_rsc,
     "title=\"Is Alive\"; rt = \"Text\"",
@@ -21,6 +23,14 @@ EVENT_RESOURCE(
 );
 
 /*------------------------------------------------*/
+
+void is_alive_init(){
+  STATE = STATE_CONFIGURED;
+}
+
+void is_alive_error(){
+  STATE = STATE_ERROR;
+}
 
 void send_is_alive_ack(char msg[]){
 
@@ -38,6 +48,9 @@ static void is_alive_get_handler(
   uint16_t preferred_size,
   int32_t *offset
   ){
+
+    if(STATE == STATE_ERROR)
+      return;
 
     printf(" <  get is alive\n");
     char msg[MSG_SIZE];

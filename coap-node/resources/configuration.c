@@ -18,6 +18,7 @@ static void config_put_handler(
 
 /*--------------------------------------------*/
 
+int STATE;
 
 struct configuration_str{
 
@@ -41,6 +42,11 @@ EVENT_RESOURCE(
 void save_config(int land_id, int node_id){
   configuration.land_id = land_id;
   configuration.node_id = node_id;
+  STATE = STATE_CONFIGURED;
+}
+
+void config_error(){
+  STATE = STATE_ERROR;
 }
 
 void get_config(unsigned int* land_id,unsigned int* node_id){
@@ -72,6 +78,8 @@ static void config_get_handler(
   int32_t *offset
   ){
 
+    if(STATE == STATE_ERROR)
+      return;
     printf(" <  get config\n");
     char msg[MSG_SIZE];
     send_config_status(msg); 
@@ -89,6 +97,9 @@ static void config_put_handler(
   uint16_t preferred_size,
   int32_t *offset
   ){
+
+    if(STATE == STATE_ERROR)
+      return;
 
     printf(" <  put config\n");
     const uint8_t* arg;

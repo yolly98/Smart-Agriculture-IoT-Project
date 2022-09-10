@@ -19,6 +19,7 @@ static void irr_put_handler(
 static void irr_event_handler(void);
 
 /*--------------------------------------------*/
+int STATE;
 
 struct irr_config_str{
     bool enabled;
@@ -46,7 +47,12 @@ void save_irr_config(bool enabled, unsigned int irr_limit, unsigned int irr_dura
   irr_mem.irr_limit = irr_limit;
   irr_mem.irr_duration = irr_duration;
   irr_mem.irr_status = irr_status;
+  STATE = STATE_CONFIGURED;
 
+}
+
+void irr_error(){
+  STATE = STATE_ERROR;
 }
 
 void get_irr_config(bool* enabled, unsigned int* irr_limit, unsigned int* irr_duration, bool* irr_status){
@@ -55,6 +61,7 @@ void get_irr_config(bool* enabled, unsigned int* irr_limit, unsigned int* irr_du
   *irr_duration = irr_mem.irr_duration;
   *irr_status = irr_mem.irr_status;
 }
+
 
 void set_irr_timer(){
   etimer_set(&irr_mem.irr_duration_etimer, irr_mem.irr_duration * CLOCK_MINUTE); 
@@ -124,7 +131,6 @@ static void irr_event_handler(void)
 
 /*----------------------------------------------*/
 
-
 static void irr_get_handler(
   coap_message_t *request,
   coap_message_t *response,
@@ -132,6 +138,9 @@ static void irr_get_handler(
   uint16_t preferred_size,
   int32_t *offset
   ){
+
+  if(STATE == STATE_ERROR)
+      return;
 
   char reply[MSG_SIZE];
 
@@ -152,6 +161,8 @@ static void irr_put_handler(
   int32_t *offset
   ){
 
+  if(STATE == STATE_ERROR)
+    return;
 
   printf(" <  put irrigation\n");
   const uint8_t* arg;

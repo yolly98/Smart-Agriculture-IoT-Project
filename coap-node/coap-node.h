@@ -56,12 +56,19 @@ void parse_json(char json[], int n_arguments, char arguments[][100]);
 void coap_init();
 void client_chunk_handler(coap_message_t *response);
 
-//CONFIGURATION RESOURCE FUNCTION
+//CONFIGURATION RESOURCE FUNCTIONS
 void save_config(int land_id, int node_id);
+void config_error();
 void get_config(unsigned int* land_id,unsigned int* node_id);
 
-//IRRIGATION RESOURCE FUNCTION
+
+//IS_ALIVE RESOURCE FUNCTIONS
+void is_alive_init();
+void is_alive_error();
+
+//IRRIGATION RESOURCE FUNCTIONS
 void save_irr_config(bool enabled, unsigned int irr_limit, unsigned int irr_duration, bool irr_status);
+void irr_error();
 void get_irr_config(bool* enabled, unsigned int* irr_limit, unsigned int* irr_duration, bool* irr_status);
 void set_irr_timer();
 void reset_irr_timer();
@@ -70,8 +77,9 @@ bool check_irr_timer_expired();
 void irr_stopping();
 void irr_starting(int moisture);
 
-//MOISTURE RESOURCE FUNCTION
+//MOISTURE RESOURCE FUNCTIONS
 void save_mst_timer(int timer);
+void mst_error();
 int get_mst_timer();
 int get_mst_value();
 void set_mst_timer();
@@ -79,24 +87,27 @@ void reset_mst_timer();
 void restart_mst_timer();
 bool check_mst_timer_expired();
 
-//PH RESOURCE FUNCTION
+//PH RESOURCE FUNCTIONS
 void save_ph_timer(int timer);
+void ph_error();
 int get_ph_timer();
 void set_ph_timer();
 void reset_ph_timer();
 void restart_ph_timer();
 bool check_ph_timer_expired();
 
-//LIGHT RESOURCE FUNCTION
+//LIGHT RESOURCE FUNCTIONS
 void save_light_timer(int timer);
+void light_error();
 int get_light_timer();
 void set_light_timer();
 void reset_light_timer();
 void restart_light_timer();
 bool check_light_timer_expired();
 
-//TRMPERATURE RESOURCE FUNCTION
+//TRMPERATURE RESOURCE FUNCTIONS
 void save_tmp_timer(int timer);
+void tmp_error();
 int get_tmp_timer();
 void set_tmp_timer();
 void reset_tmp_timer();

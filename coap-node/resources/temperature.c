@@ -19,6 +19,9 @@ static void tmp_put_handler(
 static void tmp_event_handler(void);
 
 /*--------------------------------------------*/
+
+int STATE;
+
 static struct tmp_str{
   int soil_temperature;
   unsigned int tmp_timer;
@@ -39,10 +42,15 @@ EVENT_RESOURCE(
 
 void save_tmp_timer(int timer){
   tmp_mem.tmp_timer = timer;
+  STATE = STATE_CONFIGURED;
+}
+
+void tmp_error(){
+  STATE = STATE_ERROR;
 }
 
 int get_tmp_timer(){
-  return tmp_mem.tmp_timer;
+  return tmp_mem.tmp_timer; 
 }
 
 void set_tmp_timer(){
@@ -104,6 +112,9 @@ static void tmp_get_handler(
   int32_t *offset
   ){
 
+  if(STATE == STATE_ERROR)
+      return;
+
   char reply[MSG_SIZE];
 
   printf(" <  get sensor/tmp\n");
@@ -122,6 +133,9 @@ static void tmp_put_handler(
   uint16_t preferred_size,
   int32_t *offset
   ){
+
+    if(STATE == STATE_ERROR)
+      return;
 
     printf(" <  put sensor/tmp\n");
     const uint8_t* arg;

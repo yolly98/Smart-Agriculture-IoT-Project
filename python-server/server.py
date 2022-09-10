@@ -15,7 +15,6 @@ from protocol import coap_module
 
 log.log_init()
 mqtt_module.mqtt_init()
-to_node.get_config(True)
 
 #functinon for thread 1(console)
 def server_console():
@@ -197,6 +196,9 @@ t1.start()
 t2.start()
 t3.start()
 t4.start()
+
+time.sleep(3)
+to_node.get_config(True)
 
 t1.join()
 t2.join()

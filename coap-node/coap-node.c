@@ -199,7 +199,7 @@ PROCESS_THREAD(coap_node, ev, data){
     PROCESS_BEGIN();
 
     /*------------INITIALIZATION---------------*/
-    printf("[!] initialization ...\n");
+    printf("[!] initialization COAP node...\n");
 
     //set land_id and node_id
 
@@ -214,6 +214,7 @@ PROCESS_THREAD(coap_node, ev, data){
     node_id = 0;
 
     //default configuration
+    is_alive_init();
     save_irr_config(true, 0, 60, false);
     save_mst_timer(60);
     save_ph_timer(60);
@@ -315,35 +316,48 @@ PROCESS_THREAD(coap_node, ev, data){
             break;
         else if(STATE == STATE_ERROR){
             printf("[-] configuration failed\n");
-            PROCESS_EXIT();
+            is_alive_error();
+            config_error();
+            irr_error();
+            mst_error();
+            ph_error();
+            light_error();
+            tmp_error();
+            led_status = !led_status;
+            leds_single_toggle(LEDS_RED);
+            etimer_restart(&led_etimer);
+            break;
         }
     }
-    //assign_config_received_sim(); //simulation (use this and comment the while above to jump the configuration phase)
-    print_config();
-    printf("[+] configuration ended\n");
 
-    /*------------------FIRST MEASUREMENTS------------*/
+    if(STATE != STATE_ERROR){
+        //assign_config_received_sim(); //simulation (use this and comment the while above to jump the configuration phase)
+        print_config();
+        printf("[+] configuration ended\n");
 
+        printf("[!] first sensor detection ...\n");
 
-    printf("[!] first sensor detection ...\n");
+        set_mst_timer();
+        set_ph_timer();
+        set_light_timer();
+        set_tmp_timer();
 
-    //they aren't needed because when the server registers itself as a observer, gets the first reading
-    //mst_rsc.trigger();
-    //ph_rsc.trigger();
-    //light_rsc.trigger();
-    //tmp_rsc.trigger();
-
-    set_mst_timer();
-    set_ph_timer();
-    set_light_timer();
-    set_tmp_timer();
-
-    printf("[!] sensors all online\n");
+        printf("[!] sensors all online\n");
+    }
 
     while(true){
 
         PROCESS_YIELD();
         
+        if (STATE == STATE_ERROR){
+            if(etimer_expired(&led_etimer)){
+                led_status = !led_status;
+                leds_single_toggle(LEDS_RED);
+                etimer_restart(&led_etimer);
+            }
+            continue;
+        }
+
         if(ev == serial_line_event_message){ //to test if the node can comunicate
             char * msg = (char*)data;
             if(strcmp(msg, "help") == 0){

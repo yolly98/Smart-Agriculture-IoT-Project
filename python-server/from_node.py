@@ -3,6 +3,7 @@ import random
 import to_node
 import log
 from protocol import mqtt_module
+from protocol import coap_module
 from persistence import add_mysql_db
 from persistence import update_mysql_db
 
@@ -24,12 +25,18 @@ def config_request(protocol, address, doc):
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
 
-    if mqtt_module.check_node(land_id, node_id):
+    if (protocol == "MQTT" and 
+        (mqtt_module.check_node(land_id, node_id) or coap_module.check_node(land_id, node_id))
+        ):
+
             topic = f"NODE/{land_id}/{node_id}"
             log.log_err(f"node ({land_id}, {node_id}) duplicated")
+            msg = {'cmd': 'error_id'}
+            mqtt_module.mqtt_publish(topic, json.dumps(msg))
             return
     else:
-        mqtt_module.add_node(land_id, node_id)
+        if protocol == "MQTT":
+            mqtt_module.add_node(land_id, node_id)
         to_node.assign_config(land_id, node_id, protocol, address, False)
 
 
@@ -68,7 +75,8 @@ def status(protocol, address, doc):
     light_timer = msg['body']['light_timer']
     tmp_timer = msg['body']['tmp_timer']
 
-    mqtt_module.add_node(land_id, node_id)
+    if protocol == "MQTT":
+        mqtt_module.add_node(land_id, node_id)
     update_mysql_db.update_configuration(land_id, node_id, protocol, address, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer)
     
 

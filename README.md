@@ -46,7 +46,7 @@
 * [x] gestire caso land non trovata
 * [ ] eliminare funzioni di simulazione (tranne la simulazione)
 
-### COAP SERVER
+### SERVER
 * [x] inserire COAP nel server
 * [ ] vedere se i file.h sono aggiornati con tutte le funzioni
 * [x] capire perchè con cooja non ricevo nulla (vedere il border router!)
@@ -66,18 +66,21 @@
 * [x] mettere controllo nodi già configurati per evitare doppioni sulla rete
 * [x] se mi connetto ad una rete già configurata in alcuni casi ho ancora l'errore 'TooManyObserver'
 * [ ] togliere selezione protocollo e address dai comandi (prendo da cache)
-* [ ] fare controlli tra le cache coap e mqtt al momento della registrazione di un nodo
-* [ ]
+* [x] fare controlli tra le cache coap e mqtt al momento della registrazione di un nodo
+* [ ] togliere simulazioni
 
 * [x] fare test con 4 nodi coap
 * [x] rifare test mqtt (cooja)
 * [x] fare test con 4 nodi mqtt
-* [ ] fare test con 2 nodi coap e 2 mqtt
-* [ ] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
+* [x] fare test con 2 nodi coap e 2 mqtt
+* [x] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 
 #OTTIMIZZAZIONI
 
 [ ] cambiare il nome dei protocolli da stringhe a int
 [ ] mettere i tipi bool se à previsto true o false (attenzione se è previsto il null)
 
+#PROBLEMA SECONDARIO
+[ ] se ho dei duplicati e riavvio il server python, al riavvio i nodi duplicati potrebbero prendere il posto degli
+originali (rimangono attivi i listener)
 

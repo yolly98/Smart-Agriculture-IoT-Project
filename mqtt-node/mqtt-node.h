@@ -36,6 +36,7 @@
 #define ASSIGN_I_CONFIG     "assign_i_config"
 #define ASSIGN_T_CONFIG     "assign_t_config"
 #define ERROR_LAND          "error_land"
+#define ERROR_ID            "error_id"
 #define TIMER_CMD           "timer_cmd"
 #define GET_SENSOR          "get_sensor"
 #define IS_ALIVE            "is_alive"

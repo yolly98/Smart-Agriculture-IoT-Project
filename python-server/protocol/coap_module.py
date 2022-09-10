@@ -22,10 +22,6 @@ configs = dict()
 
 def extract_addr(request):
     addr = str(request)
-#    addr = addr.split(",")
-#    addr = addr[0].split("(")
-#    addr = addr[1].split(",")
-#    addr = addr[0].replace("\'", "")
     addr = addr.split("(")
     addr = addr[1].split(")")
     addr = addr[0].split(',')

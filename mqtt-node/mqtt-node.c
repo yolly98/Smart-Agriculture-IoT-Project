@@ -180,6 +180,10 @@ bool elaborate_cmd(char msg[]){
         printf("[!] ERROR_LAND received, reset the node\n");
         process_exit(&mqtt_node);
     }
+    else if(strcmp(cmd[0], ERROR_ID) == 0){
+        printf("[!] ERROR_ID received, reset the node\n");
+        process_exit(&mqtt_node);
+    }
     else if(strcmp(cmd[0], GET_SENSOR) == 0){
         printf("[!] GET_SENSOR command elaboration ...\n");
 

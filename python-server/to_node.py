@@ -180,7 +180,7 @@ def get_config(broadcast):
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
-                if not coap_module.add_nodes(land_id, node_id, address):
+                if (not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id):
                     log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
                     continue
                 result = coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
@@ -300,7 +300,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
             if msg['cmd'] == 'error_land':
                 json_msg = 'error_land'
             else:
-                if not coap_module.add_nodes(land_id, node_id, address):
+                if (not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id):
                     log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
                     json_msg = 'error_id'
             return json_msg
@@ -560,7 +560,7 @@ def is_alive(broadcast):
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
-                if not coap_module.add_nodes(land_id, node_id, address):
+                if (not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id):
                     log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
                     continue
                 coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")

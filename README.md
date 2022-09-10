@@ -77,7 +77,10 @@
 
 #OTTIMIZZAZIONI
 
-* [ ] cambiare il nome dei protocolli da stringhe a int
+* [x] cambiare il nome dei protocolli da stringhe a int
+
+#TEST FINALE
+* [ ] simulazione con 2 nodi COAP e due nodi MQTT
 
 #PROBLEMA SECONDARIO
 * [ ] controllare che non ci siano duplicati nelle misurazioni 

@@ -20,7 +20,7 @@
 2. start mqtt broker by the terminal of your machine (not in container)
 	* > mosquitto -v
 
-3. start cooja simulation by opening the simulation "smart_agricolture_iot_project.csc"
+3. start cooja simulation by opening the simulation "smart_agricolture_cooja_sim.csc"
 
 4. open a new terminal in your machine
 	* go to project folder

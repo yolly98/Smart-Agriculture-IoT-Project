@@ -65,7 +65,7 @@
 * [x] test offline dopo timer e is_alive
 * [x] mettere controllo nodi già configurati per evitare doppioni sulla rete
 * [x] se mi connetto ad una rete già configurata in alcuni casi ho ancora l'errore 'TooManyObserver'
-* [ ] togliere selezione protocollo e address dai comandi (prendo da cache)
+* [x] togliere selezione protocollo e address dai comandi (prendo da cache)
 * [x] fare controlli tra le cache coap e mqtt al momento della registrazione di un nodo
 * [ ] togliere simulazioni
 

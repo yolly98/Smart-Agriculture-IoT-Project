@@ -56,8 +56,6 @@ def add_nodes(land_id, node_id, addr):
     else:
         return True
 
-#----------------------
-
 def show_coap_nodes():
 
     log.log_info("List of known coap nodes")
@@ -66,16 +64,12 @@ def show_coap_nodes():
         print(f"index: {key} addr: {nodes[key]['addr']}")
     print("-----------------------")
         
-#----------------------
-
 def check_node(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     if index in nodes:
         return True
     else:
         return False
-
-#----------------------
 
 def delete_node(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
@@ -84,6 +78,12 @@ def delete_node(land_id, node_id):
         nodes[index]['host'].stop()
         nodes.pop(index)
 
+def get_node_addr(land_id, node_id):
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if index in nodes:
+        return nodes[index]['addr']
+    else:
+        return False
 #----------------------
 
 def reset_config(land_id, node_id):

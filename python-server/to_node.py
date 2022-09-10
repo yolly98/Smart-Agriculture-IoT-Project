@@ -66,25 +66,27 @@ def irr_cmd():
             break
         else:
             log.log_err(f"invalid value, has to be > 0")
-    while True:
-        protocol = log.log_input("protocol(MQTT/COAP): ")
-        if protocol == "cancel":
-            return
-        if protocol == "MQTT" or protocol == "COAP":
-            break
-        else:
-            log.log_err(f"invalid value")
+#    while True:
+#        protocol = log.log_input("protocol(MQTT/COAP): ")
+#        if protocol == "cancel":
+#            return
+#        if protocol == "MQTT" or protocol == "COAP":
+#            break
+#        else:
+#            log.log_err(f"invalid value")
+
+    if coap_module.check_node(land_id, node_id):
+        protocol = "COAP"
+    elif mqtt_module.check_node(land_id, node_id):
+        protocol = "MQTT"
+    else:
+        log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+        return
 
     msg = ""
     if protocol == "MQTT":
-        if not mqtt_module.check_node(land_id, node_id):
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
         msg = { 'cmd': 'irr_cmd', 'body': { 'enable': enabled, 'status': status, 'limit': int(limit), 'irr_duration': int(irr_duration) } }
     elif protocol == "COAP":
-        if not coap_module.check_node(land_id, node_id):
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
         msg = { 'enable': enabled, 'status': status, 'limit': int(limit), 'irr_duration': int(irr_duration) }
     
     json_msg = json.dumps(msg)
@@ -129,26 +131,28 @@ def get_config(broadcast):
                 break
             else:
                 log.log_err(f"invalid value, has to be > 0")
-        while True:
-            protocol = log.log_input("protocol(MQTT/COAP): ")
-            if protocol == "cancel":
-                return
-            if protocol == "MQTT" or protocol == "COAP":
-                break
-            else:
-                log.log_err(f"invalid value")
+#        while True:
+#            protocol = log.log_input("protocol(MQTT/COAP): ")
+#            if protocol == "cancel":
+#                return
+#            if protocol == "MQTT" or protocol == "COAP":
+#                break
+#            else:
+#                log.log_err(f"invalid value")
+
+        if coap_module.check_node(land_id, node_id):
+            protocol = "COAP"
+        elif mqtt_module.check_node(land_id, node_id):
+            protocol = "MQTT"
+        else:
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
 
         topic = f"NODE/{land_id}/{node_id}"
         log.log_send(f"[{topic}] {json_msg}")
         if protocol == "MQTT":
-            if not mqtt_module.check_node(land_id, node_id):
-                log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-                return
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
-            if not coap_module.check_node(land_id, node_id):
-                log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-                return
             result = coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
             if not result:
                 return
@@ -230,34 +234,36 @@ def assign_config_cmd():
             break
         else:
             log.log_err(f"invalid value")
-    while True:
-        protocol = log.log_input("protocol(MQTT/COAP): ")
-        if protocol == "cancel":
-            return
-        if protocol == "MQTT" or protocol == "COAP":
-            break
-        else:
-            log.log_err(f"invalid value")
-    while True:
-        if protocol == "MQTT":
-            address = "null"
-            break
-        address = log.log_input("address(fd00::20?:?:?:?): ")
-        if address == "cancel":
-            return
-        if not address.isdigit():
-            break
-        else:
-            log.log_err(f"invalid value")
+#    while True:
+#        protocol = log.log_input("protocol(MQTT/COAP): ")
+#        if protocol == "cancel":
+#            return
+#        if protocol == "MQTT" or protocol == "COAP":
+#            break
+#        else:
+#            log.log_err(f"invalid value")
+#    while True:
+#        if protocol == "MQTT":
+#            address = "null"
+#            break
+#        address = log.log_input("address(fd00::20?:?:?:?): ")
+#        if address == "cancel":
+#            return
+#        if not address.isdigit():
+#            break
+#        else:
+#            log.log_err(f"invalid value")
 
-    if protocol == "MQTT":
-        if not mqtt_module.check_node(land_id, node_id):
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
-    elif protocol == "COAP":
-        if not coap_module.check_node(land_id, node_id):
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
+    if coap_module.check_node(land_id, node_id):
+        protocol = "COAP"
+        address = coap_module.get_node_addr(land_id, node_id)
+    elif mqtt_module.check_node(land_id, node_id):
+        protocol = "MQTT"
+        address = ""
+    else:
+        log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+        return
+
     assign_config(land_id, node_id, protocol, address, True)
 
 
@@ -373,25 +379,27 @@ def timer_cmd():
     if len(timer) == 0:
         timer = 0
 
-    while True:
-        protocol = log.log_input("protocol(MQTT/COAP): ")
-        if protocol == "cancel":
-            return
-        if protocol == "MQTT" or protocol == "COAP":
-            break
-        else:
-            log.log_err(f"invalid value")
+#    while True:
+#        protocol = log.log_input("protocol(MQTT/COAP): ")
+#        if protocol == "cancel":
+#            return
+#        if protocol == "MQTT" or protocol == "COAP":
+#            break
+#        else:
+#            log.log_err(f"invalid value")
+
+    if coap_module.check_node(land_id, node_id):
+        protocol = "COAP"
+    elif mqtt_module.check_node(land_id, node_id):
+        protocol = "MQTT"
+    else:
+        log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+        return
 
     msg = ""
     if protocol == "MQTT":
-        if not mqtt_module.check_node(land_id, node_id):
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
         msg = { 'cmd': 'timer_cmd', 'body': { 'sensor': sensor, 'timer': int(timer) } }
     elif protocol == "COAP":
-        if not coap_module.check_node(land_id, node_id):
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
         if sensor == "mst":
             path = "sensor/mst"
         elif sensor == "ph":
@@ -449,14 +457,22 @@ def get_sensor():
         else:
             log.log_err(f"invalid value")
 
-    while True:
-        protocol = log.log_input("protocol(MQTT/COAP): ")
-        if protocol == "cancel":
-            return
-        if protocol == "MQTT" or protocol == "COAP":
-            break
-        else:
-            log.log_err(f"invalid value")
+#    while True:
+#        protocol = log.log_input("protocol(MQTT/COAP): ")
+#        if protocol == "cancel":
+#            return
+#        if protocol == "MQTT" or protocol == "COAP":
+#            break
+#        else:
+#            log.log_err(f"invalid value")
+
+    if coap_module.check_node(land_id, node_id):
+        protocol = "COAP"
+    elif mqtt_module.check_node(land_id, node_id):
+        protocol = "MQTT"
+    else:
+        log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+        return
 
     msg = { 'cmd': 'get_sensor', 'type': sensor }
     json_msg = json.dumps(msg)
@@ -464,14 +480,8 @@ def get_sensor():
     log.log_send(f"[{topic}] {json_msg}")
 
     if protocol == "MQTT":
-        if not mqtt_module.check_node(land_id, node_id):
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
         mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
-        if not coap_module.check_node(land_id, node_id):
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
         path = ""
         if sensor == "mst":
             path = "sensor/mst"
@@ -516,26 +526,28 @@ def is_alive(broadcast):
                 break
             else:
                 log.log_err(f"invalid value, has to be > 0")
-        while True:
-            protocol = log.log_input("protocol(MQTT/COAP): ")
-            if protocol == "cancel":
-                return
-            if protocol == "MQTT" or protocol == "COAP":
-                break
-            else:
-                log.log_err(f"invalid value")
+#        while True:
+#            protocol = log.log_input("protocol(MQTT/COAP): ")
+#            if protocol == "cancel":
+#                return
+#            if protocol == "MQTT" or protocol == "COAP":
+#                break
+#            else:
+#                log.log_err(f"invalid value")
+
+        if coap_module.check_node(land_id, node_id):
+            protocol = "COAP"
+        elif mqtt_module.check_node(land_id, node_id):
+            protocol = "MQTT"
+        else:
+            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+            return
 
         topic = f"NODE/{land_id}/{node_id}"
         log.log_send(f"[{topic}] {json_msg}")
         if protocol == "MQTT":
-            if not mqtt_module.check_node(land_id, node_id):
-                log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-                return
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
-            if not coap_module.check_node(land_id, node_id):
-                log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-                return
             coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")
         else:
             log.log_err("protocol not recognized")

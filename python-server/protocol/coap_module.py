@@ -50,13 +50,15 @@ def client_observe(land_id, node_id, path):
 
 def add_nodes(land_id, node_id, addr):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
-    if (index in nodes) and nodes[index]['addr'] == addr:
-        return
-    else:
+    if index not in nodes:
         nodes[index] = dict()
         nodes[index]['addr'] = addr
         nodes[index]['host'] = new_client(addr)
-        return
+        return True
+    elif (index in nodes) and nodes[index]['addr'] != addr:
+        return False
+    else:
+        return True
 
 #----------------------
 
@@ -166,7 +168,7 @@ def client_callback(response):
     if doc['cmd'].find("status") >= 0:
         if doc['cmd'] == 'config-status':
             if int(doc['body']['land_id']) != int(land_id) or int(doc['body']['node_id']) != int(node_id):
-                log.log_err(f"node {index} address is changed")
+                log.log_err(f"node {land_id}, {node_id} address is changed")
                 update_mysql_db.update_address_in_configuration(land_id, node_id, "null", "null")
                 delete_node(land_id, node_id)
                 return False
@@ -215,8 +217,7 @@ class ConfigurationRes(Resource):
         to_print = "received " + str(msg) + " from " + addr
         log.log_info(to_print)
         self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr, False)
-        if self.payload != 'error_land':
-            add_nodes(msg['land_id'], msg['node_id'], addr)
+        if self.payload != 'error_land' and self.payload != 'error_id':
             client_observe(msg['land_id'], msg['node_id'], "/irrigation")
             client_observe(msg['land_id'], msg['node_id'], "/sensor/mst")
             client_observe(msg['land_id'], msg['node_id'], "/sensor/ph")

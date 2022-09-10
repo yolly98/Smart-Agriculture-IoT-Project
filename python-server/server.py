@@ -167,16 +167,16 @@ def server_console():
 def mqtt_server_check_node():
 
     #[REAL]
-    end_timer =  60 * 60 * 3    # 3 hours
+    #end_timer =  60 * 60 * 3    # 3 hours
     #[TEST]
-    #end_timer = 60               # 1 minute
+    end_timer = 10               # 1 minute
     start_timer = time.time()
     while True:
         
         #check if nodes are online
         if (time.time() - start_timer) >= end_timer:
-            to_node.is_alive(True)
             update_vw.set_all_node_offline_vw()
+            to_node.is_alive(True)
             start_timer = time.time()
 
         time.sleep(0.1)

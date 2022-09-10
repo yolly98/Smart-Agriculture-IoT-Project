@@ -180,7 +180,9 @@ def get_config(broadcast):
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
-                coap_module.add_nodes(land_id, node_id, address)
+                if not coap_module.add_nodes(land_id, node_id, address):
+                    log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
+                    continue
                 result = coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
                 if not result:
                     coap_module.delete_node(land_id, node_id)
@@ -288,11 +290,15 @@ def assign_config(land_id, node_id, protocol, address, cmd):
         if cmd == False:
             if msg['cmd'] == 'error_land':
                 json_msg = 'error_land'
+            else:
+                if not coap_module.add_nodes(land_id, node_id, address):
+                    log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
+                    json_msg = 'error_id'
             return json_msg
         else:
             if msg['cmd'] == 'error_land':
                 return
-            coap_module.add_nodes(land_id, node_id, address)
+            #coap_module.add_nodes(land_id, node_id, address)
             coap_module.reset_config(land_id, node_id)
             result = coap_module.send_msg(land_id, node_id, "irrigation", "PUT", json.dumps(msg['body']['irr_config']))
             if not result:
@@ -545,9 +551,11 @@ def is_alive(broadcast):
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
-                coap_module.add_nodes(land_id, node_id, address)
+                if not coap_module.add_nodes(land_id, node_id, address):
+                    log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
+                    continue
                 coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")
             else:
-                log.log_err("protocol not recognized")
+                log.log_err(f"protocol not recognized")
                 continue
 

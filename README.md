@@ -50,20 +50,21 @@
 * [x] capire come contattare i nodi all'avvio se questi sono già configurati
 * [x] risolvere tutti i problemi di configurazione (server si avvia quando già il nodo è attivo e configurato)
 * [x] capire perchè non riesco a mandare comandi (es. semplice get sensor)
-* [ ] capire perchè ricevo duplicati alla lettura sensori
+* [x] capire perchè ricevo duplicati alla lettura sensori
 * [x] capire perchè a volte assegna configurazione a 0
 * [x] capire perchè il timer non viene resettato quando lo modifico
 * [x] capire perchè a volte il server non riceve
 * [x] Se è attivo il nodo e il server si attiva dopo, poi non posso fargli l'osserving
 * [x] perchè quando invio un comando ricevo dall'observing?
 * [x] gestire caso land non trovata
-* [ ] test offline dopo timer e is_alive
-* [ ] mettere controllo nodi già configurati per evitare doppioni sulla rete
-* [ ] se mi connetto ad una rete già configurata in alcuni casi ho ancora l'errore 'TooManyObserver'
+* [x] test offline dopo timer e is_alive
+* [x] mettere controllo nodi già configurati per evitare doppioni sulla rete
+* [x] se mi connetto ad una rete già configurata in alcuni casi ho ancora l'errore 'TooManyObserver'
 
-* [ ] fare test con 4 nodi coap
+* [x] fare test con 4 nodi coap
 * [ ] rifare test mqtt (cooja)
 * [ ] fare test con 4 nodi mqtt
 * [ ] fare test con 2 nodi coap e 2 mqtt
+* [ ] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 
 

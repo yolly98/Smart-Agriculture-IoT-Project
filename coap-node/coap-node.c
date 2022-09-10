@@ -127,6 +127,11 @@ void client_chunk_handler(coap_message_t *response){
         STATE = STATE_ERROR;
         return;
     }
+    if(strcmp(msg, "error_id") == 0){
+        printf("[-] node with the same id already exists\n");
+        STATE = STATE_ERROR;
+        return;
+    }
 
     STATE = STATE_CONFIGURED;
     int n_arguments = 8; 
@@ -308,8 +313,10 @@ PROCESS_THREAD(coap_node, ev, data){
         COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
         if(STATE == STATE_CONFIGURED)
             break;
-        else if(STATE == STATE_ERROR)
-            process_exit(&coap_node);;
+        else if(STATE == STATE_ERROR){
+            printf("[-] configuration failed\n");
+            PROCESS_EXIT();
+        }
     }
     //assign_config_received_sim(); //simulation
     print_config();

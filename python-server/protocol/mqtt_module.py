@@ -54,7 +54,7 @@ def on_message(client, userdata, msg):
     log.log_receive(doc)
     add_node(doc['body']['land_id'], doc['body']['node_id'])
     if doc['cmd'] == 'config_rqst':
-        from_node.config_request("MQTT", doc, "")
+        from_node.config_request("MQTT", "null", doc)
     elif doc['cmd'] == 'status':
         from_node.status("MQTT", "", doc)
     elif doc['cmd'] == 'irrigation':

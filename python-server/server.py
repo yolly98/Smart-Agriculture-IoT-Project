@@ -60,7 +60,7 @@ def server_console():
             print(".[27]    delete one violation")
             print("--------- OTHERS ------------------")
             print(".[28]    test received messages")
-            print(".[29]    list of coap nodes in cache")
+            print(".[29]    list of nodes in memory")
             print(".[30]    exit")
             cmd = log.log_input("$ Type a number or help: ")
 

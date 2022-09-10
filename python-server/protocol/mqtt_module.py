@@ -53,7 +53,6 @@ def on_message(client, userdata, msg):
     payload = (str(msg.payload))[1:]
     doc = parse_json(payload)
     log.log_receive(doc)
-    add_node(doc['body']['land_id'], doc['body']['node_id'])
     if doc['cmd'] == 'config_rqst':
         from_node.config_request("MQTT", "null", doc)
     elif doc['cmd'] == 'status':

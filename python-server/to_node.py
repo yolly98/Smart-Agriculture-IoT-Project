@@ -286,7 +286,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
     log.log_send(f"[{topic}] {json_msg}")
-    
+        
     if protocol == "MQTT":
         if msg['cmd'] != 'error_land':
             msg1 = { 'cmd': 'assign_i_config', 'body': { 'irr_config': { 'enabled': msg['body']['irr_config']['enabled'], 'irr_limit':  msg['body']['irr_config']['irr_limit'], 'irr_duration': msg['body']['irr_config']['irr_duration']} } }

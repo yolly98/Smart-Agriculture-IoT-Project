@@ -27,7 +27,9 @@
 * [ ] togliere il log
 * [ ] controllare se tutte le librerie servono
 * [x] risolvere problema del messaggio troppo lungo per assign_config
-* [ ] risolvere problema doppioni sulla rete
+* [x] risolvere problema doppioni sulla rete
+* [ ] eliminare funzioni di simulazione (tranne la configurazione)
+
 
 ### NODO COAP
 
@@ -42,6 +44,7 @@
 * [ ] controllare se tutte le librerie servono
 * [x] capire perchè all'assign config fa crashare il nodo su cooja
 * [x] gestire caso land non trovata
+* [ ] eliminare funzioni di simulazione (tranne la simulazione)
 
 ### COAP SERVER
 * [x] inserire COAP nel server
@@ -62,12 +65,19 @@
 * [x] test offline dopo timer e is_alive
 * [x] mettere controllo nodi già configurati per evitare doppioni sulla rete
 * [x] se mi connetto ad una rete già configurata in alcuni casi ho ancora l'errore 'TooManyObserver'
+* [ ] togliere selezione protocollo e address dai comandi (prendo da cache)
+* [ ] fare controlli tra le cache coap e mqtt al momento della registrazione di un nodo
+* [ ]
 
 * [x] fare test con 4 nodi coap
-* [ ] rifare test mqtt (cooja)
-* [ ] fare test con 4 nodi mqtt
+* [x] rifare test mqtt (cooja)
+* [x] fare test con 4 nodi mqtt
 * [ ] fare test con 2 nodi coap e 2 mqtt
 * [ ] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 
+#OTTIMIZZAZIONI
+
+[ ] cambiare il nome dei protocolli da stringhe a int
+[ ] mettere i tipi bool se à previsto true o false (attenzione se è previsto il null)
 
 

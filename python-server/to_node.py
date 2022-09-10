@@ -66,14 +66,6 @@ def irr_cmd():
             break
         else:
             log.log_err(f"invalid value, has to be > 0")
-#    while True:
-#        protocol = log.log_input("protocol(MQTT/COAP): ")
-#        if protocol == "cancel":
-#            return
-#        if protocol == "MQTT" or protocol == "COAP":
-#            break
-#        else:
-#            log.log_err(f"invalid value")
 
     if coap_module.check_node(land_id, node_id):
         protocol = "COAP"
@@ -131,14 +123,6 @@ def get_config(broadcast):
                 break
             else:
                 log.log_err(f"invalid value, has to be > 0")
-#        while True:
-#            protocol = log.log_input("protocol(MQTT/COAP): ")
-#            if protocol == "cancel":
-#                return
-#            if protocol == "MQTT" or protocol == "COAP":
-#                break
-#            else:
-#                log.log_err(f"invalid value")
 
         if coap_module.check_node(land_id, node_id):
             protocol = "COAP"
@@ -234,25 +218,6 @@ def assign_config_cmd():
             break
         else:
             log.log_err(f"invalid value")
-#    while True:
-#        protocol = log.log_input("protocol(MQTT/COAP): ")
-#        if protocol == "cancel":
-#            return
-#        if protocol == "MQTT" or protocol == "COAP":
-#            break
-#        else:
-#            log.log_err(f"invalid value")
-#    while True:
-#        if protocol == "MQTT":
-#            address = "null"
-#            break
-#        address = log.log_input("address(fd00::20?:?:?:?): ")
-#        if address == "cancel":
-#            return
-#        if not address.isdigit():
-#            break
-#        else:
-#            log.log_err(f"invalid value")
 
     if coap_module.check_node(land_id, node_id):
         protocol = "COAP"
@@ -286,8 +251,15 @@ def assign_config(land_id, node_id, protocol, address, cmd):
             msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': 'true', 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
     else:
         if config[2] != protocol or config[3] != address:
-            update_mysql_db.update_address_in_configuration(land_id, node_id, protocol, address)
-        msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
+            if (protocol == "COAP" and 
+                ((not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id))):
+                log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
+                msg = {'cmd': 'error_id'}
+            else:
+                update_mysql_db.update_address_in_configuration(land_id, node_id, protocol, address)
+                msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
+        else:
+            msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
     
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
@@ -305,13 +277,11 @@ def assign_config(land_id, node_id, protocol, address, cmd):
         if cmd == False:
             if msg['cmd'] == 'error_land':
                 json_msg = 'error_land'
-            else:
-                if (not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id):
-                    log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
-                    json_msg = 'error_id'
+            elif msg['cmd'] == 'error_id':
+                json_msg = 'error_id'
             return json_msg
         else:
-            if msg['cmd'] == 'error_land':
+            if msg['cmd'] == 'error_land' or msg['cmd'] == 'error_id':
                 return
             #coap_module.add_nodes(land_id, node_id, address)
             coap_module.reset_config(land_id, node_id)
@@ -378,15 +348,6 @@ def timer_cmd():
 
     if len(timer) == 0:
         timer = 0
-
-#    while True:
-#        protocol = log.log_input("protocol(MQTT/COAP): ")
-#        if protocol == "cancel":
-#            return
-#        if protocol == "MQTT" or protocol == "COAP":
-#            break
-#        else:
-#            log.log_err(f"invalid value")
 
     if coap_module.check_node(land_id, node_id):
         protocol = "COAP"
@@ -457,15 +418,6 @@ def get_sensor():
         else:
             log.log_err(f"invalid value")
 
-#    while True:
-#        protocol = log.log_input("protocol(MQTT/COAP): ")
-#        if protocol == "cancel":
-#            return
-#        if protocol == "MQTT" or protocol == "COAP":
-#            break
-#        else:
-#            log.log_err(f"invalid value")
-
     if coap_module.check_node(land_id, node_id):
         protocol = "COAP"
     elif mqtt_module.check_node(land_id, node_id):
@@ -526,14 +478,6 @@ def is_alive(broadcast):
                 break
             else:
                 log.log_err(f"invalid value, has to be > 0")
-#        while True:
-#            protocol = log.log_input("protocol(MQTT/COAP): ")
-#            if protocol == "cancel":
-#                return
-#            if protocol == "MQTT" or protocol == "COAP":
-#                break
-#            else:
-#                log.log_err(f"invalid value")
 
         if coap_module.check_node(land_id, node_id):
             protocol = "COAP"

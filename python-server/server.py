@@ -197,7 +197,7 @@ t2.start()
 t3.start()
 t4.start()
 
-time.sleep(3)
+time.sleep(2)
 to_node.get_config(True)
 
 t1.join()

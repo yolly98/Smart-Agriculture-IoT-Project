@@ -4,5 +4,4 @@
 /* Enable TCP */
 #define UIP_CONF_TCP 1
 
-
 #endif /* PROJECT_CONF_H_ */

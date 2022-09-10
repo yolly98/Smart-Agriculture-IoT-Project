@@ -110,7 +110,7 @@ bool elaborate_cmd(char msg[]){
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments);
         
-        if(strcmp(arguments[1], "moisture") == 0 && isNumber(arguments[2])){
+        if(strcmp(arguments[1], "mst") == 0 && isNumber(arguments[2])){
             node_memory.configuration.mst_timer = atoi(arguments[2]);
             ctimer_set(&node_timers.mst_ctimer, node_memory.configuration.mst_timer * CLOCK_MINUTE, get_soil_moisture, NULL);
         }
@@ -147,6 +147,34 @@ bool elaborate_cmd(char msg[]){
 
         send_status();
         printf("[+] ASSIGN_CONFIG command elaborated with success\n");
+    }
+    else if(strcmp(cmd[0], ASSIGN_I_CONFIG) == 0){
+        printf("[!] ASSIGN_I_CONFIG command elaboration ...\n");
+        int n_arguments = 4; 
+        char arguments[n_arguments][100];
+        parse_json(msg, n_arguments, arguments );
+
+        node_memory.configuration.irr_config.enabled = (strcmp(arguments[1], "true") == 0)?true:false;
+        node_memory.configuration.irr_config.irr_limit = atoi(arguments[2]);
+        node_memory.configuration.irr_config.irr_duration = atoi(arguments[3]);
+
+        //send_status();
+        printf("[+] ASSIGN_I_CONFIG command elaborated with success\n");
+    }
+    else if(strcmp(cmd[0], ASSIGN_T_CONFIG) == 0){
+        printf("[!] ASSIGN_T_CONFIG command elaboration ...\n");
+        mqtt_module.state = STATE_CONFIGURED;
+        int n_arguments = 5; 
+        char arguments[n_arguments][100];
+        parse_json(msg, n_arguments, arguments );
+
+        node_memory.configuration.mst_timer = atoi(arguments[1]);
+        node_memory.configuration.ph_timer = atoi(arguments[2]);
+        node_memory.configuration.light_timer = atoi(arguments[3]);
+        node_memory.configuration.tmp_timer = atoi(arguments[4]);
+
+        send_status();
+        printf("[+] ASSIGN_T_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], ERROR_LAND) == 0){
         printf("[!] ERROR_LAND received, reset the node\n");
@@ -560,22 +588,22 @@ PROCESS_THREAD(mqtt_node, ev, data){
     printf("[!] configuration ... \n");
 
     send_config_request();
-    receive_configuration_sim();
-    print_config();
+//    receive_configuration_sim();
+//    print_config();
 
-//    while(true){
-//        PROCESS_YIELD();
-//        if(etimer_expired(&node_timers.mqtt_etimer))
-//            mqtt_connection_service();
-//
-//        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
-//            printf("the border router is not reachable yet\n");
-//        }
-//          
-//        if(mqtt_module.state == STATE_CONFIGURED)
-//            break;
-//    }
-//
+    while(true){
+        PROCESS_YIELD();
+        if(etimer_expired(&node_timers.mqtt_etimer))
+            mqtt_connection_service();
+
+        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
+            printf("the border router is not reachable yet\n");
+        }
+          
+        if(mqtt_module.state == STATE_CONFIGURED)
+            break;
+    }
+
     printf("[+] configuration ended\n");
 
     /*------------------FIRST MEASUREMENTS------------*/

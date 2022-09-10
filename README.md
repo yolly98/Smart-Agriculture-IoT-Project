@@ -26,6 +26,8 @@
 * [ ] cercare di dividere il file mqtt-node.c in più file (tutti in una cartella)
 * [ ] togliere il log
 * [ ] controllare se tutte le librerie servono
+* [x] risolvere problema del messaggio troppo lungo per assign_config
+* [ ] risolvere problema doppioni sulla rete
 
 ### NODO COAP
 
@@ -67,10 +69,5 @@
 * [ ] fare test con 2 nodi coap e 2 mqtt
 * [ ] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 
-
-PROBLEMA MQTT 
-
-l'assign_config è un messaggio troppo lungo, per questo il nodo su cooja si impalla. 
-Cercare la configurazione per aumentare la dimensione del buffer.
 
 

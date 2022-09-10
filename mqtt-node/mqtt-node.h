@@ -21,24 +21,26 @@
 /*------------------------------------*/
 //COMMANDS
 
-#define CONFIG_RQST     "config_rqst"
-#define STATUS          "status"
-#define IRRIGATION      "irrigation"
-#define MOISTURE        "moisture"
-#define PH              "ph"
-#define LIGHT           "light"
-#define TMP             "tmp"
-#define IS_ALIVE_ACK    "is_alive_ack"
+#define CONFIG_RQST         "config_rqst"
+#define STATUS              "status"
+#define IRRIGATION          "irrigation"
+#define MOISTURE            "moisture"
+#define PH                  "ph"
+#define LIGHT               "light"
+#define TMP                 "tmp"
+#define IS_ALIVE_ACK        "is_alive_ack"
 
-#define IRR_CMD         "irr_cmd"
-#define GET_CONFIG      "get_config"
-#define ASSIGN_CONFIG   "assign_config"
-#define ERROR_LAND      "error_land"
-#define TIMER_CMD       "timer_cmd"
-#define GET_SENSOR      "get_sensor"
-#define IS_ALIVE        "is_alive"
-#define CLOCK_MINUTE    CLOCK_SECOND * 60
-#define MSG_SIZE        512
+#define IRR_CMD             "irr_cmd"
+#define GET_CONFIG          "get_config"
+#define ASSIGN_CONFIG       "assign_config"
+#define ASSIGN_I_CONFIG     "assign_i_config"
+#define ASSIGN_T_CONFIG     "assign_t_config"
+#define ERROR_LAND          "error_land"
+#define TIMER_CMD           "timer_cmd"
+#define GET_SENSOR          "get_sensor"
+#define IS_ALIVE            "is_alive"
+#define CLOCK_MINUTE        CLOCK_SECOND * 60
+#define MSG_SIZE            512
 
 /*------------------------------------*/
 //DATA STRUCTURES

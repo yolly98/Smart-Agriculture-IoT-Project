@@ -239,6 +239,9 @@ def assign_config_cmd():
         else:
             log.log_err(f"invalid value")
     while True:
+        if protocol == "MQTT":
+            address = "null"
+            break
         address = log.log_input("address(fd00::20?:?:?:?): ")
         if address == "cancel":
             return
@@ -285,7 +288,13 @@ def assign_config(land_id, node_id, protocol, address, cmd):
     log.log_send(f"[{topic}] {json_msg}")
     
     if protocol == "MQTT":
-        mqtt_module.mqtt_publish(topic, json_msg)
+        if msg['cmd'] != 'error_land':
+            msg1 = { 'cmd': 'assign_i_config', 'body': { 'irr_config': { 'enabled': msg['body']['irr_config']['enabled'], 'irr_limit':  msg['body']['irr_config']['irr_limit'], 'irr_duration': msg['body']['irr_config']['irr_duration']} } }
+            msg2 = { 'cmd': 'assign_t_config', 'body': {'mst_timer': msg['body']['mst_timer'], 'ph_timer':msg['body']['ph_timer'], 'light_timer': msg['body']['light_timer'], 'tmp_timer': msg['body']['tmp_timer'] } }
+            mqtt_module.mqtt_publish(topic, json.dumps(msg1))
+            mqtt_module.mqtt_publish(topic, json.dumps(msg2))
+        else:
+            mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
         if cmd == False:
             if msg['cmd'] == 'error_land':

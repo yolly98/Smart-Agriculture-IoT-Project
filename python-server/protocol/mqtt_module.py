@@ -3,6 +3,7 @@ import json
 import from_node
 import log
 
+BROKER_ADDR = "127.0.0.1"
 #-------------------------
 
 nodes = dict()
@@ -76,7 +77,7 @@ client = mqtt.Client()
 
 def mqtt_init():
     global client 
-    client.connect("127.0.0.1", 1883, 60)
+    client.connect(BROKER_ADDR, 1883, 60)
 
 #------------------------
 

@@ -68,3 +68,9 @@
 * [ ] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 
 
+PROBLEMA MQTT 
+
+l'assign_config è un messaggio troppo lungo, per questo il nodo su cooja si impalla. 
+Cercare la configurazione per aumentare la dimensione del buffer.
+
+

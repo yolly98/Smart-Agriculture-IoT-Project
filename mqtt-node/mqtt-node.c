@@ -159,7 +159,7 @@ bool elaborate_cmd(char msg[]){
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments);
 
-        if(strcmp(arguments[1], "moisture") == 0)
+        if(strcmp(arguments[1], "mst") == 0)
             get_soil_moisture();
         else if(strcmp(arguments[1], "ph") == 0)
             get_ph_level();
@@ -560,22 +560,22 @@ PROCESS_THREAD(mqtt_node, ev, data){
     printf("[!] configuration ... \n");
 
     send_config_request();
-    //receive_configuration_sim(); //TODO capire perchè se tolgo questo succede un macello
-    //print_config();
+    receive_configuration_sim();
+    print_config();
 
-    while(true){
-        PROCESS_YIELD();
-        if(etimer_expired(&node_timers.mqtt_etimer))
-            mqtt_connection_service();
-
-        //if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
-        //    printf("the border router is not reachable yet\n");
-        //}
-          
-        if(mqtt_module.state == STATE_CONFIGURED)
-            break;
-    }
-
+//    while(true){
+//        PROCESS_YIELD();
+//        if(etimer_expired(&node_timers.mqtt_etimer))
+//            mqtt_connection_service();
+//
+//        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
+//            printf("the border router is not reachable yet\n");
+//        }
+//          
+//        if(mqtt_module.state == STATE_CONFIGURED)
+//            break;
+//    }
+//
     printf("[+] configuration ended\n");
 
     /*------------------FIRST MEASUREMENTS------------*/
@@ -603,9 +603,9 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
         PROCESS_YIELD();
         
-        //if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
-        //    printf("the border router is not reachable yet\n");
-        //}
+        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
+            printf("the border router is not reachable yet\n");
+        }
 
         if(etimer_expired(&node_timers.mqtt_etimer) || ev == PROCESS_EVENT_POLL)
             mqtt_connection_service();

@@ -13,6 +13,14 @@ def add_configuration(land_id, node_id, protocol, address, status, irr_enabled, 
     )
     mycursor = mydb.cursor(prepared=True)
 
+    if address != "null":
+        sql = "UPDATE configuration \
+        SET protocol = %s \
+        address = %s \
+        WHERE protocol = %s and address = %s"
+        mycursor.execute(sql, ( "null", "null", "COAP", address))
+        mydb.commit()
+    
     sql = "INSERT INTO configuration ( \
         land_id, node_id, protocol, address, status, \
         irr_enabled, irr_limit, irr_duration, \

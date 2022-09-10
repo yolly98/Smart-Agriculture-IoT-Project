@@ -161,7 +161,7 @@ def get_config(broadcast):
             protocol = config[2]
             address = config[3]
 
-            if node_id == 0:
+            if protocol == "null":
                 continue
             topic = f"NODE/{land_id}/{node_id}"
             log.log_send(f"[{topic}] {json_msg}")

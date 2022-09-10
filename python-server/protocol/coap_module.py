@@ -39,6 +39,8 @@ def new_client(addr):
 
 def client_observe(land_id, node_id, path):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if not index in nodes:
+        return
     client = nodes[index]['host']
     client.observe(path, client_callback)
 
@@ -135,6 +137,8 @@ def send_msg(land_id, node_id, path, mode, msg):
         response = client.put(path, msg, timeout=SEND_TIMEOUT)
     
     client.stop()
+    if response == None or response.payload == None or response.payload == "":
+        return False
     return client_callback(response)
 
 #----------------------

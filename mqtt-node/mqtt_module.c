@@ -31,6 +31,7 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
 #define STATE_SUBSCRIBED      5
 #define STATE_DISCONNECTED    6
 #define STATE_CONFIGURED      7
+#define STATE_ERROR           8
 
 /*---------------------------------------------------------------------------*/
 /* Maximum TCP segment size for outgoing segments of our socket */
@@ -167,6 +168,10 @@ static void pub_handler(
   const uint8_t *chunk,
    uint16_t chunk_len
    ){
+
+  if (mqtt_module.state == STATE_ERROR)
+    return;
+
   printf("[!] received: topic='%s' (len=%u), chunk_len=%u\n", topic,
           topic_len, chunk_len);
 
@@ -177,6 +182,9 @@ static void pub_handler(
 
 static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data){
   
+  if (mqtt_module.state == STATE_ERROR)
+    return;
+
   switch(event) {
     case MQTT_EVENT_CONNECTED: {
         printf("[+] Application has a MQTT connection\n");

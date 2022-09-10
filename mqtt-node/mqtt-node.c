@@ -177,11 +177,13 @@ bool elaborate_cmd(char msg[]){
     }
     else if(strcmp(cmd[0], ERROR_LAND) == 0){
         printf("[!] ERROR_LAND received, reset the node\n");
-        process_exit(&mqtt_node);
+        //process_exit(&mqtt_node);
+        mqtt_module.state = STATE_ERROR;
     }
     else if(strcmp(cmd[0], ERROR_ID) == 0){
         printf("[!] ERROR_ID received, reset the node\n");
-        process_exit(&mqtt_node);
+        //process_exit(&mqtt_node);
+        mqtt_module.state = STATE_ERROR;
     }
     else if(strcmp(cmd[0], GET_SENSOR) == 0){
         printf("[!] GET_SENSOR command elaboration ...\n");
@@ -425,7 +427,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
     PROCESS_BEGIN();
 
     /*------------INITIALIZATION---------------*/
-    printf("[!] initialization ...\n");
+    printf("[!] initialization MQTT node...\n");
 
     printf("[!] manual land_id setting\n");
 
@@ -535,7 +537,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
             printf("the border router is not reachable yet\n");
         }
           
-        if(mqtt_module.state == STATE_CONFIGURED)
+        if(mqtt_module.state == STATE_CONFIGURED || mqtt_module.state == STATE_ERROR)
             break;
     }
 
@@ -543,29 +545,37 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     /*------------------FIRST MEASUREMENTS------------*/
 
+    if(mqtt_module.state != STATE_ERROR){
+        printf("[!] first sensor detection ...\n");
 
-    printf("[!] first sensor detection ...\n");
+        node_timers.sensor_timer_are_setted = false;
+        node_timers.irr_timer_is_setted = false;
+        get_soil_moisture();
+        get_ph_level();
+        get_lihght_raw();
+        get_soil_tmp();
 
-    node_timers.sensor_timer_are_setted = false;
-    node_timers.irr_timer_is_setted = false;
-    get_soil_moisture();
-    get_ph_level();
-    get_lihght_raw();
-    get_soil_tmp();
+        ctimer_set(&node_timers.mst_ctimer, node_memory.configuration.mst_timer * CLOCK_MINUTE, get_soil_moisture, NULL);
+        ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
+        ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_raw, NULL);
+        ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, get_soil_tmp, NULL);
 
-    ctimer_set(&node_timers.mst_ctimer, node_memory.configuration.mst_timer * CLOCK_MINUTE, get_soil_moisture, NULL);
-    ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
-    ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_raw, NULL);
-    ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, get_soil_tmp, NULL);
-
-    node_timers.sensor_timer_are_setted = true;
-
+        node_timers.sensor_timer_are_setted = true;
+    }
     /*---------------NORMAL WORKLOAD----------------*/
 
     while(true){
 
         PROCESS_YIELD();
         
+        if(mqtt_module.state == STATE_ERROR){
+            if(etimer_expired(&node_timers.led_etimer)){
+                led_status = !led_status;
+                leds_single_toggle(LEDS_RED);
+                etimer_restart(&node_timers.led_etimer);
+            }
+            continue;
+        }
         if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
             printf("the border router is not reachable yet\n");
         }

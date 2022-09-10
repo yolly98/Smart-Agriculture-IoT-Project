@@ -67,6 +67,7 @@
 * [x] togliere selezione protocollo e address dai comandi (prendo da cache)
 * [x] fare controlli tra le cache coap e mqtt al momento della registrazione di un nodo
 * [x] togliere simulazioni
+* [ ] il nodo 2 COAP si spaccia per più id al riavvio del server
 
 * [x] fare test con 4 nodi coap
 * [x] rifare test mqtt (cooja)

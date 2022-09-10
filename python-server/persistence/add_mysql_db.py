@@ -15,7 +15,7 @@ def add_configuration(land_id, node_id, protocol, address, status, irr_enabled, 
 
     if address != "null":
         sql = "UPDATE configuration \
-        SET protocol = %s \
+        SET protocol = %s, \
         address = %s \
         WHERE protocol = %s and address = %s"
         mycursor.execute(sql, ( "null", "null", "COAP", address))

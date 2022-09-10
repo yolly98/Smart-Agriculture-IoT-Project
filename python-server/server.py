@@ -12,6 +12,7 @@ from protocol import mqtt_module
 from protocol import coap_module
 
 # ------------MAIN-----------
+IS_ALIVE_TIMER = 60 #1 minute
 
 log.log_init()
 mqtt_module.mqtt_init()
@@ -165,10 +166,7 @@ def server_console():
 #functino for thread 2 (daemon)
 def mqtt_server_check_node():
 
-    #[REAL]
-    end_timer =  60 * 60 * 3    # 3 hours
-    #[TEST]
-    #end_timer = 10               # 1 minute
+    end_timer =  IS_ALIVE_TIMER
     start_timer = time.time()
     while True:
         

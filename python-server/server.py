@@ -167,9 +167,9 @@ def server_console():
 def mqtt_server_check_node():
 
     #[REAL]
-    #end_timer =  60 * 60 * 3    # 3 hours
+    end_timer =  60 * 60 * 3    # 3 hours
     #[TEST]
-    end_timer = 10               # 1 minute
+    #end_timer = 10               # 1 minute
     start_timer = time.time()
     while True:
         

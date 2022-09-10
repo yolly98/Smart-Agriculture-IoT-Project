@@ -158,7 +158,6 @@ bool elaborate_cmd(char msg[]){
         node_memory.configuration.irr_config.irr_limit = atoi(arguments[2]);
         node_memory.configuration.irr_config.irr_duration = atoi(arguments[3]);
 
-        //send_status();
         printf("[+] ASSIGN_I_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], ASSIGN_T_CONFIG) == 0){
@@ -216,77 +215,9 @@ bool elaborate_cmd(char msg[]){
 
 }
 
-/*-----------------COMMAND RECEIVED (SIMULATED)-----------------------------*/
+/*------------------------------------------*/
 
-void irr_cmd_received_sim(char msg[]){
-
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": {\"enable\": \"%s\", \"status\": \"%s\", \"limit\": %d, \"irr_duration\": %d } } ",
-        IRR_CMD,
-        ((random_rand()%2)!=0)?(((random_rand()%2)!=0)?"true":"false"):"null",
-        ((random_rand()%2)!=0)?(((random_rand()%2)!=0)?"on":"off"):"null",
-        ((random_rand()%2)!=0)?(10 + random_rand()%30):0,
-        ((random_rand()%2)!=0)?(5+ random_rand()%30):0
-        );
-
-}
-
-/*--------*/
-
-void get_config_received_sim(char msg[]){
-
-    sprintf(msg, "{ \"cmd\": \"%s\" } ", GET_CONFIG);
-}
-
-/*--------*/
-
-void assign_config_received_sim(char msg[]){ //is a simulation of a message received from server
-
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"irr_config\": { \"enabled\": \"true\", \"irr_limit\": 38, \"irr_duration\": 20 }, \"mst_timer\": 720, \"ph_timer\": 720, \"light_timer\": 60, \"tmp_timer\": 60 } } ",
-        ASSIGN_CONFIG
-        );
-}
-
-/*--------*/
-
-void timer_cmd_received_sim(char msg[]){
-
-    char sensor[50];
-    int rand = random_rand()%3;
-    if(rand == 0)
-        sprintf(sensor, "moisture");
-    else if(rand == 1)
-        sprintf(sensor, "ph");
-    else if(rand == 2)
-        sprintf(sensor, "light");
-    else
-        sprintf(sensor, "tmp");
-
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"sensor\": \"%s\", \"timer\": %d } } ",
-        TIMER_CMD,
-        sensor,
-        20 + random_rand()%690
-        );
-}
-
-/*--------*/
-
-void get_sensor_received_sim(char msg[]){
-
-    char sensor[50];
-    int rand = random_rand()%3;
-    if(rand == 0)
-        sprintf(sensor, "%s", "moisture");
-    else if(rand == 1)
-        sprintf(sensor, "%s", "ph");
-    else if(rand == 2)
-        sprintf(sensor, "%s", "light");
-    else
-        sprintf(sensor, "%s", "tmp");
-
-    sprintf(msg, "{ \"cmd\": \"%s\", \"type\": \"%s\" } ", GET_SENSOR, sensor);
-}
-
-/*--------*/
+//used to test if the node can send
 
 void is_alive_received_sim(char msg[]){
 
@@ -360,7 +291,7 @@ void send_is_alive_ack(){
     mqtt_publish_service(msg, IS_ALIVE_ACK);
 }
 
-/*-----------------SENSORS READINGS AND SEND TO SERVER(SIMULATED)-------------------------------*/
+/*----------------- SENSORS READINGS (SIMULATED) AND SEND TO SERVER -------------------------------*/
 
 void irr_stopping(){
     node_memory.irr_status = false;
@@ -474,7 +405,9 @@ void get_soil_tmp(){
 void receive_configuration_sim(){
 
     char msg[200];
-    assign_config_received_sim(msg);
+    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"irr_config\": { \"enabled\": \"true\", \"irr_limit\": 38, \"irr_duration\": 20 }, \"mst_timer\": 720, \"ph_timer\": 720, \"light_timer\": 60, \"tmp_timer\": 60 } } ",
+        ASSIGN_CONFIG
+    );
     printf(" <  %s \n", msg);
     elaborate_cmd(msg);
 }
@@ -493,8 +426,6 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     /*------------INITIALIZATION---------------*/
     printf("[!] initialization ...\n");
-
-    //set land_id
 
     printf("[!] manual land_id setting\n");
 
@@ -592,7 +523,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
     printf("[!] configuration ... \n");
 
     send_config_request();
-//    receive_configuration_sim();
+//    receive_configuration_sim();  //uncomment here to jump the configuration phase
 //    print_config();
 
     while(true){
@@ -649,30 +580,10 @@ PROCESS_THREAD(mqtt_node, ev, data){
         
             if(strcmp(cmd, "help") == 0){
                 printf("[!] command list:\n");
-                printf("    . irr_cmd\n");
-                printf("    . get_config\n");
-                printf("    . timer_cmd\n");
-                printf("    . assign_config\n");
-                printf("    . get_sensor\n");
                 printf("    . is_alive\n");
                 printf("    . mqtt_status\n");
                 printf("---------------\n");
                 continue;
-            }
-            else if(strcmp(cmd, "irr_cmd") == 0){
-                irr_cmd_received_sim(msg);
-            }
-            else if(strcmp(cmd, "get_config") == 0){
-                get_config_received_sim(msg);
-            }
-            else if(strcmp(cmd, "timer_cmd") == 0){
-                timer_cmd_received_sim(msg);
-            }
-            else if(strcmp(cmd, "assign_config") == 0){
-                assign_config_received_sim(msg);
-            }
-            else if(strcmp(cmd, "get_sensor") == 0){
-                get_sensor_received_sim(msg);
             }
             else if(strcmp(cmd, "is_alive") == 0){
                 is_alive_received_sim(msg);

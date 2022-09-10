@@ -99,12 +99,6 @@ void parse_json(char json[], int n_arguments, char arguments[][100]);
 //COMMAND ELABORATOR
 bool elaborate_cmd(char msg[]);
 
-//COMMAND RECEIVED (SIMULATED)
-void irr_cmd_received_sim(char msg[]);
-void get_config_received_sim(char msg[]);
-void assign_config_received_sim(char msg[]);
-void timer_cmd_received_sim(char msg[]);
-void get_sensor_received_sim(char msg[]);
 void is_alive_received_sim(char msg[]);
 
 //SENDING TO SERVER (SIMULATED)

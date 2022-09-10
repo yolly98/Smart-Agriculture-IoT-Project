@@ -77,10 +77,11 @@
 
 #OTTIMIZZAZIONI
 
-[ ] cambiare il nome dei protocolli da stringhe a int
-[ ] mettere i tipi bool se à previsto true o false (attenzione se è previsto il null)
+* [ ] cambiare il nome dei protocolli da stringhe a int
+* [ ] mettere i tipi bool se à previsto true o false (attenzione se è previsto il null)
 
 #PROBLEMA SECONDARIO
-[ ] se ho dei duplicati e riavvio il server python, al riavvio i nodi duplicati potrebbero prendere il posto degli
+* [ ] controllare che non ci siano duplicati nelle misurazioni 
+* [ ] se ho dei duplicati e riavvio il server python, al riavvio i nodi duplicati potrebbero prendere il posto degli
 originali (rimangono attivi i listener)
 

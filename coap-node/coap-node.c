@@ -318,7 +318,7 @@ PROCESS_THREAD(coap_node, ev, data){
             PROCESS_EXIT();
         }
     }
-    //assign_config_received_sim(); //simulation
+    //assign_config_received_sim(); //simulation (use this and comment the while above to jump the configuration phase)
     print_config();
     printf("[+] configuration ended\n");
 
@@ -327,6 +327,7 @@ PROCESS_THREAD(coap_node, ev, data){
 
     printf("[!] first sensor detection ...\n");
 
+    //they aren't needed because when the server registers itself as a observer, gets the first reading
     //mst_rsc.trigger();
     //ph_rsc.trigger();
     //light_rsc.trigger();
@@ -343,14 +344,25 @@ PROCESS_THREAD(coap_node, ev, data){
 
         PROCESS_YIELD();
         
-        /*if(ev == serial_line_event_message){
+        if(ev == serial_line_event_message){ //to test if the node can comunicate
             char * msg = (char*)data;
-            printf("[!] recevived '%s' by serial\n", msg);
-            coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
-            coap_set_header_uri_path(coap_module.request, "/new_config");
-            //coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg) - 1);
-            COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
-        }*/
+            if(strcmp(msg, "help") == 0){
+                printf("---- command list ----\n");
+                printf(". config\n");
+                printf(". trigger\n");
+                printf("----------------------\n");
+            }
+            else if(strcmp(msg, "config") == 0){
+                char to_send[MSG_SIZE];
+                sprintf(to_send, "{ \"land_id\": %d, \"node_id\": %d }", land_id, node_id);
+                coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
+                coap_set_header_uri_path(coap_module.request, "/new_config");
+                coap_set_payload(coap_module.request, (uint8_t *)to_send, strlen(to_send));
+                COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);   
+            }
+            else if(strcmp(msg, "trigger") == 0)
+                ph_rsc.trigger();
+        }
 
         if(check_mst_timer_expired()){
             mst_rsc.trigger();

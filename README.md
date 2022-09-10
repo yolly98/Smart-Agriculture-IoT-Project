@@ -23,12 +23,12 @@
 
 ### NODO MQTT
 
-* [ ] cercare di dividere il file mqtt-node.c in più file (tutti in una cartella)
+* [x] cercare di dividere il file mqtt-node.c in più file (tutti in una cartella)
 * [ ] togliere il log
 * [ ] controllare se tutte le librerie servono
 * [x] risolvere problema del messaggio troppo lungo per assign_config
 * [x] risolvere problema doppioni sulla rete
-* [ ] eliminare funzioni di simulazione (tranne la configurazione)
+* [x] eliminare funzioni di simulazione (tranne la configurazione)
 
 
 ### NODO COAP
@@ -44,7 +44,7 @@
 * [ ] controllare se tutte le librerie servono
 * [x] capire perchè all'assign config fa crashare il nodo su cooja
 * [x] gestire caso land non trovata
-* [ ] eliminare funzioni di simulazione (tranne la simulazione)
+* [x] eliminare funzioni di simulazione (tranne la simulazione)
 
 ### SERVER
 * [x] inserire COAP nel server
@@ -67,7 +67,7 @@
 * [x] se mi connetto ad una rete già configurata in alcuni casi ho ancora l'errore 'TooManyObserver'
 * [x] togliere selezione protocollo e address dai comandi (prendo da cache)
 * [x] fare controlli tra le cache coap e mqtt al momento della registrazione di un nodo
-* [ ] togliere simulazioni
+* [x] togliere simulazioni
 
 * [x] fare test con 4 nodi coap
 * [x] rifare test mqtt (cooja)
@@ -78,7 +78,6 @@
 #OTTIMIZZAZIONI
 
 * [ ] cambiare il nome dei protocolli da stringhe a int
-* [ ] mettere i tipi bool se à previsto true o false (attenzione se è previsto il null)
 
 #PROBLEMA SECONDARIO
 * [ ] controllare che non ci siano duplicati nelle misurazioni 

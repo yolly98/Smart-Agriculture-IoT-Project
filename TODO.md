@@ -54,19 +54,16 @@
 * [x] fare controlli tra le cache coap e mqtt al momento della registrazione di un nodo
 * [x] togliere simulazioni
 * [x] ricevere dall'mqtt la configurazioen spezzata
-* [ ] quando invio is_alive ad un nodo mqtt che era un nodo coap, l'is_alive_ack viene considerato 
+* [x] quando invio is_alive ad un nodo mqtt che era un nodo coap, l'is_alive_ack viene considerato 
 	ricevuto sia dal nodo mqtt sia coap
 
 ### TEST
 * [ ] fare test con 4 nodi coap
 * [ ] rifare test mqtt (cooja)
 * [ ] fare test con 4 nodi mqtt
-* [ ] fare test con 2 nodi coap e 2 mqtt
-
-
 
 ### TEST FINALE
-* [ ] simulazione con 2 nodi COAP e due nodi MQTT
+* [ ] simulazione con 2 nodi COAP e 2 nodi MQTT
 
 ### PROBLEMA SECONDARIO
 * [ ] controllare che non ci siano duplicati nelle misurazioni 

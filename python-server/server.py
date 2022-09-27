@@ -157,8 +157,8 @@ def server_console():
             coap_module.show_coap_nodes()
             mqtt_module.show_mqtt_nodes()
         elif cmd.isdigit() and int(cmd) == 30:
-            log.log_info("typed 'exit'")
-            log.log_info("Press Ctrl+c two time in order to stop the other threads")
+            log.log_info("exit ...")
+            time.sleep(2)
             exit()
         else:
             log.log_err(f"command not valid!")
@@ -199,9 +199,10 @@ time.sleep(2)
 to_node.get_config(True)
 
 t1.join()
-t2.join()
-t3.join()
-t4.join()
+
+#t2.join()
+#t3.join()
+#t4.join()
 
 
 

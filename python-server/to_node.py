@@ -100,7 +100,7 @@ def get_config(broadcast):
     msg = { 'cmd': 'get_config' }
     json_msg = json.dumps(msg)
 
-    if( not broadcast):
+    if(not broadcast):
         log.log_info("Type the arguments or 'cancel'")
         
         land_id = ""
@@ -519,7 +519,9 @@ def is_alive(broadcast):
                 if (not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id):
                     log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
                     continue
-                coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")
+                result = coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")
+                if not result:
+                    coap_module.delete_node(land_id, node_id)
             else:
                 log.log_err(f"protocol not recognized")
                 continue

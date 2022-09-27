@@ -100,7 +100,7 @@ bool elaborate_cmd(char msg[]){
     }
     else if(strcmp(cmd[0], GET_CONFIG) == 0){
         printf("[!] GET_CONFIG command elaboration ...\n");
-        send_status_fake();
+        send_status();
         printf("[+] GET_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], TIMER_CMD) == 0){
@@ -244,8 +244,8 @@ void send_config_request(){
 
 void send_status(){
 
-    char msg_irr[MSG_SIZE];
-    char msg_timer[MSG_SIZE];
+    char msg_irr[150];//MSG_SIZE];
+    char msg_timer[150];//MSG_SIZE];
     sprintf(msg_irr, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d } } ",
         STATUS_I,
         node_memory.configuration.land_id,
@@ -264,8 +264,8 @@ void send_status(){
         node_memory.configuration.tmp_timer
         );
     
-    printf(" >  %s [%d]\n", msg_irr, strlen(msg_irr));
-    printf(" >  %s [%d]\n", msg_timer, strlen(msg_timer));
+    printf(" >  [%d] %s \n", strlen(msg_irr), msg_irr);
+    printf(" >  [%d] %s \n", strlen(msg_timer), msg_timer);
     mqtt_publish_service(msg_irr, STATUS_I);
     mqtt_publish_service(msg_timer, STATUS_T);
 }
@@ -275,8 +275,8 @@ void send_status_fake(){
     printf("[-] send status fake\n");
     char msg_irr[150];
     char msg_timer[150];
-    sprintf(msg_irr, "%s", "AFFANCULO IRR");
-    sprintf(msg_timer, "%s", "AFFANCULO TIMER");
+    sprintf(msg_irr, "%s", " IRR");
+    sprintf(msg_timer, "%s", " TIMER");
     //sprintf(msg_irr, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d } } ",
     //    STATUS_I,
     //    node_memory.configuration.land_id,

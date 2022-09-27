@@ -8,6 +8,8 @@
 * Paho
 * Coapthon
 
+To test the project it was used docker
+
 # components
 
 * Python server

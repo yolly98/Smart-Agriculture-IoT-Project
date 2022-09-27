@@ -1,5 +1,13 @@
 # Smart Agricolture IoT project
 
+
+# Software
+
+* Contiki-ng 
+* Mysql
+* Paho
+* Coapthon
+
 # components
 
 * Python server

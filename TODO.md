@@ -75,3 +75,13 @@ originali (rimangono attivi i listener)
 
 ### OTTIMIZZAZIONI
 * [ ] cambiare il nome dei protocolli da stringhe a int
+
+
+#NOTA PROBLEMA IMPROPOBNIBILR
+
+* crash del nodo mqtt in fase di configurazione
+* se dimensione del messaggio è 200 => assign_config crash
+* se dimensione del messaggio è 150 => ok
+* se dimensione del messaggio è 512 => assign_config ok, get_config crash
+
+* ???????? CHE COSA STA SUCCEDENDO ????????

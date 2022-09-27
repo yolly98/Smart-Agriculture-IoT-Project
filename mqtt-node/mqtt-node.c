@@ -100,7 +100,7 @@ bool elaborate_cmd(char msg[]){
     }
     else if(strcmp(cmd[0], GET_CONFIG) == 0){
         printf("[!] GET_CONFIG command elaboration ...\n");
-        send_status();
+        send_status_fake();
         printf("[+] GET_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], TIMER_CMD) == 0){
@@ -264,11 +264,41 @@ void send_status(){
         node_memory.configuration.tmp_timer
         );
     
-    printf(" >  %s \n", msg_irr);
-    printf(" >  %s \n", msg_timer);
+    printf(" >  %s [%d]\n", msg_irr, strlen(msg_irr));
+    printf(" >  %s [%d]\n", msg_timer, strlen(msg_timer));
     mqtt_publish_service(msg_irr, STATUS_I);
     mqtt_publish_service(msg_timer, STATUS_T);
+}
 
+void send_status_fake(){
+
+    printf("[-] send status fake\n");
+    char msg_irr[150];
+    char msg_timer[150];
+    sprintf(msg_irr, "%s", "AFFANCULO IRR");
+    sprintf(msg_timer, "%s", "AFFANCULO TIMER");
+    //sprintf(msg_irr, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d } } ",
+    //    STATUS_I,
+    //    node_memory.configuration.land_id,
+    //    node_memory.configuration.node_id,
+    //    node_memory.configuration.irr_config.enabled?"true":"false",
+    //    node_memory.configuration.irr_config.irr_limit,
+    //    node_memory.configuration.irr_config.irr_duration
+    //    );
+    //sprintf(msg_timer, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"mst_timer\": %d, \"ph_timer\": %d, \"light_timer\": %d, \"tmp_timer\": %d } } ",
+    //    STATUS_T,
+    //    node_memory.configuration.land_id,
+    //    node_memory.configuration.node_id,
+    //    node_memory.configuration.mst_timer,
+    //    node_memory.configuration.ph_timer,
+    //    node_memory.configuration.light_timer,
+    //    node_memory.configuration.tmp_timer
+    //    );
+    
+    printf(" >  %s \n", msg_irr);
+    printf(" >  %s \n", msg_timer);
+    //mqtt_publish_service(msg_irr, STATUS_I);
+    //mqtt_publish_service(msg_timer, STATUS_T);
 }
 
 /*-------*/

@@ -105,6 +105,7 @@ void is_alive_received_sim(char msg[]);
 //SENDING TO SERVER (SIMULATED)
 void send_config_request();
 void send_status();
+void send_status_fake();
 void send_irrigation();
 void send_is_alive_ack();
 

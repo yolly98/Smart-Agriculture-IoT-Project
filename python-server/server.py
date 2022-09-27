@@ -77,7 +77,20 @@ def server_console():
         elif cmd.isdigit() and int(cmd) == 6:
             to_node.irr_cmd()
         elif cmd.isdigit() and int(cmd) == 7:
-            to_node.get_config(False)
+            broadcast = ""
+            while True:
+                broadcast = log.log_input("discovery mode? (y/n): ")
+                if broadcast == "cancel":
+                    return
+                if broadcast == "y" or broadcast == "n":
+                    break
+                else:
+                    log.log_err(f"invalid value")
+            if broadcast == "y":
+                broadcast = True
+            else:
+                broadcast = False
+            to_node.get_config(broadcast)
         elif cmd.isdigit() and int(cmd) == 8:
             to_node.assign_config_cmd()
         elif cmd.isdigit() and int(cmd) == 9:
@@ -199,10 +212,9 @@ time.sleep(2)
 to_node.get_config(True)
 
 t1.join()
-
-#t2.join()
-#t3.join()
-#t4.join()
+t2.join()
+t3.join()
+t4.join()
 
 
 

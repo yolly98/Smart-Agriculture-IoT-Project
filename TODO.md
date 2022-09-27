@@ -13,7 +13,8 @@
 * [x] eliminare funzioni di simulazione (tranne la configurazione)
 * [x] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 * [x] spezzare l'invio della configurazione in due pezzi(altrimenti crasha)
-* [ ] se riavvio il server dopo che il nodo è già configurato crasha
+* [ ] se riavvio il server dopo che il nodo è già configurato crasha (dipende dalla dimensione dei buffer)
+* [ ] se riavvio il server a volte non ricevo da un secondo nodo mqtt (troppo lontano?)
 
 ### NODO COAP
 

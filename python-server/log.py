@@ -5,6 +5,7 @@ import json
 def log_init():
     log_file = open("log.txt", "w")
     log_file.write("-----------------------------------------\n")
+    log_file.close()
 
 #-------------------
 
@@ -19,6 +20,7 @@ def log_receive(msg):
         print(f" < [{msg['cmd']}] from node ({msg['body']['land_id']},{msg['body']['node_id']})")
 
     log_file.write(f"[{current_time}]  <  {msg}\n")
+    log_file.close()
 
 #-------------------
 
@@ -31,6 +33,7 @@ def log_send(msg):
         print(" >  ", msg)
 
     log_file.write(f"[{current_time}]  >  {msg}\n")
+    log_file.close()
 #-------------------
 
 def log_err(msg):
@@ -42,6 +45,7 @@ def log_err(msg):
         print("[-] ", msg)
 
     log_file.write(f"[{current_time}] [-] {msg}\n")
+    log_file.close()
 
 #-------------------
 
@@ -54,6 +58,7 @@ def log_success(msg):
         print("[+] ", msg)
 
     log_file.write(f"[{current_time}] [+] {msg}\n")
+    log_file.close()
 
 #---------------------
 
@@ -66,6 +71,7 @@ def log_info(msg):
         print("[!] ", msg)
 
     log_file.write(f"[{current_time}] [!] {msg}\n")
+    log_file.close()
 
 #--------------------
 
@@ -77,5 +83,6 @@ def log_input(msg):
     current_time = str(datetime.datetime.now())
     
     log_file.write(f"[{current_time}] [k] {msg}{key_input}\n")
+    log_file.close()
 
     return key_input

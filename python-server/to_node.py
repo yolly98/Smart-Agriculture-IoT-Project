@@ -166,8 +166,12 @@ def get_config(broadcast):
             topic = f"NODE/{land_id}/{node_id}"
             log.log_send(f"[{topic}] {json_msg}")
             if protocol == "MQTT":
+                if mqtt_module.check_node(land_id, node_id):
+                    continue
                 mqtt_module.mqtt_publish(topic, json_msg)
             elif protocol == "COAP":
+                if coap_module.check_node(land_id, node_id):
+                    continue
                 if (not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id):
                     log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
                     continue

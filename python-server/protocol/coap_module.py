@@ -88,7 +88,7 @@ def get_node_addr(land_id, node_id):
         return False
 #----------------------
 
-def reset_config(land_id, node_id):
+def coap_reset_config(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     if index not in configs:
         return
@@ -98,7 +98,7 @@ def reset_config(land_id, node_id):
     configs[index].pop('light-status')
     configs[index].pop('tmp-status')
 
-def coapStatus(land_id, node_id, doc):
+def coap_status(land_id, node_id, doc):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     if not (index in configs):
         configs[index] = dict()
@@ -173,7 +173,7 @@ def client_callback(response):
                 delete_node(land_id, node_id)
                 return False
 
-        coapStatus(land_id, node_id, doc)
+        coap_status(land_id, node_id, doc)
     elif doc['cmd'] == "irrigation":
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id, 'status': doc['status'] } }
         from_node.irrigation(msg)

@@ -22,7 +22,8 @@
 //COMMANDS
 
 #define CONFIG_RQST         "config_rqst"
-#define STATUS              "status"
+#define STATUS_I            "irr_status"
+#define STATUS_T            "timer_status"
 #define IRRIGATION          "irrigation"
 #define MOISTURE            "moisture"
 #define PH                  "ph"

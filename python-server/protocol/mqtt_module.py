@@ -4,9 +4,43 @@ import from_node
 import log
 
 BROKER_ADDR = "127.0.0.1"
+configs = dict()
+nodes = dict()
+
+#---------------------------------
+
+def mqtt_reset_config(land_id, node_id):
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if index not in configs:
+        return
+    configs[index].pop('irr_status')
+    configs[index].pop('timer_status')
+
+def mqtt_status(doc):
+    index = "NODE/" + str(doc['body']['land_id']) + "/" + str(doc['body']['node_id'])
+    if not (index in configs):
+        configs[index] = dict()
+
+    configs[index][doc['cmd']] = doc['body']
+    if ('irr_status' in configs[index] and
+        'timer_status' in configs[index]
+        ):
+
+        land_id = configs[index]['irr_status']['land_id']
+        node_id = configs[index]['irr_status']['node_id']
+        enabled = configs[index]['irr_status']['enabled']
+        irr_limit = configs[index]['irr_status']['irr_limit']
+        irr_duration = configs[index]['irr_status']['irr_duration']
+        mst_timer = configs[index]['timer_status']['mst_timer']
+        ph_timer = configs[index]['timer_status']['ph_timer']
+        light_timer = configs[index]['timer_status']['light_timer']
+        tmp_timer =  configs[index]['timer_status']['tmp_timer']
+
+        msg = { 'cmd': 'status', 'body': { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': enabled, 'irr_limit': irr_limit, 'irr_duration': irr_duration }, 'mst_timer': mst_timer, 'ph_timer': ph_timer, 'light_timer': light_timer, 'tmp_timer': tmp_timer } } 
+        from_node.status("MQTT", "", msg)
+
 #-------------------------
 
-nodes = dict()
 
 def add_node(land_id, node_id):
     index = f"NODE/{land_id}/{node_id}"
@@ -55,8 +89,8 @@ def on_message(client, userdata, msg):
     log.log_receive(doc)
     if doc['cmd'] == 'config_rqst':
         from_node.config_request("MQTT", "null", doc)
-    elif doc['cmd'] == 'status':
-        from_node.status("MQTT", "", doc)
+    elif doc['cmd'] == 'irr_status' or doc['cmd'] == 'timer_status':
+        mqtt_status(doc)
     elif doc['cmd'] == 'irrigation':
         from_node.irrigation(doc)
     elif doc['cmd'] == 'moisture':

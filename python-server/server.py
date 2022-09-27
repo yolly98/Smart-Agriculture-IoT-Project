@@ -12,7 +12,7 @@ from protocol import mqtt_module
 from protocol import coap_module
 
 # ------------MAIN-----------
-IS_ALIVE_TIMER = 60 #1 minute
+IS_ALIVE_TIMER = 10*60 #1 minute
 
 log.log_init()
 mqtt_module.mqtt_init()

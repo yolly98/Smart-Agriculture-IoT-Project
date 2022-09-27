@@ -12,7 +12,8 @@
 * [x] risolvere problema doppioni sulla rete
 * [x] eliminare funzioni di simulazione (tranne la configurazione)
 * [x] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
-* [ ] spezzare l'invio della configurazione in due pezzi(altrimenti crasha)
+* [x] spezzare l'invio della configurazione in due pezzi(altrimenti crasha)
+* [ ] se riavvio il server dopo che il nodo è già configurato crasha
 
 ### NODO COAP
 
@@ -52,7 +53,9 @@
 * [x] togliere selezione protocollo e address dai comandi (prendo da cache)
 * [x] fare controlli tra le cache coap e mqtt al momento della registrazione di un nodo
 * [x] togliere simulazioni
-* [ ] ricevere dall'mqtt la configurazioen spezzata
+* [x] ricevere dall'mqtt la configurazioen spezzata
+* [ ] quando invio is_alive ad un nodo mqtt che era un nodo coap, l'is_alive_ack viene considerato 
+	ricevuto sia dal nodo mqtt sia coap
 
 ### TEST
 * [ ] fare test con 4 nodi coap

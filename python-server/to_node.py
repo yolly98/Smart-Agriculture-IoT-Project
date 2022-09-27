@@ -267,11 +267,12 @@ def assign_config(land_id, node_id, protocol, address, cmd):
         
     if protocol == "MQTT":
         if msg['cmd'] != 'error_land':
-            msg1 = { 'cmd': 'assign_i_config', 'body': { 'irr_config': { 'enabled': msg['body']['irr_config']['enabled'], 'irr_limit':  msg['body']['irr_config']['irr_limit'], 'irr_duration': msg['body']['irr_config']['irr_duration']} } }
+            msg1 = { 'cmd': 'assign_i_config', 'body': {'enabled': msg['body']['irr_config']['enabled'], 'irr_limit':  msg['body']['irr_config']['irr_limit'], 'irr_duration': msg['body']['irr_config']['irr_duration'] } }
             msg2 = { 'cmd': 'assign_t_config', 'body': {'mst_timer': msg['body']['mst_timer'], 'ph_timer':msg['body']['ph_timer'], 'light_timer': msg['body']['light_timer'], 'tmp_timer': msg['body']['tmp_timer'] } }
             mqtt_module.mqtt_publish(topic, json.dumps(msg1))
             mqtt_module.mqtt_publish(topic, json.dumps(msg2))
         else:
+            mqtt_module.mqtt_reset_config(land_id, node_id)
             mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
         if cmd == False:
@@ -283,8 +284,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
         else:
             if msg['cmd'] == 'error_land' or msg['cmd'] == 'error_id':
                 return
-            #coap_module.add_nodes(land_id, node_id, address)
-            coap_module.reset_config(land_id, node_id)
+            coap_module.coap_reset_config(land_id, node_id)
             result = coap_module.send_msg(land_id, node_id, "irrigation", "PUT", json.dumps(msg['body']['irr_config']))
             if not result:
                 coap_module.delete_node(land_id, node_id)

@@ -2,24 +2,6 @@
 
 ## TODO
 
-* [x] inserire supporto per mysqldb in command.py
-* [x] inserire supporto per mysqldb in from_node.py
-* [x] spostare tutte le operazioni su mysql su un file
-* [x] scrivere controlli di buona riuscita delle funzioni del modulo mysql
-* [x] scrivere le funzioni e comandi per modificare land e config di default
-* [x] mettere il limit alle funzioni get
-* [x] testare funzionalità server
-* [x] scrivere un log module che scrive sia su file sia su terminale
-
-* [x] usare una lista per bufferizzare i messaggi da inviare in mqtt
-* [x] inserire mqtt nel nodo e testarlo
-* [x] aggingere il campo protocol (COAP/MQTT) alle config in sql
-* [x] testare server
-* [x] inserire mqtt nel server (modificare json)
-* [x] testare configurazione del nodo e occuparmi dei TODO 
-* [x] capire pwerchè il while di configurazione non funziona
-* [x] far tornare al reset il nodo se la land non esiste
-* [x] test di tutti i comandi
 
 ### NODO MQTT
 
@@ -29,6 +11,8 @@
 * [x] risolvere problema del messaggio troppo lungo per assign_config
 * [x] risolvere problema doppioni sulla rete
 * [x] eliminare funzioni di simulazione (tranne la configurazione)
+* [x] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
+* [ ] spezzare l'invio della configurazione in due pezzi(altrimenti crasha)
 
 ### NODO COAP
 
@@ -44,6 +28,7 @@
 * [x] capire perchè all'assign config fa crashare il nodo su cooja
 * [x] gestire caso land non trovata
 * [x] eliminare funzioni di simulazione (tranne la simulazione)
+* [x] il nodo 2 COAP si spaccia per più id al riavvio del server
 
 ### SERVER
 * [x] inserire COAP nel server
@@ -67,13 +52,14 @@
 * [x] togliere selezione protocollo e address dai comandi (prendo da cache)
 * [x] fare controlli tra le cache coap e mqtt al momento della registrazione di un nodo
 * [x] togliere simulazioni
-* [x] il nodo 2 COAP si spaccia per più id al riavvio del server
+* [ ] ricevere dall'mqtt la configurazioen spezzata
 
-* [x] fare test con 4 nodi coap
-* [x] rifare test mqtt (cooja)
-* [x] fare test con 4 nodi mqtt
-* [x] fare test con 2 nodi coap e 2 mqtt
-* [x] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
+### TEST
+* [ ] fare test con 4 nodi coap
+* [ ] rifare test mqtt (cooja)
+* [ ] fare test con 4 nodi mqtt
+* [ ] fare test con 2 nodi coap e 2 mqtt
+
 
 
 ### TEST FINALE

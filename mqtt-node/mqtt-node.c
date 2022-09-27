@@ -525,8 +525,8 @@ PROCESS_THREAD(mqtt_node, ev, data){
     printf("[!] configuration ... \n");
 
     send_config_request();
-//    receive_configuration_sim();  //uncomment here to jump the configuration phase
-//    print_config();
+    // receive_configuration_sim();  //uncomment here to jump the configuration phase
+    // print_config();
 
     while(true){
         PROCESS_YIELD();

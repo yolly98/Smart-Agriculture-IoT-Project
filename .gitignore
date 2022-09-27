@@ -4,3 +4,5 @@ log.txt
 *.native
 __pycache__
 *.cooja
+*.sky
+*.cc26x0-cc13x0

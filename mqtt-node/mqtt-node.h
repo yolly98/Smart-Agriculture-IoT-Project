@@ -17,7 +17,7 @@
 #include "sys/ctimer.h"
 #include "lib/sensors.h"
 #include "os/sys/log.h"
-#include <strings.h>
+
 /*------------------------------------*/
 //COMMANDS
 

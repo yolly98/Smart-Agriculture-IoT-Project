@@ -84,8 +84,9 @@ void print_mqtt_status(){
     printf("state: %d\n", mqtt_module.state);
     printf("-----BUFFER MQTT--------\n");
     struct mqtt_publish_list *p = mqtt_module.plist_head;
-    for(int i = 0; i < mqtt_module.messages; i++){
-        printf("[ %s, len: %ld]->", p->cmd, strlen(p->msg));
+    int i;
+    for(i = 0; i < mqtt_module.messages; i++){
+        printf("[ %s, len: %ld]->", p->cmd, (long int)(strlen(p->msg)));
         p = p->ptr;
     }
     printf("\n");
@@ -136,7 +137,7 @@ bool get_msg_to_publish(char msg[], char topic[]){ //remove from list
   sprintf(cmd, "%s",  mqtt_module.plist_tail->cmd);
   sprintf(topic, "%s", "SERVER");
 
-  printf("[!] Publishing [ %s, len: %ld]\n", cmd, strlen(msg));
+  printf("[!] Publishing [ %s, len: %ld]\n", cmd, (long int)(strlen(msg)));
 
   if(mqtt_module.messages == 1){
     mqtt_module.plist_head = NULL;
@@ -144,7 +145,8 @@ bool get_msg_to_publish(char msg[], char topic[]){ //remove from list
   }
   else{
     struct mqtt_publish_list *p = mqtt_module.plist_head;
-    for(int i = 0; i < mqtt_module.messages ; i++){
+    int i;
+    for(i = 0; i < mqtt_module.messages ; i++){
       if(i == mqtt_module.messages - 2)
         break;
       p = p->ptr;

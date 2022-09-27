@@ -6,7 +6,8 @@
 bool isNumber(char * text){
 
     int len = strlen(text);
-    for(int i = 0; i < len; i++){
+    int i;
+    for(i = 0; i < len; i++){
         if(text[i] > 47 && text[i] < 58)
             continue;
         else 
@@ -59,8 +60,8 @@ void parse_json(char json[], int n_arguments, char arguments[][100]){
     int value_parsed = 0;
     int len = 0;
     bool value_detected = false;
-
-    for(int i = 0; json[i] != '\0' && value_parsed < n_arguments; i++){
+    int i;
+    for(i = 0; json[i] != '\0' && value_parsed < n_arguments; i++){
         
         if(json[i] == ':'){
             i++; //there is the space after ':'

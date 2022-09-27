@@ -16,7 +16,6 @@
 #include "net/ipv6/sicslowpan.h"
 #include "sys/ctimer.h"
 #include "lib/sensors.h"
-#include <strings.h>
 
 
 /*------------------------------------*/

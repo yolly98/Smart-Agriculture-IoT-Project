@@ -266,8 +266,8 @@ void send_status(){
         node_memory.configuration.tmp_timer
         );
     
-    printf(" >  [%d] %s \n", strlen(msg_irr), msg_irr);
-    printf(" >  [%d] %s \n", strlen(msg_timer), msg_timer);
+    printf(" >  [%d] %s \n", (int)(strlen(msg_irr)), msg_irr);
+    printf(" >  [%d] %s \n", (int)(strlen(msg_timer)), msg_timer);
     mqtt_publish_service(msg_irr, STATUS_I);
     mqtt_publish_service(msg_timer, STATUS_T);
 }

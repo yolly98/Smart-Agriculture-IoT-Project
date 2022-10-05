@@ -10,7 +10,7 @@ static void is_alive_get_handler(
 
 /*--------------------------------------------*/
 
-int STATE;
+int is_alive_state;
 
 EVENT_RESOURCE(
     is_alive_rsc,
@@ -25,11 +25,11 @@ EVENT_RESOURCE(
 /*------------------------------------------------*/
 
 void is_alive_init(){
-  STATE = STATE_CONFIGURED;
+  is_alive_state = STATE_CONFIGURED;
 }
 
 void is_alive_error(){
-  STATE = STATE_ERROR;
+  is_alive_state = STATE_ERROR;
 }
 
 void send_is_alive_ack(char msg[]){
@@ -49,7 +49,7 @@ static void is_alive_get_handler(
   int32_t *offset
   ){
 
-    if(STATE == STATE_ERROR)
+    if(is_alive_state == STATE_ERROR)
       return;
 
     printf(" <  get is alive\n");

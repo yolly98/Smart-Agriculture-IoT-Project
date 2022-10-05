@@ -20,12 +20,11 @@ static void tmp_event_handler(void);
 
 /*--------------------------------------------*/
 
-int STATE;
-
 static struct tmp_str{
   int soil_temperature;
   unsigned int tmp_timer;
   struct etimer tmp_etimer;
+  int state;
 }tmp_mem;
 
 EVENT_RESOURCE(
@@ -42,11 +41,11 @@ EVENT_RESOURCE(
 
 void save_tmp_timer(int timer){
   tmp_mem.tmp_timer = timer;
-  STATE = STATE_CONFIGURED;
+  tmp_mem.state = STATE_CONFIGURED;
 }
 
 void tmp_error(){
-  STATE = STATE_ERROR;
+  tmp_mem.state = STATE_ERROR;
 }
 
 int get_tmp_timer(){
@@ -112,7 +111,7 @@ static void tmp_get_handler(
   int32_t *offset
   ){
 
-  if(STATE == STATE_ERROR)
+  if(tmp_mem.state == STATE_ERROR)
       return;
 
   char reply[MSG_SIZE];
@@ -134,7 +133,7 @@ static void tmp_put_handler(
   int32_t *offset
   ){
 
-    if(STATE == STATE_ERROR)
+    if(tmp_mem.state == STATE_ERROR)
       return;
 
     printf(" <  put sensor/tmp\n");

@@ -1,3 +1,6 @@
+#ifndef RESOURCE_H_
+#define RESOURCE_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,3 +14,5 @@
 
 void parse_json(char json[], int n_arguments, char arguments[][100]);
 bool isNumber(char * text);
+
+#endif

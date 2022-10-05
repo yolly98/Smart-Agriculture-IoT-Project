@@ -20,12 +20,11 @@ static void light_event_handler(void);
 
 /*--------------------------------------------*/
 
-int STATE;
-
 static struct light_str{
   unsigned int light_raw;
   unsigned int light_timer;
   struct etimer light_etimer;
+  int state;
 }light_mem;
 
 EVENT_RESOURCE(
@@ -42,11 +41,11 @@ EVENT_RESOURCE(
 
 void save_light_timer(int timer){
   light_mem.light_timer = timer;
-  STATE = STATE_CONFIGURED;
+  light_mem.state = STATE_CONFIGURED;
 }
 
 void light_error(){
-  STATE = STATE_ERROR;
+  light_mem.state = STATE_ERROR;
 }
 
 int get_light_timer(){
@@ -111,7 +110,7 @@ static void light_get_handler(
   int32_t *offset
   ){
 
-  if(STATE == STATE_ERROR)
+  if(light_mem.state == STATE_ERROR)
       return;
 
   char reply[MSG_SIZE];

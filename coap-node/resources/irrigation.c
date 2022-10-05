@@ -19,7 +19,6 @@ static void irr_put_handler(
 static void irr_event_handler(void);
 
 /*--------------------------------------------*/
-int STATE;
 
 struct irr_config_str{
     bool enabled;
@@ -27,6 +26,7 @@ struct irr_config_str{
     unsigned int irr_duration;
     bool irr_status;
     struct etimer irr_duration_etimer;
+    int state;
 }irr_mem;
 
 EVENT_RESOURCE(
@@ -47,12 +47,12 @@ void save_irr_config(bool enabled, unsigned int irr_limit, unsigned int irr_dura
   irr_mem.irr_limit = irr_limit;
   irr_mem.irr_duration = irr_duration;
   irr_mem.irr_status = irr_status;
-  STATE = STATE_CONFIGURED;
+  irr_mem.state = STATE_CONFIGURED;
 
 }
 
 void irr_error(){
-  STATE = STATE_ERROR;
+  irr_mem.state = STATE_ERROR;
 }
 
 void get_irr_config(bool* enabled, unsigned int* irr_limit, unsigned int* irr_duration, bool* irr_status){
@@ -139,7 +139,7 @@ static void irr_get_handler(
   int32_t *offset
   ){
 
-  if(STATE == STATE_ERROR)
+  if(irr_mem.state == STATE_ERROR)
       return;
 
   char reply[MSG_SIZE];
@@ -161,7 +161,7 @@ static void irr_put_handler(
   int32_t *offset
   ){
 
-  if(STATE == STATE_ERROR)
+  if(irr_mem.state == STATE_ERROR)
     return;
 
   printf(" <  put irrigation\n");

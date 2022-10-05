@@ -20,12 +20,11 @@ static void ph_event_handler(void);
 
 /*--------------------------------------------*/
 
-int STATE;
-
 static struct ph_str{
   unsigned int ph_level;
   unsigned int ph_timer;
   struct etimer ph_etimer;
+  int state;
 }ph_mem;
 
 EVENT_RESOURCE(
@@ -42,11 +41,11 @@ EVENT_RESOURCE(
 
 void save_ph_timer(int timer){
   ph_mem.ph_timer = timer;
-  STATE = STATE_CONFIGURED;
+  ph_mem.state = STATE_CONFIGURED;
 }
 
 void ph_error(){
-  STATE = STATE_ERROR;
+  ph_mem.state = STATE_ERROR;
 }
 
 int get_ph_timer(){
@@ -112,7 +111,7 @@ static void ph_get_handler(
   int32_t *offset
   ){
 
-  if(STATE == STATE_ERROR)
+  if(ph_mem.state == STATE_ERROR)
       return;
 
   char reply[MSG_SIZE];
@@ -135,7 +134,7 @@ static void ph_put_handler(
   int32_t *offset
   ){
 
-  if(STATE == STATE_ERROR)
+  if(ph_mem.state == STATE_ERROR)
       return;
 
   printf(" <  put sensor/ph\n");

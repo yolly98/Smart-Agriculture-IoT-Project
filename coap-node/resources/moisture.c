@@ -20,12 +20,11 @@ static void mst_event_handler(void);
 
 /*--------------------------------------------*/
 
-int STATE;
-
 static struct mst_str{
   unsigned int soil_moisture;
   unsigned int mst_timer;
   struct etimer mst_etimer;
+  int state;
 }mst_mem;
 
 EVENT_RESOURCE(
@@ -42,11 +41,11 @@ EVENT_RESOURCE(
 
 void save_mst_timer(int timer){
   mst_mem.mst_timer = timer;
-  STATE = STATE_CONFIGURED;
+  mst_mem.state = STATE_CONFIGURED;
 }
 
 void mst_error(){
-  STATE = STATE_ERROR;
+  mst_mem.state = STATE_ERROR;
 }
 
 int get_mst_timer(){
@@ -117,7 +116,7 @@ static void mst_get_handler(
   int32_t *offset
   ){
 
-  if(STATE == STATE_ERROR)
+  if(mst_mem.state == STATE_ERROR)
       return;
 
   char reply[MSG_SIZE];

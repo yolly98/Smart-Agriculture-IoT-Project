@@ -57,6 +57,7 @@
 * [x] ricevere dall'mqtt la configurazioen spezzata
 * [x] quando invio is_alive ad un nodo mqtt che era un nodo coap, l'is_alive_ack viene considerato 
 	ricevuto sia dal nodo mqtt sia coap
+* [ ] fare in modo che is_alive broadcast vada a prendersi i nodi dalla cache non da mysql
 
 ### TEST
 * [ ] fare test con 4 nodi coap

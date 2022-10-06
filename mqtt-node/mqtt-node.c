@@ -246,8 +246,8 @@ void send_config_request(){
 
 void send_status(){
 
-    char msg_irr[150];//MSG_SIZE];
-    char msg_timer[150];//MSG_SIZE];
+    char msg_irr[MSG_SIZE];//MSG_SIZE];
+    char msg_timer[MSG_SIZE];//MSG_SIZE];
     sprintf(msg_irr, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d } } ",
         STATUS_I,
         node_memory.configuration.land_id,

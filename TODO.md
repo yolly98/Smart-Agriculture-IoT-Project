@@ -13,8 +13,10 @@
 * [x] eliminare funzioni di simulazione (tranne la configurazione)
 * [x] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 * [x] spezzare l'invio della configurazione in due pezzi(altrimenti crasha)
-* [ ] se riavvio il server dopo che il nodo è già configurato crasha (dipende dalla dimensione dei buffer)
+* [ ] se riavvio il server dopo che il nodo è già configurato crasha (dipende dalla dimensione dei buffer - nota alla fine)
 * [ ] se riavvio il server a volte non ricevo da un secondo nodo mqtt (troppo lontano?)
+	* provare a inviare un get-config al nodo da cui non ricevo (togliere il contrllo check_mqtt_node)
+	* se con il punto precedente si configura vuol dire che il server ha inviato i messaggi mqtt troppo velocemente (mettere uno sleep tra gli invii dei messaggi in broadcast)
 
 ### NODO COAP
 
@@ -58,6 +60,8 @@
 * [x] quando invio is_alive ad un nodo mqtt che era un nodo coap, l'is_alive_ack viene considerato 
 	ricevuto sia dal nodo mqtt sia coap
 * [ ] fare in modo che is_alive broadcast vada a prendersi i nodi dalla cache non da mysql
+* [ ] fare in modo da poter inviare is_alive broadcast anche da terminale
+
 
 ### TEST
 * [ ] fare test con 4 nodi coap

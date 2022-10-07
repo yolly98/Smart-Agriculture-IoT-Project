@@ -34,7 +34,7 @@ void is_alive_error(){
 
 void send_is_alive_ack(char msg[]){
 
-    sprintf(msg, "{ \"cmd\": \"%s\" }", "is_alive_ack");  
+    sprintf(msg, "{\"cmd\":\"%s\"}", "is_alive_ack");  
     printf(" >  %s \n", msg);
 }
 

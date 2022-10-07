@@ -75,7 +75,7 @@ void send_light_raw(char msg[]){
     light_mem.light_raw =  light;
     printf("[+] light raw detected: %d\n", light);
 
-    sprintf(msg,"{ \"cmd\": \"%s\", \"value\": %d }",
+    sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
         "light",
         light_mem.light_raw
         );
@@ -85,7 +85,7 @@ void send_light_raw(char msg[]){
 /*------------------------------------------*/
 
 void send_light_status(char msg[]){
-  sprintf(msg,"{ \"cmd\": \"%s\", \"timer\": %d }",
+  sprintf(msg,"{\"cmd\":\"%s\",\"timer\":%d}",
       "light-status",
       light_mem.light_timer
       );

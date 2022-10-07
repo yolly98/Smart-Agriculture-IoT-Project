@@ -80,7 +80,7 @@ void send_soil_moisture(char msg[]){
     mst_mem.soil_moisture = moisture;
     printf("[+] soil moisture detected: %d\n", moisture);
 
-    sprintf(msg,"{ \"cmd\": \"%s\", \"value\": %d }",
+    sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
         "mst",
         mst_mem.soil_moisture
       );
@@ -92,7 +92,7 @@ void send_soil_moisture(char msg[]){
 /*------------------------------------------*/
 
 void send_mst_status(char msg[]){
-  sprintf(msg,"{ \"cmd\": \"%s\", \"timer\": %d }",
+  sprintf(msg,"{\"cmd\":\"%s\",\"timer\":%d}",
       "mst-status",
       mst_mem.mst_timer
       );

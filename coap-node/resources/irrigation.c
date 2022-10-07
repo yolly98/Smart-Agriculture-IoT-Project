@@ -101,7 +101,7 @@ void irr_starting(int moisture){
 /*-----------------------------------------------*/
 void send_irr_status(char msg[]){
 
-  sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d, \"status\": \"%s\" } }",
+  sprintf(msg, "{\"cmd\":\"%s\",\"body\":{\"enabled\":\"%s\",\"irr_limit\":%d,\"irr_duration\":%d,\"status\":\"%s\"}}",
       "irr-status",
       irr_mem.enabled?"true":"false",
       irr_mem.irr_limit,
@@ -115,7 +115,7 @@ void send_irr_status(char msg[]){
 
 void send_irrigation(char msg[]){
 
-    sprintf(msg, "{ \"cmd\": \"%s\", \"status\": \"%s\" }",
+    sprintf(msg, "{\"cmd\":\"%s\",\"status\":\"%s\"}",
         "irrigation",
         irr_mem.irr_status?"on":"off"
         );

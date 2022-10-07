@@ -41,7 +41,7 @@ void print_config(){
     printf("[!] actual configuration: \n");
     printf("land_id: %d\n", land_id);
     printf("node_id: %d\n", node_id);
-    printf("irr_config: { enabled: %s, irr_limit: %d, irr_duration: %d }\n",
+    printf("irr_config: { enabled: %s, irr_limit: %d, irr_duration: %d}\n",
         enabled?"true":"false",
         irr_limit,
         irr_duration);
@@ -97,7 +97,7 @@ void send_config_request(char msg[]){
     unsigned int land_id = 0;
     unsigned int node_id = 0;
     get_config(&land_id, &node_id);
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d } }",
+    sprintf(msg, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d}}",
         "config_rqst",
         land_id,
         node_id
@@ -163,7 +163,7 @@ void client_chunk_handler(coap_message_t *response){
 void assign_config_received_sim(){ //is a simulation of a message received from server
 
     char msg[MSG_SIZE];
-    sprintf(msg, "%s", "{ \"land_id\": 4, \"node_id\": 2, \"irr_config\": { \"enabled\": \"true\", \"irr_limit\": 38, \"irr_duration\": 20 }, \"mst_timer\": 720, \"ph_timer\": 720, \"light_timer\": 60, \"tmp_timer\": 60 }");
+    sprintf(msg, "%s", "{\"land_id\":4,\"node_id\":2,\"irr_config\":{\"enabled\":\"true\",\"irr_limit\":38,\"irr_duration\":20 },\"mst_timer\":720,\"ph_timer\":720,\"light_timer\":60,\"tmp_timer\":60 }");
     printf("[!] ASSIGN_CONFIG command elaboration ...\n");
     STATE = STATE_CONFIGURED;
     int n_arguments = 9; 
@@ -306,7 +306,7 @@ PROCESS_THREAD(coap_node, ev, data){
     printf("[!] configuration ... \n");
 
     char msg[MSG_SIZE];
-    sprintf(msg, "{ \"land_id\": %d, \"node_id\": %d }", land_id, node_id);
+    sprintf(msg, "{\"land_id\":%d,\"node_id\":%d}", land_id, node_id);
     
     coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
     coap_set_header_uri_path(coap_module.request, "/new_config");
@@ -369,7 +369,7 @@ PROCESS_THREAD(coap_node, ev, data){
             }
             else if(strcmp(msg, "config") == 0){
                 char to_send[MSG_SIZE];
-                sprintf(to_send, "{ \"land_id\": %d, \"node_id\": %d }", land_id, node_id);
+                sprintf(to_send, "{\"land_id\":%d,\"node_id\":%d}", land_id, node_id);
                 coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
                 coap_set_header_uri_path(coap_module.request, "/new_config");
                 coap_set_payload(coap_module.request, (uint8_t *)to_send, strlen(to_send));

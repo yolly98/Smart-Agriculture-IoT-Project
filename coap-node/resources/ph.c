@@ -75,7 +75,7 @@ void send_ph_level(char msg[]){
     ph_mem.ph_level =  ph_level;
     printf("[+] ph level detected: %d\n", ph_level);
 
-    sprintf(msg,"{ \"cmd\": \"%s\", \"value\": %d }",
+    sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
         "ph", 
         ph_mem.ph_level
         );
@@ -86,7 +86,7 @@ void send_ph_level(char msg[]){
 /*------------------------------------------*/
 
 void send_ph_status(char msg[]){
-  sprintf(msg,"{ \"cmd\": \"%s\", \"timer\": %d }",
+  sprintf(msg,"{\"cmd\":\"%s\",\"timer\":%d}",
       "ph-status",
       ph_mem.ph_timer
       );

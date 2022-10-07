@@ -76,7 +76,7 @@ void send_soil_tmp(char msg[]){
   tmp_mem.soil_temperature =  tmp;
   printf("[+] soil temperature detected: %d\n", tmp);
 
-  sprintf(msg,"{ \"cmd\": \"%s\", \"value\": %d }",
+  sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
       "tmp",
       tmp_mem.soil_temperature
       );
@@ -86,7 +86,7 @@ void send_soil_tmp(char msg[]){
 /*------------------------------------------*/
 
 void send_tmp_status(char msg[]){
-  sprintf(msg,"{ \"cmd\": \"%s\", \"timer\": %d }",
+  sprintf(msg,"{\"cmd\":\"%s\",\"timer\":%d}",
       "tmp-status",
       tmp_mem.tmp_timer
       );

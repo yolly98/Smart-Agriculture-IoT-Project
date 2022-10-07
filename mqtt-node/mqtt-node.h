@@ -42,7 +42,7 @@
 #define GET_SENSOR          "get_sensor"
 #define IS_ALIVE            "is_alive"
 #define CLOCK_MINUTE        CLOCK_SECOND * 60
-#define MSG_SIZE            256
+#define MSG_SIZE            150
 
 /*------------------------------------*/
 //DATA STRUCTURES

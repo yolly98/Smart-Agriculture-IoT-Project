@@ -57,7 +57,7 @@ void get_config(unsigned int* land_id,unsigned int* node_id){
 
 void send_config_status(char msg[]){
 
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d } } ",
+    sprintf(msg, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d}}",
         "config-status",
         configuration.land_id,
         configuration.node_id

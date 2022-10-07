@@ -24,7 +24,7 @@ void print_config(){
     printf("[!] actual configuration: \n");
     printf("land_id: %d\n", node_memory.configuration.land_id);
     printf("node_id: %d\n", node_memory.configuration.node_id);
-    printf("irr_config: { enabled: %s, irr_limit: %d, irr_duration: %d }\n",
+    printf("irr_config: { enabled: %s, irr_limit: %d, irr_duration: %d}\n",
         node_memory.configuration.irr_config.enabled?"true":"false",
         node_memory.configuration.irr_config.irr_limit,
         node_memory.configuration.irr_config.irr_duration);
@@ -225,7 +225,7 @@ bool elaborate_cmd(char msg[]){
 
 void is_alive_received_sim(char msg[]){
 
-    sprintf(msg, "{ \"cmd\": \"%s\" }", IS_ALIVE);
+    sprintf(msg, "{\"cmd\":\"%s\"}", IS_ALIVE);
 }
 
 /*------------------SENDING TO SERVER (SIMULATED)-----------------------------*/
@@ -233,7 +233,7 @@ void is_alive_received_sim(char msg[]){
 void send_config_request(){
 
     char msg[MSG_SIZE];
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d } }",
+    sprintf(msg, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d}}",
         CONFIG_RQST,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id
@@ -246,9 +246,9 @@ void send_config_request(){
 
 void send_status(){
 
-    char msg_irr[MSG_SIZE];//MSG_SIZE];
-    char msg_timer[MSG_SIZE];//MSG_SIZE];
-    sprintf(msg_irr, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d } } ",
+    char msg_irr[MSG_SIZE];
+    char msg_timer[MSG_SIZE];
+    sprintf(msg_irr, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"enabled\":\"%s\",\"irr_limit\":%d,\"irr_duration\":%d}}",
         STATUS_I,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -256,7 +256,7 @@ void send_status(){
         node_memory.configuration.irr_config.irr_limit,
         node_memory.configuration.irr_config.irr_duration
         );
-    sprintf(msg_timer, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"mst_timer\": %d, \"ph_timer\": %d, \"light_timer\": %d, \"tmp_timer\": %d } } ",
+    sprintf(msg_timer, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"mst_timer\":%d,\"ph_timer\":%d,\"light_timer\":%d,\"tmp_timer\":%d}}",
         STATUS_T,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -279,7 +279,7 @@ void send_status_fake(){
     char msg_timer[150];
     sprintf(msg_irr, "%s", " IRR");
     sprintf(msg_timer, "%s", " TIMER");
-    //sprintf(msg_irr, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"enabled\": \"%s\", \"irr_limit\": %d, \"irr_duration\": %d } } ",
+    //sprintf(msg_irr, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"enabled\":\"%s\",\"irr_limit\":%d,\"irr_duration\":%d}}",
     //    STATUS_I,
     //    node_memory.configuration.land_id,
     //    node_memory.configuration.node_id,
@@ -287,7 +287,7 @@ void send_status_fake(){
     //    node_memory.configuration.irr_config.irr_limit,
     //    node_memory.configuration.irr_config.irr_duration
     //    );
-    //sprintf(msg_timer, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"mst_timer\": %d, \"ph_timer\": %d, \"light_timer\": %d, \"tmp_timer\": %d } } ",
+    //sprintf(msg_timer, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"mst_timer\":%d,\"ph_timer\":%d,\"light_timer\":%d,\"tmp_timer\":%d}}",
     //    STATUS_T,
     //    node_memory.configuration.land_id,
     //    node_memory.configuration.node_id,
@@ -308,7 +308,7 @@ void send_status_fake(){
 void send_irrigation(){
 
     char msg[MSG_SIZE];
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"status\": \"%s\" } }",
+    sprintf(msg, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"status\":\"%s\"}}",
         IRRIGATION,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -323,7 +323,7 @@ void send_irrigation(){
 void send_is_alive_ack(){
 
     char msg[MSG_SIZE];
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d } }",
+    sprintf(msg, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d}}",
         IS_ALIVE_ACK,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id
@@ -350,7 +350,7 @@ void get_soil_moisture(){
     printf("[+] soil moisture detected: %d\n", moisture);
 
     char msg[MSG_SIZE];
-    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
+    sprintf(msg,"{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"value\":%d}}",
         MOISTURE,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -387,7 +387,7 @@ void get_ph_level(){
     printf("[+] ph level detected: %d\n", ph_level);
 
     char msg[MSG_SIZE];
-    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
+    sprintf(msg,"{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"value\":%d}}",
         PH, 
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -411,7 +411,7 @@ void get_lihght_raw(){
     printf("[+] light raw detected: %d\n", light);
 
     char msg[MSG_SIZE];
-    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
+    sprintf(msg,"{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"value\":%d}}",
         LIGHT,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -433,7 +433,7 @@ void get_soil_tmp(){
     printf("[+] soil temperature detected: %d\n", tmp);
 
     char msg[MSG_SIZE];
-    sprintf(msg,"{ \"cmd\": \"%s\", \"body\": { \"land_id\": %d, \"node_id\": %d, \"value\": %d } }",
+    sprintf(msg,"{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"value\":%d}}",
         TMP,
         node_memory.configuration.land_id,
         node_memory.configuration.node_id,
@@ -447,7 +447,7 @@ void get_soil_tmp(){
 void receive_configuration_sim(){
 
     char msg[200];
-    sprintf(msg, "{ \"cmd\": \"%s\", \"body\": { \"irr_config\": { \"enabled\": \"true\", \"irr_limit\": 38, \"irr_duration\": 20 }, \"mst_timer\": 720, \"ph_timer\": 720, \"light_timer\": 60, \"tmp_timer\": 60 } } ",
+    sprintf(msg, "{\"cmd\":\"%s\",\"body\":{\"irr_config\":{\"enabled\":\"true\",\"irr_limit\":38,\"irr_duration\":20 },\"mst_timer\":720,\"ph_timer\":720,\"light_timer\":60,\"tmp_timer\":60 }}",
         ASSIGN_CONFIG
     );
     printf(" <  %s \n", msg);

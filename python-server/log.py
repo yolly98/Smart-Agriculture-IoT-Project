@@ -1,6 +1,7 @@
 import datetime
 from threading import *
 import json
+import logging
 
 LOG_MODE = 0
 
@@ -13,6 +14,8 @@ def log_init(log_mode):
     else:
         print("selected log normal mode")
         LOG_MODE = 0
+        logging.disable(logging.CRITICAL)
+    
     log_file = open("log.txt", "w")
     log_file.write("-----------------------------------------\n")
     log_file.close()

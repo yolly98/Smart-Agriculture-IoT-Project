@@ -4,12 +4,17 @@ import log
 
 def update_configuration(land_id, node_id, protocol, address, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "UPDATE configuration \
@@ -27,12 +32,17 @@ def update_configuration(land_id, node_id, protocol, address, irr_enabled, irr_l
 #-----------------------------
 def update_address_in_configuration(land_id, node_id, protocol, address):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "UPDATE configuration \
@@ -53,12 +63,17 @@ def update_address_in_configuration(land_id, node_id, protocol, address):
 
 def update_land(id, area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_tmp, max_tmp):
     
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "UPDATE land  \
@@ -74,12 +89,17 @@ def update_land(id, area, locality, name, crop, soil_type, mst_trashold, min_ph,
 
 def set_node_online(land_id, node_id):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "UPDATE configuration \
@@ -91,12 +111,17 @@ def set_node_online(land_id, node_id):
 #---------------------------
 
 def set_all_node_offline():
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "UPDATE configuration SET status = 'offline' WHERE node_id <> 0"

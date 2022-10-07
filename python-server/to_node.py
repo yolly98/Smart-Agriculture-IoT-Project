@@ -153,7 +153,7 @@ def get_config(broadcast):
             coap_module.send_msg(land_id, node_id, "sensor/light", "PUT", "status")
             coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", "status")
         else:
-            log.log_err("protocol not recognized")
+            log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
             return
 
     else:
@@ -192,7 +192,7 @@ def get_config(broadcast):
                 coap_module.send_msg(land_id, node_id, "sensor/light", "PUT", "status")
                 coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", "status")
             else:
-                log.log_err("protocol not recognized")
+                log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
                 continue
         
     
@@ -299,7 +299,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
             coap_module.send_msg(land_id, node_id, "sensor/light", "PUT", str(msg['body']['light_timer']))
             coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", str(msg['body']['tmp_timer']))
     else:
-        log.log_err("protocol not recognized")
+        log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
         
 
 #--------
@@ -450,7 +450,7 @@ def get_sensor():
             path = "sensor/tmp"
         coap_module.send_msg(land_id, node_id, path, "GET", "")
     else:
-        log.log_err("protocol not recognized")
+        log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
         return
 
 #-------
@@ -504,7 +504,7 @@ def is_alive(broadcast):
         elif protocol == "COAP":
             coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")
         else:
-            log.log_err("protocol not recognized")
+            log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
             return
     else:
         configs = get_mysql_db.get_config('all', 'all', False)
@@ -534,6 +534,6 @@ def is_alive(broadcast):
                 if not result:
                     coap_module.delete_node(land_id, node_id)
             else:
-                log.log_err(f"protocol not recognized")
+                log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
                 continue
 

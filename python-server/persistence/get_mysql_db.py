@@ -3,12 +3,17 @@ import log
 #----------------------GET--------------------
 
 def get_land(land_id, fetchone):
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
     sql = "SELECT * FROM land WHERE (%s = 'all' OR id = %s OR %s = 0) ORDER BY id" 
     mycursor.execute(sql, (land_id, land_id, land_id))
@@ -23,12 +28,17 @@ def get_land(land_id, fetchone):
 
 def get_config(land_id, node_id, fetchone):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "SELECT * FROM configuration WHERE (%s = 'all' OR land_id = %s) AND (%s = 'all' OR node_id = %s) ORDER BY land_id, node_id"
@@ -44,12 +54,17 @@ def get_config(land_id, node_id, fetchone):
 
 def get_measurement(land_id, node_id, sensor, older_time, recent_time, limit):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     if int(older_time) != 0 and int(recent_time) != 0:
@@ -76,12 +91,17 @@ def get_measurement(land_id, node_id, sensor, older_time, recent_time, limit):
 
 def get_measurement_one(land_id, node_id, timestamp):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "SELECT * FROM measurement \
@@ -98,12 +118,17 @@ def get_measurement_one(land_id, node_id, timestamp):
 
 def get_violation(land_id, node_id, sensor, older_time, recent_time, limit):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     if int(older_time) != 0 and int(recent_time) != 0:
@@ -130,12 +155,17 @@ def get_violation(land_id, node_id, sensor, older_time, recent_time, limit):
 
 def get_violation_one(land_id, node_id, timestamp):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "SELECT * FROM violation \
@@ -152,12 +182,17 @@ def get_violation_one(land_id, node_id, timestamp):
 
 def get_irrigation(land_id, node_id, older_time, recent_time, limit):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     if int(older_time) != 0 and int(recent_time) != 0:
@@ -182,12 +217,17 @@ def get_irrigation(land_id, node_id, older_time, recent_time, limit):
 
 def get_irrigation_one(land_id, node_id, timestamp):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "SELECT * FROM irrigation \

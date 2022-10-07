@@ -5,12 +5,17 @@ import log
 
 def add_configuration(land_id, node_id, protocol, address, status, irr_enabled, irr_limit, irr_duration, mst_timer, ph_timer, light_timer, tmp_timer):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     if address != "null":
@@ -34,12 +39,17 @@ def add_configuration(land_id, node_id, protocol, address, status, irr_enabled, 
 
 def add_land(id, area, locality, name, crop, soil_type, mst_trashold, min_ph, max_ph, min_tmp, max_tmp):
     
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "INSERT INTO land ( \
@@ -55,12 +65,17 @@ def add_land(id, area, locality, name, crop, soil_type, mst_trashold, min_ph, ma
 
 def add_irrigation_event(land_id, node_id, status):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "SELECT * FROM irrigation \
@@ -83,27 +98,27 @@ def add_irrigation_event(land_id, node_id, status):
 def add_measurement_event(land_id, node_id, sensor, value):
 
     #add the measure to db
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
-    sql = "SELECT * FROM measurement \
-        WHERE land_id = %s and node_id = %s \
-        and sensor = %s and m_timestamp = CURRENT_TIMESTAMP \
-        LIMIT 1"
-    mycursor.execute(sql, (land_id, node_id, sensor))
-    last_value = mycursor.fetchone()
-    if last_value:
-        log.log_err(f"duplicated value from ({land_id}, {node_id}, {sensor})")
-        return
-    
     sql = "INSERT INTO measurement (land_id, node_id, sensor, m_value) \
         VALUES (%s, %s, %s, %s)"
-    mycursor.execute(sql, (land_id, node_id, sensor, value))
+    
+    try:
+        mycursor.execute(sql, (land_id, node_id, sensor, value))
+    except mysql.connector.Error as e:
+        log.log_info(f"Mysql error [{e.args[0]}]: {e.args[1]}")
+        return
     mydb.commit()
 
     #check if the measure if out of range

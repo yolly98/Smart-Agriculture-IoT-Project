@@ -4,12 +4,17 @@ import log
 #---------------------DELETE--------------
 
 def delete_configuration(land_id, node_id):
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "DELETE from configuration WHERE (%s = 'all' OR land_id = %s) AND (%s = 'all' OR node_id = %s)"
@@ -19,12 +24,17 @@ def delete_configuration(land_id, node_id):
 #---------
 
 def delete_land(land_id):
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     sql = "DELETE from land WHERE (%s = 'all' OR id = %s)"
@@ -36,12 +46,17 @@ def delete_land(land_id):
 
 def delete_measurement_many(land_id, node_id, sensor, older_time, recent_time):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     if int(older_time) != 0 and int(recent_time) != 0:
@@ -64,12 +79,17 @@ def delete_measurement_many(land_id, node_id, sensor, older_time, recent_time):
 
 def delete_measurement_one(land_id, node_id, timestamp):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     
@@ -86,12 +106,17 @@ def delete_measurement_one(land_id, node_id, timestamp):
 
 def delete_violation_many(land_id, node_id, sensor, older_time, recent_time):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     if int(older_time) != 0 and int(recent_time) != 0:
@@ -114,12 +139,17 @@ def delete_violation_many(land_id, node_id, sensor, older_time, recent_time):
 
 def delete_violation_one(land_id, node_id, timestamp):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
     
     sql = "DELETE FROM violation \
@@ -134,12 +164,17 @@ def delete_violation_one(land_id, node_id, timestamp):
 
 def delete_irrigation_many(land_id, node_id, older_time, recent_time):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
     if int(older_time) != 0 and int(recent_time) != 0:
@@ -160,12 +195,17 @@ def delete_irrigation_many(land_id, node_id, older_time, recent_time):
 
 def delete_irrigation_one(land_id, node_id, timestamp):
 
-    mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "password",
-        database = "iot_project_db"
-    )
+    mydb = ""
+    try:
+        mydb = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "password",
+            database = "iot_project_db"
+        )
+    except mysql.connector.Error as e:
+        log.log_err("failed connection to mysql db")
+        return
     mycursor = mydb.cursor(prepared=True)
 
 

@@ -56,12 +56,14 @@ void set_tmp_timer(){
   etimer_set(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
 }
 
-void reset_tmp_timer(){
-  etimer_set(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
+void reset_tmp_timer(int new_interval){
+  int old_interval = - (tmp_mem.tmp_timer * CLOCK_MINUTE);
+  tmp_mem.tmp_timer = new_interval;
+  etimer_adjust(&tmp_mem.tmp_etimer, old_interval);
 }
 
 void restart_tmp_timer(){
-  etimer_restart(&tmp_mem.tmp_etimer);
+  etimer_reset_with_new_interval(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
 }
 
 bool check_tmp_timer_expired(){
@@ -154,8 +156,7 @@ static void tmp_put_handler(
       coap_remove_observer_by_uri(NULL, tmp_rsc.url); //remove observer
     } 
     else{
-      tmp_mem.tmp_timer = atoi(msg);
-      reset_tmp_timer();
+      reset_tmp_timer(atoi(msg));
       send_tmp_status(reply);
     }
     coap_set_header_content_format(response, TEXT_PLAIN);

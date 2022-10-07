@@ -35,7 +35,8 @@
 * [x] il nodo 2 COAP si spaccia per più id al riavvio del server
 * [x] crash improvviso dovuto al buffer (mettere MAX_SIZE = 200)
 * [ ] a volte il nodo coap si configura ma non invia i segnali dai sensori (si risolve con un get config discovery)
-* [ ] quando setto un timer questo rimane lo stesso della configurazione 
+* [x] quando setto un timer questo rimane lo stesso della configurazione 
+* [ ] se chiedo un get_config non funzionano più i timer
 
 
 ### SERVER

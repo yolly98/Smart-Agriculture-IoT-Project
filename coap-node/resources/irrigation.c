@@ -62,13 +62,14 @@ void get_irr_config(bool* enabled, unsigned int* irr_limit, unsigned int* irr_du
   *irr_status = irr_mem.irr_status;
 }
 
-
 void set_irr_timer(){
   etimer_set(&irr_mem.irr_duration_etimer, irr_mem.irr_duration * CLOCK_MINUTE); 
 }
 
-void reset_irr_timer(){
-  etimer_set(&irr_mem.irr_duration_etimer, irr_mem.irr_duration * CLOCK_MINUTE);
+void reset_irr_timer(int new_interval){
+  int old_interval = - (irr_mem.irr_duration * CLOCK_MINUTE);
+  irr_mem.irr_duration = new_interval;
+  etimer_adjust(&irr_mem.irr_duration_etimer, old_interval);
 }
 
 void restart_irr_timer(){

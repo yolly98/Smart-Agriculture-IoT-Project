@@ -56,12 +56,14 @@ void set_ph_timer(){
   etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
 }
 
-void reset_ph_timer(){
-  etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
+void reset_ph_timer(int new_interval){
+  int old_interval = - (ph_mem.ph_timer * CLOCK_MINUTE);
+  ph_mem.ph_timer = new_interval;
+  etimer_adjust(&ph_mem.ph_etimer, old_interval);
 }
 
 void restart_ph_timer(){
-  etimer_restart(&ph_mem.ph_etimer);
+  etimer_reset_with_new_interval(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
 }
 
 bool check_ph_timer_expired(){
@@ -153,8 +155,7 @@ static void ph_put_handler(
     coap_remove_observer_by_uri(NULL, ph_rsc.url); //remove observer
   }
   else{
-    ph_mem.ph_timer = atoi(msg);
-    reset_ph_timer();
+    reset_ph_timer(atoi(msg));
     send_ph_status(reply); 
   }
   coap_set_header_content_format(response, TEXT_PLAIN);

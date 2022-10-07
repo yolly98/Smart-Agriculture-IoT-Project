@@ -15,8 +15,9 @@
 * [x] spezzare l'invio della configurazione in due pezzi(altrimenti crasha)
 * [x] se riavvio il server dopo che il nodo è già configurato crasha (dipende dalla dimensione dei buffer - nota alla fine)
 * [ ] se riavvio il server a volte non ricevo da un secondo nodo mqtt (troppo lontano?)
-	* nota che se gli invio un is_alive (o un get_config) questo risponde ma è il border router che non inoltra,
+	* nota che se gli invio un is_alive (o un get_config) questo risponde ma il borker non riceve,
 		ecco perchè il server non riceve
+		Se riavvio il mosquitto torna a funzionare
 
 ### NODO COAP
 
@@ -37,7 +38,7 @@
 * [x] a volte il nodo coap si configura ma non invia i segnali dai sensori (si risolve con un get config discovery)
 * [x] quando setto un timer questo rimane lo stesso della configurazione 
 * [x] se chiedo un get_config non funzionano più i timer
-* [ ] quando invio il get config, il nodo invia troppe misurazioni
+* [ ] quando invio il get config (non il discovery), il nodo invia troppe misurazioni
 
 
 ### SERVER
@@ -68,7 +69,7 @@
 * [ ] fare in modo che is_alive broadcast vada a prendersi i nodi dalla cache non da mysql
 * [ ] fare in modo da poter inviare is_alive broadcast anche da terminale
 * [ ] killare i thread dopo che si è premuto exit
-* [ ] capire perchè l'mqtt config stampa su terminale e coap no
+* [x] capire perchè l'mqtt config stampa su terminale e coap no
 * [x] dopo la configurazione di un nodo coap, a volte non si salva in cache, se mand un discovery li prende
 * [ ] gestire caso in cui avvengono doppie misurazioni (a volte succede, fare controllo sul db)
 * [ ] mettere il log nelle modalità verbose o normale

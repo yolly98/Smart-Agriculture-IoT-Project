@@ -222,6 +222,13 @@ t2.start()
 t3.start()
 t4.start()
 
+log.log_info("connecting node attempt 1")
+time.sleep(2)
+to_node.get_config(True)
+log.log_info("connecting node attempt 1")
+time.sleep(2)
+to_node.get_config(True)
+log.log_info("connecting node attempt 1")
 time.sleep(2)
 to_node.get_config(True)
 

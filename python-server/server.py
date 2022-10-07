@@ -98,7 +98,20 @@ def server_console():
         elif cmd.isdigit() and int(cmd) == 10:
             to_node.get_sensor()
         elif cmd.isdigit() and int(cmd) == 11:
-            to_node.is_alive(False)
+            broadcast = ""
+            while True:
+                broadcast = log.log_input("broadcast mode? (y/n): ")
+                if broadcast == "cancel":
+                    return
+                if broadcast == "y" or broadcast == "n":
+                    break
+                else:
+                    log.log_err(f"invalid value")
+            if broadcast == "y":
+                broadcast = True
+            else:
+                broadcast = False
+            to_node.is_alive(broadcast)
         elif cmd.isdigit() and int(cmd) == 12:
             add_vw.add_land_vw()
         elif cmd.isdigit() and int(cmd) == 13:
@@ -210,7 +223,8 @@ t3.start()
 t4.start()
 
 time.sleep(2)
-to_node.get_config(True)
+#to_node.get_config(True)
+to_node.is_alive(True)
 
 t1.join()
 t2.join()

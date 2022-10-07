@@ -201,13 +201,16 @@ def is_alive_ack_sim():
     msg = { 'cmd': 'is_alive_ack', 'body': { 'land_id': land_id, 'node_id': node_id } }
     return msg
 
-def is_alive_ack(doc):
+def is_alive_ack(doc, protocol):
 
     msg = doc
     if msg == "":
+        protocol = "MQTT" if random.randint(0,1) == 0 else "COAP"
         msg = is_alive_ack_sim()
     
     land_id = msg['body']['land_id']
     node_id = msg['body']['node_id']
 
+    if protocol == "MQTT":
+        mqtt_module.add_node(land_id, node_id)
     update_mysql_db.set_node_online(land_id, node_id)

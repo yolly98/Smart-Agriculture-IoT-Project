@@ -64,6 +64,7 @@
 * [ ] killare i thread dopo che si è premuto exit
 * [ ] capire perchè l'mqtt config stampa su terminale e coap no
 * [ ] dopo la configurazione di un nodo coap, a volte non si salva in cache, se mand un discovery li prende
+* [ ] gestire caso in cui avvengono doppie misurazioni (a volte succede)
 
 
 ### TEST

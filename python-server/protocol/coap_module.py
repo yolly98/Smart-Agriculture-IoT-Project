@@ -15,7 +15,7 @@ from coapthon.utils import parse_uri
 nodes = dict()
 my_ip = "fd00::1"
 port = 5683
-SEND_TIMEOUT = 3.0
+SEND_TIMEOUT = 5.0
 configs = dict()
 
 #----------------------
@@ -191,7 +191,7 @@ def client_callback(response):
         from_node.tmp(msg)
     elif doc['cmd'] == "is_alive_ack":
         msg = { 'cmd': doc['cmd'], 'body': { 'land_id': land_id, 'node_id': node_id } }
-        from_node.is_alive_ack(msg)
+        from_node.is_alive_ack(msg, "COAP")
 
     return True
 

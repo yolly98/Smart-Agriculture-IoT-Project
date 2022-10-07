@@ -530,6 +530,7 @@ def is_alive(broadcast):
             
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)
+                mqtt_module.delete_node(land_id, node_id)
             elif protocol == "COAP":
                 if (not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id):
                     log.log_err(f"nodes ({land_id}, {node_id}) duplicated")

@@ -102,7 +102,7 @@ def on_message(client, userdata, msg):
     elif doc['cmd'] == 'tmp':
         from_node.tmp(doc)
     elif doc['cmd'] == 'is_alive_ack':
-        from_node.is_alive_ack(doc)
+        from_node.is_alive_ack(doc, "MQTT")
 
 client = mqtt.Client()
 

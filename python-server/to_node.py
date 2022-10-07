@@ -143,6 +143,7 @@ def get_config(broadcast):
         if protocol == "MQTT":
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
+            coap_module.coap_reset_config(land_id, node_id)
             result = coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
             if not result:
                 return

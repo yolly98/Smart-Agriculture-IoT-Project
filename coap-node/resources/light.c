@@ -103,7 +103,6 @@ static void light_event_handler(void)
 
 /*----------------------------------------------*/
 
-
 static void light_get_handler(
   coap_message_t *request,
   coap_message_t *response,

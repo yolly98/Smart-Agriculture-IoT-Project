@@ -38,7 +38,7 @@
 * [x] a volte il nodo coap si configura ma non invia i segnali dai sensori (si risolve con un get config discovery)
 * [x] quando setto un timer questo rimane lo stesso della configurazione 
 * [x] se chiedo un get_config non funzionano più i timer
-* [ ] quando invio il get config (non il discovery), il nodo invia troppe misurazioni
+* [x] quando invio il get config (non il discovery), il nodo invia troppe misurazioni
 
 
 ### SERVER

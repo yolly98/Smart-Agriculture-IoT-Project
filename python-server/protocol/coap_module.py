@@ -112,6 +112,12 @@ def coap_status(land_id, node_id, doc):
         'tmp-status'in configs[index] 
         ):
 
+        client_observe(land_id, node_id, "/irrigation")
+        client_observe(land_id, node_id, "/sensor/mst")
+        client_observe(land_id, node_id, "/sensor/ph")
+        client_observe(land_id, node_id, "/sensor/light")
+        client_observe(land_id, node_id, "/sensor/tmp")
+
         irr_config = configs[index]['irr-status']['body']
         mst_timer = configs[index]['mst-status']['timer']
         ph_timer = configs[index]['ph-status']['timer']

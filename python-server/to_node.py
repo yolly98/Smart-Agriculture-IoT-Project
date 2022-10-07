@@ -190,12 +190,6 @@ def get_config(broadcast):
                 coap_module.send_msg(land_id, node_id, "sensor/ph", "PUT", "status")
                 coap_module.send_msg(land_id, node_id, "sensor/light", "PUT", "status")
                 coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", "status")
-
-                coap_module.client_observe(land_id, node_id, "/irrigation")
-                coap_module.client_observe(land_id, node_id, "/sensor/mst")
-                coap_module.client_observe(land_id, node_id, "/sensor/ph")
-                coap_module.client_observe(land_id, node_id, "/sensor/light")
-                coap_module.client_observe(land_id, node_id, "/sensor/tmp")
             else:
                 log.log_err("protocol not recognized")
                 continue

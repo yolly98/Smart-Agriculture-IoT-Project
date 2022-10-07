@@ -14,6 +14,7 @@
 * [x] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 * [x] spezzare l'invio della configurazione in due pezzi(altrimenti crasha)
 * [x] se riavvio il server dopo che il nodo è già configurato crasha (dipende dalla dimensione dei buffer - nota alla fine)
+* [ ] fare il reset degli intervalli (se ci sono) come per il coap node
 * [ ] se riavvio il server a volte non ricevo da un secondo nodo mqtt (troppo lontano?)
 	* nota che se gli invio un is_alive (o un get_config) questo risponde ma è il border router che non inoltra,
 		ecco perchè il server non riceve
@@ -34,9 +35,9 @@
 * [x] eliminare funzioni di simulazione (tranne la simulazione)
 * [x] il nodo 2 COAP si spaccia per più id al riavvio del server
 * [x] crash improvviso dovuto al buffer (mettere MAX_SIZE = 200)
-* [ ] a volte il nodo coap si configura ma non invia i segnali dai sensori (si risolve con un get config discovery)
+* [x] a volte il nodo coap si configura ma non invia i segnali dai sensori (si risolve con un get config discovery)
 * [x] quando setto un timer questo rimane lo stesso della configurazione 
-* [ ] se chiedo un get_config non funzionano più i timer
+* [x] se chiedo un get_config non funzionano più i timer
 
 
 ### SERVER

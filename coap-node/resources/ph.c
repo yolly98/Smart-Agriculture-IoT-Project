@@ -70,10 +70,9 @@ bool check_ph_timer_expired(){
 /*---------------------------------------*/
 
 void send_ph_level(char msg[]){
-
-    int ph_level = (5 + random_rand()%5);
-    ph_mem.ph_level =  ph_level;
-    printf("[+] ph level detected: %d\n", ph_level);
+ 
+    ph_mem.ph_level = 4 + random_rand()%5;
+    printf("[+] ph level detected: %d\n", ph_mem.ph_level);
 
     sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
         "ph", 
@@ -114,11 +113,11 @@ static void ph_get_handler(
   if(ph_mem.state == STATE_ERROR)
       return;
 
-  char reply[MSG_SIZE];
+  char reply[MSG_SIZE] = "";
 
   printf(" <  get sensor/ph\n");
+  
   send_ph_level(reply);
-
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));
 

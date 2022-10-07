@@ -15,7 +15,7 @@ from coapthon.utils import parse_uri
 nodes = dict()
 my_ip = "fd00::1"
 port = 5683
-SEND_TIMEOUT = 5.0
+SEND_TIMEOUT = 3.0
 configs = dict()
 
 #----------------------

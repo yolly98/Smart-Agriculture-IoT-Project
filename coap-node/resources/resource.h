@@ -8,7 +8,7 @@
 #include "random.h"
 
 #define CLOCK_MINUTE        CLOCK_SECOND * 60
-#define MSG_SIZE            512
+#define MSG_SIZE            200
 #define STATE_CONFIGURED    0
 #define STATE_ERROR         1
 

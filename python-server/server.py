@@ -223,8 +223,7 @@ t3.start()
 t4.start()
 
 time.sleep(2)
-#to_node.get_config(True)
-to_node.is_alive(True)
+to_node.get_config(True)
 
 t1.join()
 t2.join()

@@ -68,7 +68,7 @@ void set_irr_timer(){
 }
 
 void reset_irr_timer(){
-  etimer_reset_with_new_interval(&irr_mem.irr_duration_etimer, irr_mem.irr_duration * CLOCK_MINUTE);
+  etimer_set(&irr_mem.irr_duration_etimer, irr_mem.irr_duration * CLOCK_MINUTE);
 }
 
 void restart_irr_timer(){

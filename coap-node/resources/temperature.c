@@ -57,7 +57,7 @@ void set_tmp_timer(){
 }
 
 void reset_tmp_timer(){
-  etimer_reset_with_new_interval(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
+  etimer_set(&tmp_mem.tmp_etimer, tmp_mem.tmp_timer * CLOCK_MINUTE);
 }
 
 void restart_tmp_timer(){

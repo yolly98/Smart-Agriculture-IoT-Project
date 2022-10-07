@@ -57,7 +57,7 @@ void set_ph_timer(){
 }
 
 void reset_ph_timer(){
-  etimer_reset_with_new_interval(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
+  etimer_set(&ph_mem.ph_etimer, ph_mem.ph_timer * CLOCK_MINUTE);
 }
 
 void restart_ph_timer(){

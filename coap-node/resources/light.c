@@ -57,7 +57,7 @@ void set_light_timer(){
 }
 
 void reset_light_timer(){
-  etimer_reset_with_new_interval(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
+  etimer_set(&light_mem.light_etimer, light_mem.light_timer * CLOCK_MINUTE);
 }
 
 void restart_light_timer(){

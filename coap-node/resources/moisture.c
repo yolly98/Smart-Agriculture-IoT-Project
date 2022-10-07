@@ -61,7 +61,7 @@ void set_mst_timer(){
 }
 
 void reset_mst_timer(){
-  etimer_reset_with_new_interval(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
+  etimer_set(&mst_mem.mst_etimer, mst_mem.mst_timer * CLOCK_MINUTE);
 }
 
 void restart_mst_timer(){

@@ -52,7 +52,7 @@ def print_configurations(config_list):
         print("-----------------")
         print("land_id:         ", config[0])
         print("node_id:         ", config[1])
-        print("protocol:        ", config[3])
+        print("protocol:        ", config[2])
         print("status:          ", config[4])
         print("timestamp:       ", config[5])
         print("irr_enabled:     ", config[6])

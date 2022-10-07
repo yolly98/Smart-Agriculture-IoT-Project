@@ -75,7 +75,7 @@ def check_node(land_id, node_id):
 
 def delete_node(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
-    log.log_info(f"deleting node {index} from cache")
+    log.log_info(f"deleting node ({land_id}, {node_id}) from cache")
     if index in nodes:
         nodes[index]['host'].stop()
         nodes.pop(index)
@@ -169,8 +169,9 @@ def client_callback(response):
         log.log_err(f"error too many oberservers in node ({land_id}, {node_id})")
         return False
     
-    log.log_info(f"received {response.payload} from ({land_id}, {node_id})")
     doc = json.loads(response.payload)
+    log.log_receive(doc, land_id, node_id)
+
     if doc['cmd'].find("status") >= 0:
         if doc['cmd'] == 'config-status':
             if int(doc['body']['land_id']) != int(land_id) or int(doc['body']['node_id']) != int(node_id):
@@ -201,11 +202,7 @@ def client_callback(response):
 
     return True
 
-
-
 # ------------ SERVER ---------------- #
-
-
 
 class ConfigurationRes(Resource):
 
@@ -220,8 +217,7 @@ class ConfigurationRes(Resource):
     def render_GET(self, request):
         msg = json.loads(request.payload)
         addr = extract_addr(request)
-        to_print = "received " + str(msg) + " from " + addr
-        log.log_info(to_print)
+        log.log_receive(str(msg), addr, 0)
         self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr, False)
         if self.payload != 'error_land' and self.payload != 'error_id':
             client_observe(msg['land_id'], msg['node_id'], "/irrigation")

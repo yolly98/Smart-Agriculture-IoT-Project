@@ -83,7 +83,7 @@ def irr_cmd():
     
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_send(f"[{topic}] {json_msg}")
+    log.log_send(json_msg, land_id, node_id)
     
     if protocol == "MQTT":
         mqtt_module.mqtt_publish(topic, json_msg)
@@ -139,7 +139,7 @@ def get_config(broadcast):
         #-----------------
 
         topic = f"NODE/{land_id}/{node_id}"
-        log.log_send(f"[{topic}] {json_msg}")
+        log.log_send(json_msg, land_id, node_id)
         if protocol == "MQTT":
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
@@ -171,7 +171,7 @@ def get_config(broadcast):
             if protocol == "null":
                 continue
             topic = f"NODE/{land_id}/{node_id}"
-            log.log_send(f"[{topic}] {json_msg}")
+            log.log_send(json_msg, land_id, node_id)
             if protocol == "MQTT":
                 if mqtt_module.check_node(land_id, node_id):
                     continue
@@ -268,7 +268,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
     
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_send(f"[{topic}] {json_msg}")
+    log.log_send(json_msg, land_id, node_id)
         
     if protocol == "MQTT":
         if msg['cmd'] != 'error_land':
@@ -378,7 +378,7 @@ def timer_cmd():
 
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_send(f"[{topic}] {sensor} {json_msg}")
+    log.log_send(json_msg, land_id, node_id)
 
     if protocol == "MQTT":
         mqtt_module.mqtt_publish(topic, json_msg)
@@ -434,7 +434,7 @@ def get_sensor():
     msg = { 'cmd': 'get_sensor', 'type': sensor }
     json_msg = json.dumps(msg)
     topic = f"NODE/{land_id}/{node_id}"
-    log.log_send(f"[{topic}] {json_msg}")
+    log.log_send(json_msg, land_id, node_id)
 
     if protocol == "MQTT":
         mqtt_module.mqtt_publish(topic, json_msg)
@@ -498,7 +498,7 @@ def is_alive(broadcast):
             protocol = "MQTT"
 
         topic = f"NODE/{land_id}/{node_id}"
-        log.log_send(f"[{topic}] {json_msg}")
+        log.log_send(json_msg, land_id, node_id)
         if protocol == "MQTT":
             mqtt_module.mqtt_publish(topic, json_msg)
         elif protocol == "COAP":
@@ -521,7 +521,7 @@ def is_alive(broadcast):
             if node_id == 0:
                 continue
             topic = f"NODE/{land_id}/{node_id}"
-            log.log_send(f"[{topic}] {json_msg}")
+            log.log_send(json_msg, land_id, node_id)
             
             if protocol == "MQTT":
                 mqtt_module.mqtt_publish(topic, json_msg)

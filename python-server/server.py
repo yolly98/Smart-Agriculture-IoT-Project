@@ -10,11 +10,17 @@ from view import update_vw
 from view import delete_vw
 from protocol import mqtt_module
 from protocol import coap_module
+import sys
 
-# ------------MAIN-----------
+log_mode = ""
+if len(sys.argv) > 1:
+    for i in range(1, len(sys.argv)):
+        log_mode = sys.argv[i]
+        break
+
 IS_ALIVE_TIMER = 10*60 #1 minute
 
-log.log_init()
+log.log_init(log_mode)
 mqtt_module.mqtt_init()
 
 #functinon for thread 1(console)
@@ -222,15 +228,16 @@ t2.start()
 t3.start()
 t4.start()
 
-log.log_info("connecting node attempt 1")
 time.sleep(2)
-to_node.get_config(True)
 log.log_info("connecting node attempt 1")
-time.sleep(2)
 to_node.get_config(True)
-log.log_info("connecting node attempt 1")
-time.sleep(2)
+log.log_info("connecting node attempt 2")
 to_node.get_config(True)
+log.log_info("connecting node attempt 3")
+to_node.get_config(True)
+
+coap_module.show_coap_nodes()
+mqtt_module.show_mqtt_nodes()
 
 t1.join()
 t2.join()

@@ -67,7 +67,7 @@
 * [x] quando invio is_alive ad un nodo mqtt che era un nodo coap, l'is_alive_ack viene considerato 
 	ricevuto sia dal nodo mqtt sia coap
 * [ ] fare in modo che is_alive broadcast vada a prendersi i nodi dalla cache non da mysql
-* [ ] fare in modo da poter inviare is_alive broadcast anche da terminale
+* [x] fare in modo da poter inviare is_alive broadcast anche da terminale
 * [ ] killare i thread dopo che si è premuto exit
 * [x] capire perchè l'mqtt config stampa su terminale e coap no
 * [x] dopo la configurazione di un nodo coap, a volte non si salva in cache, se mand un discovery li prende

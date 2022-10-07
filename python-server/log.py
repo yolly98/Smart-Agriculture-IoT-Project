@@ -2,33 +2,47 @@ import datetime
 from threading import *
 import json
 
-def log_init():
+LOG_MODE = 0
+
+def log_init(log_mode):
+
+    global LOG_MODE
+    if log_mode == "verbose" or log_mode == "-v":
+        print("selected log verbose mode")
+        LOG_MODE = 1
+    else:
+        print("selected log normal mode")
+        LOG_MODE = 0
     log_file = open("log.txt", "w")
     log_file.write("-----------------------------------------\n")
     log_file.close()
 
 #-------------------
 
-def log_receive(msg):
+def log_receive(msg, land_id, node_id):
 
+    global LOG_MODE
     log_file = open("log.txt", "a")
     current_time = str(datetime.datetime.now())
-    
-    print(f" < [{msg['cmd']}] from node ({msg['body']['land_id']},{msg['body']['node_id']})")
 
-    log_file.write(f"[{current_time}]  <  {msg}\n")
+    if LOG_MODE == 1 :
+        print(f" <  [{msg['cmd']}] ({land_id}, {node_id})")
+
+    log_file.write(f"[{current_time}]  <  {msg} from ({str(land_id)}, {node_id})\n")
     log_file.close()
 
 #-------------------
 
-def log_send(msg):
+def log_send(msg, land_id, node_id):
 
+    global LOG_MODE
     log_file = open("log.txt", "a")
     current_time = str(datetime.datetime.now())
     
-    print(" >  ", msg)
+    if LOG_MODE == 1 :
+        print(f" >  {msg} to ({land_id}, {node_id})")
 
-    log_file.write(f"[{current_time}]  >  {msg}\n")
+    log_file.write(f"[{current_time}]  >  {msg} to ({land_id}, {node_id})\n")
     log_file.close()
 #-------------------
 

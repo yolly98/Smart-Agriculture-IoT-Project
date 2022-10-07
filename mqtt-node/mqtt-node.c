@@ -541,10 +541,6 @@ PROCESS_THREAD(mqtt_node, ev, data){
         PROCESS_YIELD();
         if(etimer_expired(&node_timers.mqtt_etimer))
             mqtt_connection_service();
-
-        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
-            printf("the border router is not reachable yet\n");
-        }
           
         if(mqtt_module.state == STATE_CONFIGURED || mqtt_module.state == STATE_ERROR)
             break;
@@ -584,9 +580,6 @@ PROCESS_THREAD(mqtt_node, ev, data){
                 etimer_restart(&node_timers.led_etimer);
             }
             continue;
-        }
-        if(!(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&mqtt_module.dest_ipaddr))){
-            printf("the border router is not reachable yet\n");
         }
 
         if(etimer_expired(&node_timers.mqtt_etimer) || ev == PROCESS_EVENT_POLL)

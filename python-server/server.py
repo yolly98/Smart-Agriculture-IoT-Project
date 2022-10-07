@@ -171,6 +171,7 @@ def server_console():
             mqtt_module.show_mqtt_nodes()
         elif cmd.isdigit() and int(cmd) == 30:
             log.log_info("exit ...")
+            log.log_info("press ctrl+C to terminate the other threads")
             time.sleep(2)
             exit()
         else:

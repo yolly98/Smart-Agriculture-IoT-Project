@@ -13,10 +13,10 @@
 * [x] eliminare funzioni di simulazione (tranne la configurazione)
 * [x] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 * [x] spezzare l'invio della configurazione in due pezzi(altrimenti crasha)
-* [ ] se riavvio il server dopo che il nodo è già configurato crasha (dipende dalla dimensione dei buffer - nota alla fine)
+* [x] se riavvio il server dopo che il nodo è già configurato crasha (dipende dalla dimensione dei buffer - nota alla fine)
 * [ ] se riavvio il server a volte non ricevo da un secondo nodo mqtt (troppo lontano?)
-	* provare a inviare un get-config al nodo da cui non ricevo (togliere il contrllo check_mqtt_node)
-	* se con il punto precedente si configura vuol dire che il server ha inviato i messaggi mqtt troppo velocemente (mettere uno sleep tra gli invii dei messaggi in broadcast)
+	* nota che se gli invio un is_alive (o un get_config) questo risponde ma è il border router che non inoltra,
+		ecco perchè il server non riceve
 
 ### NODO COAP
 
@@ -61,6 +61,9 @@
 	ricevuto sia dal nodo mqtt sia coap
 * [ ] fare in modo che is_alive broadcast vada a prendersi i nodi dalla cache non da mysql
 * [ ] fare in modo da poter inviare is_alive broadcast anche da terminale
+* [ ] killare i thread dopo che si è premuto exit
+* [ ] capire perchè l'mqtt config stampa su terminale e coap no
+* [ ] dopo la configurazione di un nodo coap, a volte non si salva in cache, se mand un discovery li prende
 
 
 ### TEST
@@ -80,11 +83,3 @@ originali (rimangono attivi i listener)
 * [ ] cambiare il nome dei protocolli da stringhe a int
 
 
-#NOTA PROBLEMA IMPROPOBNIBILR
-
-* crash del nodo mqtt in fase di configurazione
-* se dimensione del messaggio è 200 => assign_config crash
-* se dimensione del messaggio è 150 => ok
-* se dimensione del messaggio è 512 => assign_config ok, get_config crash
-
-* ???????? CHE COSA STA SUCCEDENDO ????????

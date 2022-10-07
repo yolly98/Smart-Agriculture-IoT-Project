@@ -272,37 +272,6 @@ void send_status(){
     mqtt_publish_service(msg_timer, STATUS_T);
 }
 
-void send_status_fake(){
-
-    printf("[-] send status fake\n");
-    char msg_irr[150];
-    char msg_timer[150];
-    sprintf(msg_irr, "%s", " IRR");
-    sprintf(msg_timer, "%s", " TIMER");
-    //sprintf(msg_irr, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"enabled\":\"%s\",\"irr_limit\":%d,\"irr_duration\":%d}}",
-    //    STATUS_I,
-    //    node_memory.configuration.land_id,
-    //    node_memory.configuration.node_id,
-    //    node_memory.configuration.irr_config.enabled?"true":"false",
-    //    node_memory.configuration.irr_config.irr_limit,
-    //    node_memory.configuration.irr_config.irr_duration
-    //    );
-    //sprintf(msg_timer, "{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"mst_timer\":%d,\"ph_timer\":%d,\"light_timer\":%d,\"tmp_timer\":%d}}",
-    //    STATUS_T,
-    //    node_memory.configuration.land_id,
-    //    node_memory.configuration.node_id,
-    //    node_memory.configuration.mst_timer,
-    //    node_memory.configuration.ph_timer,
-    //    node_memory.configuration.light_timer,
-    //    node_memory.configuration.tmp_timer
-    //    );
-    
-    printf(" >  %s \n", msg_irr);
-    printf(" >  %s \n", msg_timer);
-    //mqtt_publish_service(msg_irr, STATUS_I);
-    //mqtt_publish_service(msg_timer, STATUS_T);
-}
-
 /*-------*/
 
 void send_irrigation(){

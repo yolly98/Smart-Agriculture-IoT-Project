@@ -124,13 +124,19 @@ def get_config(broadcast):
             else:
                 log.log_err(f"invalid value, has to be > 0")
 
+        #if coap_module.check_node(land_id, node_id):
+        #    protocol = "COAP"
+        #elif mqtt_module.check_node(land_id, node_id):
+        #    protocol = "MQTT"
+        #else:
+        #    log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+        #    return
+
         if coap_module.check_node(land_id, node_id):
             protocol = "COAP"
-        elif mqtt_module.check_node(land_id, node_id):
-            protocol = "MQTT"
         else:
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
+            protocol = "MQTT"
+        #-----------------
 
         topic = f"NODE/{land_id}/{node_id}"
         log.log_send(f"[{topic}] {json_msg}")
@@ -483,13 +489,18 @@ def is_alive(broadcast):
             else:
                 log.log_err(f"invalid value, has to be > 0")
 
+        #if coap_module.check_node(land_id, node_id):
+        #    protocol = "COAP"
+        #elif mqtt_module.check_node(land_id, node_id):
+        #    protocol = "MQTT"
+        #else:
+        #    log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
+        #    return
+
         if coap_module.check_node(land_id, node_id):
             protocol = "COAP"
-        elif mqtt_module.check_node(land_id, node_id):
-            protocol = "MQTT"
         else:
-            log.log_err(f"node ({land_id}, {node_id}) there isn't in the network")
-            return
+            protocol = "MQTT"
 
         topic = f"NODE/{land_id}/{node_id}"
         log.log_send(f"[{topic}] {json_msg}")

@@ -11,6 +11,7 @@ from view import delete_vw
 from protocol import mqtt_module
 from protocol import coap_module
 import sys
+import os
 
 log_mode = ""
 if len(sys.argv) > 1:
@@ -190,7 +191,6 @@ def server_console():
             mqtt_module.show_mqtt_nodes()
         elif cmd.isdigit() and int(cmd) == 30:
             log.log_info("exit ...")
-            log.log_info("press ctrl+C to terminate the other threads")
             time.sleep(2)
             exit()
         else:
@@ -217,7 +217,6 @@ def mqtt_server_listener():
 def coap_server_listener():
     coap_module.listener()
 
-
 t1 = threading.Thread(target = server_console, args = (), daemon = False)
 t2 = threading.Thread(target = mqtt_server_check_node, args = (), daemon = True) 
 t3 = threading.Thread(target = mqtt_server_listener, args = (), daemon = True) 
@@ -240,9 +239,10 @@ coap_module.show_coap_nodes()
 mqtt_module.show_mqtt_nodes()
 
 t1.join()
-t2.join()
-t3.join()
-t4.join()
+os._exit(os.EX_OK)
+#t2.join()
+#t3.join()
+#t4.join()
 
 
 

@@ -68,13 +68,13 @@
 	ricevuto sia dal nodo mqtt sia coap
 * [ ] fare in modo che is_alive broadcast vada a prendersi i nodi dalla cache non da mysql
 * [x] fare in modo da poter inviare is_alive broadcast anche da terminale
-* [ ] killare i thread dopo che si è premuto exit
+* [x] killare i thread dopo che si è premuto exit
 * [x] capire perchè l'mqtt config stampa su terminale e coap no
 * [x] dopo la configurazione di un nodo coap, a volte non si salva in cache, se mand un discovery li prende
 * [x] gestire caso in cui avvengono doppie misurazioni (a volte succede, fare controllo sul db)
 * [x] mettere il log nelle modalità verbose o normale
 * [ ] sistemare meglio il log
-* [ ] gestire broken pipeline
+* [x] gestire broken pipeline
 		Traceback (most recent call last):
   File "/usr/lib/python3.6/multiprocessing/queues.py", line 240, in _feed
     send_bytes(obj)

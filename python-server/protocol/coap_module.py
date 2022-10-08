@@ -234,8 +234,6 @@ class CoAPServer(CoAP):
         CoAP.__init__(self, (host, port), False)
         self.add_resource("new_config", ConfigurationRes())
 
-#----------------------
-
 def listener():
 
     server = CoAPServer(my_ip, port)

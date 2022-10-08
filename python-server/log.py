@@ -19,7 +19,7 @@ def log_init(log_mode):
     log_file = open("log.txt", "w")
     log_file.write("-----------------------------------------\n")
     log_file.close()
-
+    
 #-------------------
 
 def log_receive(msg, land_id, node_id):

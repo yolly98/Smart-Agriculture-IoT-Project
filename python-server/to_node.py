@@ -9,7 +9,7 @@ from protocol import coap_module
 #--------------------COMMAND TO NODE--------------
 
 def irr_cmd():
-    log.log_info("irr_cmd command selected")
+    log.log_info("irr_cmd process starting ...")
     land_id = ""
     node_id = ""
     enabled = ""
@@ -90,12 +90,13 @@ def irr_cmd():
     elif protocol == "COAP":
         coap_module.send_msg(land_id, node_id, "irrigation", "PUT", json_msg)
 
+    log.log_info("irr_cmd ended")
 
 #---------
 
 def get_config(broadcast):
 
-    log.log_info("get_config command selected")
+    log.log_info("get_config process starting ...")
     
     msg = { 'cmd': 'get_config' }
     json_msg = json.dumps(msg)
@@ -195,6 +196,7 @@ def get_config(broadcast):
                 log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
                 continue
         
+    log.log_info("get_config ended")
     
 
 #---------
@@ -239,7 +241,7 @@ def assign_config_cmd():
 
 def assign_config(land_id, node_id, protocol, address, cmd):
 
-    log.log_info("assign_config command")
+    log.log_info("assign_config process starting ...")
     config = get_mysql_db.get_config(land_id, node_id, True)
     msg = {}
     
@@ -300,13 +302,15 @@ def assign_config(land_id, node_id, protocol, address, cmd):
             coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", str(msg['body']['tmp_timer']))
     else:
         log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
+
+    log.log_info("assign_config process ended")
         
 
 #--------
 
 def timer_cmd():
 
-    log.log_info("timer_cmd command selected")
+    log.log_info("timer_cmd process starting ...")
     log.log_info("Type the arguments or 'cancel'...")
     land_id = ""
     node_id = ""
@@ -385,11 +389,13 @@ def timer_cmd():
     elif protocol == "COAP":
         coap_module.send_msg(land_id, node_id, path, "PUT", timer)
 
+    log.log_info("timer_cmd ended")
+
 #-------
 
 def get_sensor():
 
-    log.log_info("get_sensor command selected")
+    log.log_info("get_sensor process starting ...")
     log.log_info("Type the arguments ...")
     land_id = ""
     node_id = ""
@@ -453,11 +459,13 @@ def get_sensor():
         log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
         return
 
+    log.log_info("get_sensor ended")
+
 #-------
 
 def is_alive(broadcast):
 
-    log.log_info("is_alive command selected")
+    log.log_info("is_alive process starting ...")
     msg = { 'cmd': 'is_alive' }
     json_msg = json.dumps(msg)
 
@@ -536,4 +544,6 @@ def is_alive(broadcast):
             else:
                 log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
                 continue
+
+    log.log_info("is_alive ended")
 

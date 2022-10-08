@@ -66,7 +66,7 @@
 * [x] ricevere dall'mqtt la configurazioen spezzata
 * [x] quando invio is_alive ad un nodo mqtt che era un nodo coap, l'is_alive_ack viene considerato 
 	ricevuto sia dal nodo mqtt sia coap
-* [ ] fare in modo che is_alive broadcast vada a prendersi i nodi dalla cache non da mysql
+* [x] fare in modo che is_alive broadcast vada a prendersi i nodi dalla cache non da mysql
 * [x] fare in modo da poter inviare is_alive broadcast anche da terminale
 * [x] killare i thread dopo che si è premuto exit
 * [x] capire perchè l'mqtt config stampa su terminale e coap no
@@ -85,6 +85,7 @@
   File "/usr/lib/python3.6/multiprocessing/connection.py", line 368, in _send
     n = write(self._handle, buf)
 BrokenPipeError: [Errno 32] Broken pipe
+* [ ] il secondo nodo mqtt si disconnette dopo la configurazione (non riceve proprio il broker)
 
 
 

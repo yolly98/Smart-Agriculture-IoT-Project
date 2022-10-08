@@ -60,15 +60,6 @@ def get_nodes():
     return list_of_nodes
 
 
-def update_node_status(land_id, node_id, status):
-    index = f"NODE/{land_id}/{node_id}"
-    if index in nodes:
-        nodes[index] = status
-
-def set_all_node_offline():
-    for key in nodes.keys():
-        nodes[key] = False
-
 def check_node(land_id, node_id):
     index = f"NODE/{land_id}/{node_id}"
     if index in nodes:
@@ -82,7 +73,7 @@ def show_mqtt_nodes():
     log.log_console("|      CONFIGURED MQTT NODES      |")
     log.log_console("+---------------------------------+")
     for key in nodes.keys():
-        log.log_console(f"  index: {key} | status: {'online' if nodes[key] else 'offline'}")
+        log.log_console(f"  index: {key}")
     log.log_console("-----------------------------------")
 
 #--------------------------

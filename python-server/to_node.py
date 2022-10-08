@@ -516,8 +516,6 @@ def is_alive(broadcast):
             return
     else:
         update_mysql_db.set_all_node_offline()
-        mqtt_module.set_all_node_offline()
-        coap_module.set_all_node_offline()
         
         #configs = get_mysql_db.get_config('all', 'all', False)
         #if not configs:

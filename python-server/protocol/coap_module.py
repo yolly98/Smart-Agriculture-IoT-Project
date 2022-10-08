@@ -52,7 +52,6 @@ def add_nodes(land_id, node_id, addr):
         nodes[index] = dict()
         nodes[index]['addr'] = addr
         nodes[index]['host'] = new_client(addr)
-        nodes[index]['is_online'] = True
         return True
     elif (index in nodes) and nodes[index]['addr'] != addr:
         return False
@@ -66,22 +65,13 @@ def check_node(land_id, node_id):
     else:
         return False
 
-def update_node_status(land_id, node_id, status):
-    index = "NODE/" + str(land_id) + "/" + str(node_id)
-    if index in nodes:
-        nodes[index]['is_online'] = status
-
-def set_all_node_offline():
-    for key in nodes.keys():
-        nodes[key]['is_onlie'] = False
-
 def show_coap_nodes():
 
     log.log_console("+---------------------------------+")
     log.log_console("|       CONFIGURED COAP NODES     |")
     log.log_console("+---------------------------------+")
     for key in nodes.keys():
-        log.log_console(f"  index: {key} | addr: {nodes[key]['addr']} | status: {'online' if nodes[key]['is_online'] else 'offline'}")
+        log.log_console(f"  index: {key} | addr: {nodes[key]['addr']}")
     log.log_console("-----------------------------------")
 
 

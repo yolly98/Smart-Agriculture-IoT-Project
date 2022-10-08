@@ -116,10 +116,10 @@ def add_measurement_event(land_id, node_id, sensor, value):
     
     try:
         mycursor.execute(sql, (land_id, node_id, sensor, value))
+        mydb.commit()
     except mysql.connector.Error as e:
         log.log_info(f"Mysql error [{e.args[0]}]: {e.args[1]}")
         return
-    mydb.commit()
 
     #check if the measure if out of range
     if sensor == 'light':
@@ -156,5 +156,9 @@ def add_measurement_event(land_id, node_id, sensor, value):
         log.log_info(f"Violation detected for {sensor} from ({land_id}, {node_id})")
         sql = "INSERT INTO violation (land_id, node_id, sensor, v_value) \
             VALUES(%s, %s, %s, %s)"
-        mycursor.execute(sql, (land_id, node_id, sensor, value))
-        mydb.commit()
+        try:
+            mycursor.execute(sql, (land_id, node_id, sensor, value))
+            mydb.commit()
+        except mysql.connector.Error as e:
+            log.log_info(f"Mysql error [{e.args[0]}]: {e.args[1]}")
+            return

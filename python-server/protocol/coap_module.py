@@ -111,6 +111,7 @@ def coap_status(land_id, node_id, doc):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     if not (index in configs):
         configs[index] = dict()
+        configs[index]['observed'] = False
 
     configs[index][doc['cmd']] = doc
     if ('config-status' in configs[index] and
@@ -121,11 +122,15 @@ def coap_status(land_id, node_id, doc):
         'tmp-status'in configs[index] 
         ):
 
-        client_observe(land_id, node_id, "/irrigation")
-        client_observe(land_id, node_id, "/sensor/mst")
-        client_observe(land_id, node_id, "/sensor/ph")
-        client_observe(land_id, node_id, "/sensor/light")
-        client_observe(land_id, node_id, "/sensor/tmp")
+        if configs[index]['observed'] == False:
+            log.log_info(f"Observing node ({land_id}, {node_id})")
+            client_observe(land_id, node_id, "/irrigation")
+            client_observe(land_id, node_id, "/sensor/mst")
+            client_observe(land_id, node_id, "/sensor/ph")
+            client_observe(land_id, node_id, "/sensor/light")
+            client_observe(land_id, node_id, "/sensor/tmp")
+
+        configs[index]['observed'] = True
 
         irr_config = configs[index]['irr-status']['body']
         mst_timer = configs[index]['mst-status']['timer']
@@ -135,7 +140,7 @@ def coap_status(land_id, node_id, doc):
 
         msg = { 'cmd': 'status', 'body': { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': irr_config['enabled'], 'irr_limit': irr_config['irr_limit'], 'irr_duration': irr_config['irr_duration'] }, 'mst_timer': mst_timer, 'ph_timer': ph_timer, 'light_timer': light_timer, 'tmp_timer': tmp_timer } } 
         from_node.status("COAP", nodes[index]['addr'], msg)
-
+        
 # --------------- CLIENT---------------- #
 
 def send_msg(land_id, node_id, path, mode, msg):

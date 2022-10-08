@@ -386,10 +386,10 @@ def timer_cmd():
         msg = { 'timer': int(timer)}
 
     json_msg = json.dumps(msg)
-    topic = f"NODE/{land_id}/{node_id}"
     log.log_send(json_msg, land_id, node_id)
 
     if protocol == "MQTT":
+        topic = f"NODE/{land_id}/{node_id}"
         mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
         coap_module.send_msg(land_id, node_id, path, "PUT", timer)

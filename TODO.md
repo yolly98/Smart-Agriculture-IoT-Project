@@ -85,9 +85,9 @@
   File "/usr/lib/python3.6/multiprocessing/connection.py", line 368, in _send
     n = write(self._handle, buf)
 BrokenPipeError: [Errno 32] Broken pipe
-* [ ] il secondo nodo mqtt si disconnette dopo la configurazione (il problema si presenta al riavvio del server, ho messo una coda mqtt ed ora non si configura più il primo)
+* [ ] il secondo nodo mqtt si disconnette dopo la configurazione (il problema si presenta al riavvio del server o dopo un po di tempo, dopo il riavvio di mosquitto sembra andare bene per un po')
 * [x] a volte non riesco a registrarmi come observer (probabilmente è dovuto al fatto che il nodo sta aspettando la risposta dalla risorsa del server, perciò non ascolta le richieste di observing) 
-* [x] il timer_cmd causa nel coap l'invio di misurazioni multiple (succede solo se do timer 1, fa partire subito i trigger)
+* [ ] il timer_cmd causa nel coap l'invio di misurazioni multiple (succede solo se do timer 1, fa partire subito i trigger, perchè di tutti?)
 
 
 

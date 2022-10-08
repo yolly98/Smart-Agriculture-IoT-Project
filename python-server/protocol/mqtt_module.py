@@ -2,12 +2,33 @@ import paho.mqtt.client as mqtt
 import json
 import from_node
 import log
+import time
 
 BROKER_ADDR = "127.0.0.1"
 configs = dict()
 nodes = dict()
+mqtt_queue = []
+MAX_MSG_QUEUE = 100
+MQTT_PUB_INTERVAL = 1 
 
 #---------------------------------
+
+def add_in_queue(topic, msg):
+
+    if len(mqtt_queue) > MAX_MSG_QUEUE:
+        return
+    else:
+        mqtt_queue.append({'topic': topic, 'msg': msg})
+
+
+def get_from_queue():
+
+    if len(mqtt_queue) == 0:
+        return -1
+    else:
+        return mqtt_queue.pop(0)
+
+#--------------------------------
 
 def mqtt_reset_config(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
@@ -131,5 +152,22 @@ def mqtt_subscribe():
 #------------------------
 
 def mqtt_publish(topic, msg):
+    add_in_queue(topic, msg)
+
+
+def mqtt_publisher_loop():
+    
     global client
-    client.publish(topic, payload=msg)
+
+    end_timer =  MQTT_PUB_INTERVAL
+    start_timer = time.time()
+    while True:
+        
+        #check if nodes are online
+        if (time.time() - start_timer) >= end_timer:
+            msg_to_publish = get_from_queue()
+            if msg_to_publish != -1:
+                client.publish(msg_to_publish['topic'], payload=msg_to_publish['msg'])
+            start_timer = time.time()
+
+        time.sleep(0.1)

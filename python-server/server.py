@@ -19,7 +19,7 @@ if len(sys.argv) > 1:
         log_mode = sys.argv[i]
         break
 
-IS_ALIVE_TIMER = 10*60 #1 minute
+IS_ALIVE_TIMER = 10*60 #10 minutes
 
 log.log_init(log_mode)
 mqtt_module.mqtt_init()
@@ -189,8 +189,8 @@ def server_console():
         else:
             log.log_err(f"command not valid!")
 
-#functino for thread 2 (daemon)
-def mqtt_server_check_node():
+
+def check_if_nodes_is_alive():
 
     end_timer =  IS_ALIVE_TIMER
     start_timer = time.time()
@@ -203,6 +203,9 @@ def mqtt_server_check_node():
 
         time.sleep(0.1)
             
+def mqtt_server_publisher():
+    mqtt_module.mqtt_publisher_loop()
+
 def mqtt_server_listener():
     mqtt_module.mqtt_subscribe()
 
@@ -210,31 +213,29 @@ def coap_server_listener():
     coap_module.listener()
 
 t1 = threading.Thread(target = server_console, args = (), daemon = False)
-t2 = threading.Thread(target = mqtt_server_check_node, args = (), daemon = True) 
-t3 = threading.Thread(target = mqtt_server_listener, args = (), daemon = True) 
-t4 = threading.Thread(target = coap_server_listener, args = (), daemon = True)
+t2 = threading.Thread(target = check_if_nodes_is_alive, args = (), daemon = True) 
+t3 = threading.Thread(target = mqtt_server_publisher, args = (), daemon = True) 
+t4 = threading.Thread(target = mqtt_server_listener, args = (), daemon = True) 
+t5 = threading.Thread(target = coap_server_listener, args = (), daemon = True)
 
 t1.start()
 t2.start()
 t3.start()
 t4.start()
+t5.start()
 
 time.sleep(1)
-log.log_console("connecting node attempt 1 ...")
+log.log_console("connecting to nodes attempt 1 ...")
 to_node.get_config(True)
-log.log_console("connecting node attempt 2 ...")
+time.sleep(1)
+log.log_console("connecting to nodes attempt 2 ...")
 to_node.get_config(True)
-log.log_console("connecting node attempt 3 ...")
+time.sleep(1)
+log.log_console("connecting to nodes attempt 3 ...")
 to_node.get_config(True)
-
-coap_module.show_coap_nodes()
-mqtt_module.show_mqtt_nodes()
 
 t1.join()
 os._exit(os.EX_OK)
-#t2.join()
-#t3.join()
-#t4.join()
 
 
 

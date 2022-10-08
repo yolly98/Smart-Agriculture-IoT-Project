@@ -154,7 +154,7 @@ def get_config(broadcast):
             coap_module.send_msg(land_id, node_id, "sensor/light", "PUT", "status")
             coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", "status")
         else:
-            log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
+            log.log_info(f"protocol not recognized for node ({land_id}, {node_id})")
             return
 
     else:
@@ -193,7 +193,7 @@ def get_config(broadcast):
                 coap_module.send_msg(land_id, node_id, "sensor/light", "PUT", "status")
                 coap_module.send_msg(land_id, node_id, "sensor/tmp", "PUT", "status")
             else:
-                log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
+                log.log_info(f"protocol not recognized for node ({land_id}, {node_id})")
                 continue
         
     log.log_success("get_config ended")
@@ -456,7 +456,7 @@ def get_sensor():
             path = "sensor/tmp"
         coap_module.send_msg(land_id, node_id, path, "GET", "")
     else:
-        log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
+        log.log_info(f"protocol not recognized for node ({land_id}, {node_id})")
         return
 
     log.log_success("get_sensor ended")
@@ -512,7 +512,7 @@ def is_alive(broadcast):
         elif protocol == "COAP":
             coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")
         else:
-            log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
+            log.log_info(f"protocol not recognized for node ({land_id}, {node_id})")
             return
     else:
         update_mysql_db.set_all_node_offline()
@@ -554,7 +554,7 @@ def is_alive(broadcast):
                 if not result:
                     coap_module.delete_node(land_id, node_id)
             else:
-                log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
+                log.log_info(f"protocol not recognized for node ({land_id}, {node_id})")
                 continue
 
     log.log_success("is_alive ended")

@@ -73,7 +73,7 @@
 * [x] dopo la configurazione di un nodo coap, a volte non si salva in cache, se mand un discovery li prende
 * [x] gestire caso in cui avvengono doppie misurazioni (a volte succede, fare controllo sul db)
 * [x] mettere il log nelle modalità verbose o normale
-* [ ] sistemare meglio il log
+* [x] sistemare meglio il log
 * [x] gestire broken pipeline
 		Traceback (most recent call last):
   File "/usr/lib/python3.6/multiprocessing/queues.py", line 240, in _feed
@@ -97,7 +97,7 @@ BrokenPipeError: [Errno 32] Broken pipe
 * [ ] simulazione con 2 nodi COAP e 2 nodi MQTT
 
 ### PROBLEMA SECONDARIO
-* [ ] controllare che non ci siano duplicati nelle misurazioni 
+* [x] controllare che non ci siano duplicati nelle misurazioni 
 * [x] se ho dei duplicati e riavvio il server python, al riavvio i nodi duplicati potrebbero prendere il posto degli
 originali (rimangono attivi i listener)
 

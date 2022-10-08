@@ -61,11 +61,13 @@ def check_node(land_id, node_id):
 
 def show_mqtt_nodes():
 
-    log.log_info("List of known mqtt nodes")
+    log.log_console("+---------------------------------+")
+    log.log_console("|      CONFIGURED MQTT NODES      |")
+    log.log_console("+---------------------------------+")
     keys = [ key for key, val in nodes.items()]
     for key in keys:
-        print(f"index: {key}")
-    print("-----------------------")
+        log.log_console(f"  index: {key}")
+    log.log_console("-----------------------------------")
 
 #--------------------------
 

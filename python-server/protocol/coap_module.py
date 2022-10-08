@@ -60,11 +60,13 @@ def add_nodes(land_id, node_id, addr):
 
 def show_coap_nodes():
 
-    log.log_info("List of known coap nodes")
+    log.log_console("+---------------------------------+")
+    log.log_console("|       CONFIGURED COAP NODES     |")
+    log.log_console("+---------------------------------+")
     keys = [ key for key, val in nodes.items()]
     for key in keys:
-        print(f"index: {key} addr: {nodes[key]['addr']}")
-    print("-----------------------")
+        log.log_console(f"  index: {key} addr: {nodes[key]['addr']}")
+    log.log_console("-----------------------------------")
         
 def check_node(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)

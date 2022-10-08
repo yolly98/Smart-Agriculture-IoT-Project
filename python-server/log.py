@@ -34,7 +34,7 @@ def log_receive(msg, land_id, node_id):
     current_time = str(datetime.datetime.now())
 
     if LOG_MODE == 1 :
-        print(f" <  [{msg['cmd']}] ({land_id}, {node_id})")
+        print(f"[<] [{msg['cmd']}] ({land_id}, {node_id})")
 
     log_file.write(f"[{current_time}]  <  {msg} from ({str(land_id)}, {node_id})\n")
     log_file.close()
@@ -54,7 +54,7 @@ def log_send(msg, land_id, node_id):
     current_time = str(datetime.datetime.now())
     
     if LOG_MODE == 1 :
-        print(f" >  {msg} to ({land_id}, {node_id})")
+        print(f"[>] {msg} to ({land_id}, {node_id})")
 
     log_file.write(f"[{current_time}]  >  {msg} to ({land_id}, {node_id})\n")
     log_file.close()
@@ -111,7 +111,27 @@ def log_info(msg):
     log_file = open("log.txt", "a")
     current_time = str(datetime.datetime.now())
     
-    print("[!] ", msg)
+    if LOG_MODE == 1 :
+        print("[!] ", msg)
+
+    log_file.write(f"[{current_time}] [!] {msg}\n")
+    log_file.close()
+
+    LOG_LOCK.release()
+    
+#--------------------
+
+def log_console(msg):
+
+    global LOG_MODE
+    global LOG_LOCK
+
+    LOG_LOCK.acquire()
+
+    log_file = open("log.txt", "a")
+    current_time = str(datetime.datetime.now())
+    
+    print("[ ] ", msg)
 
     log_file.write(f"[{current_time}] [!] {msg}\n")
     log_file.close()

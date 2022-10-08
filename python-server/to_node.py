@@ -17,7 +17,7 @@ def irr_cmd():
     limit = ""
     irr_duration = ""
     protocol = ""
-    log.log_info("Type the arguments or 'cancel'")
+    log.log_console("Type the arguments or 'cancel'")
     while True:
         land_id = log.log_input("land_id: ")
         if land_id == "cancel":
@@ -102,7 +102,7 @@ def get_config(broadcast):
     json_msg = json.dumps(msg)
 
     if(not broadcast):
-        log.log_info("Type the arguments or 'cancel'")
+        log.log_console("Type the arguments or 'cancel'")
         
         land_id = ""
         node_id = ""
@@ -160,7 +160,7 @@ def get_config(broadcast):
     else:
         configs = get_mysql_db.get_config('all', 'all', False)
         if not configs:
-            log.log_info("There are no configutations")
+            log.log_err("There are no configutations")
             return
         
         for config in configs:
@@ -208,7 +208,7 @@ def assign_config_cmd():
     protocol = ""
     address = ""
 
-    log.log_info("Type the arguments or 'cancel'")
+    log.log_console("Type the arguments or 'cancel'")
     while True:
         land_id = log.log_input("land_id: ")
         if land_id == "cancel":
@@ -311,7 +311,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
 def timer_cmd():
 
     log.log_info("timer_cmd process starting ...")
-    log.log_info("Type the arguments or 'cancel'...")
+    log.log_console("Type the arguments or 'cancel'...")
     land_id = ""
     node_id = ""
     sensor = ""
@@ -396,7 +396,7 @@ def timer_cmd():
 def get_sensor():
 
     log.log_info("get_sensor process starting ...")
-    log.log_info("Type the arguments ...")
+    log.log_console("Type the arguments ...")
     land_id = ""
     node_id = ""
     sensor = ""
@@ -470,7 +470,7 @@ def is_alive(broadcast):
     json_msg = json.dumps(msg)
 
     if(not broadcast):
-        log.log_info("Type the arguments or 'cancel'...")
+        log.log_console("Type the arguments or 'cancel'...")
         land_id = ""
         node_id = ""
         protocol = ""

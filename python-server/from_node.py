@@ -213,4 +213,7 @@ def is_alive_ack(doc, protocol):
 
     if protocol == "MQTT":
         mqtt_module.add_node(land_id, node_id)
+        mqtt_module.update_node_status(land_id, node_id, True)
+    else:
+        coap_module.update_node_status(land_id, node_id, True)
     update_mysql_db.set_node_online(land_id, node_id)

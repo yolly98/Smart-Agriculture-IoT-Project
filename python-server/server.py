@@ -29,7 +29,7 @@ def server_console():
 
     while True:
 
-        cmd = log.log_input("$ Type a number or help: ")
+        cmd = log.log_input("Type a number or help: ")
         if cmd == "help":
             log.log_info("Command list:")
             log.log_console("----------- SHOW DATA -----------------|---------- COMMAND TO NODES ------------")
@@ -62,7 +62,7 @@ def server_console():
             log.log_console(".[30] exit                                                                      ")
             log.log_console("                                                                                ")
             log.log_console("--------------------------------------------------------------------------------")
-            cmd = log.log_input("$ Type a number or help: ")
+            cmd = log.log_input("Type a number or help: ")
 
         if cmd.isdigit() and int(cmd) == 1:
             get_vw.view_lands()
@@ -198,7 +198,6 @@ def mqtt_server_check_node():
         
         #check if nodes are online
         if (time.time() - start_timer) >= end_timer:
-            update_vw.set_all_node_offline_vw()
             to_node.is_alive(True)
             start_timer = time.time()
 

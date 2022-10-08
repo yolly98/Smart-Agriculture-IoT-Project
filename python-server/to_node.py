@@ -90,7 +90,7 @@ def irr_cmd():
     elif protocol == "COAP":
         coap_module.send_msg(land_id, node_id, "irrigation", "PUT", json_msg)
 
-    log.log_info("irr_cmd ended")
+    log.log_success("irr_cmd ended")
 
 #---------
 
@@ -196,7 +196,7 @@ def get_config(broadcast):
                 log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
                 continue
         
-    log.log_info("get_config ended")
+    log.log_success("get_config ended")
     
 
 #---------
@@ -303,7 +303,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
     else:
         log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
 
-    log.log_info("assign_config process ended")
+    log.log_success("assign_config process ended")
         
 
 #--------
@@ -389,7 +389,7 @@ def timer_cmd():
     elif protocol == "COAP":
         coap_module.send_msg(land_id, node_id, path, "PUT", timer)
 
-    log.log_info("timer_cmd ended")
+    log.log_success("timer_cmd ended")
 
 #-------
 
@@ -459,7 +459,7 @@ def get_sensor():
         log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
         return
 
-    log.log_info("get_sensor ended")
+    log.log_success("get_sensor ended")
 
 #-------
 
@@ -515,16 +515,28 @@ def is_alive(broadcast):
             log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
             return
     else:
-        configs = get_mysql_db.get_config('all', 'all', False)
-        if not configs:
-            log.log_info("There are no configutations")
-            return
+        update_mysql_db.set_all_node_offline()
+        mqtt_module.set_all_node_offline()
+        coap_module.set_all_node_offline()
         
-        for config in configs:
-            land_id = config[0]
-            node_id = config[1]
-            protocol = config[2]
-            address = config[3]
+        #configs = get_mysql_db.get_config('all', 'all', False)
+        #if not configs:
+        #    log.log_info("There are no configutations")
+        #    return
+        
+        list_of_nodes = coap_module.get_nodes() + mqtt_module.get_nodes()
+
+        #for config in configs:
+        #    land_id = config[0]
+        #    node_id = config[1]
+        #    protocol = config[2]
+        #    address = config[3]
+
+        for node in list_of_nodes:
+            land_id = node['land_id']
+            node_id = node['node_id']
+            protocol = node['protocol']
+            address = node['addr']
 
             if node_id == 0:
                 continue
@@ -545,5 +557,5 @@ def is_alive(broadcast):
                 log.log_info(f"protocol not recognized for node ({land_id}, {node_id}")
                 continue
 
-    log.log_info("is_alive ended")
+    log.log_success("is_alive ended")
 

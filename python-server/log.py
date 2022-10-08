@@ -145,7 +145,7 @@ def log_input(msg):
     global LOG_MODE
     global LOG_LOCK
 
-    key_input = input(msg)
+    key_input = input(f"[$] {msg}")
 
     LOG_LOCK.acquire()
 

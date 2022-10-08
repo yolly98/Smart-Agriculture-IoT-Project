@@ -52,6 +52,23 @@ def delete_node(land_id, node_id):
     if index in nodes:
         nodes.pop(index)
 
+def get_nodes():
+    list_of_nodes = []
+    for key in nodes.keys():
+        index = (key.replace("NODE/", "")).split('/')
+        list_of_nodes.append({'land_id': index[0], 'node_id': index[1], 'protocol': 'MQTT', 'addr': 'null'})
+    return list_of_nodes
+
+
+def update_node_status(land_id, node_id, status):
+    index = f"NODE/{land_id}/{node_id}"
+    if index in nodes:
+        nodes[index] = status
+
+def set_all_node_offline():
+    for key in nodes.keys():
+        nodes[key] = False
+
 def check_node(land_id, node_id):
     index = f"NODE/{land_id}/{node_id}"
     if index in nodes:
@@ -64,9 +81,8 @@ def show_mqtt_nodes():
     log.log_console("+---------------------------------+")
     log.log_console("|      CONFIGURED MQTT NODES      |")
     log.log_console("+---------------------------------+")
-    keys = [ key for key, val in nodes.items()]
-    for key in keys:
-        log.log_console(f"  index: {key}")
+    for key in nodes.keys():
+        log.log_console(f"  index: {key} | status: {'online' if nodes[key] else 'offline'}")
     log.log_console("-----------------------------------")
 
 #--------------------------

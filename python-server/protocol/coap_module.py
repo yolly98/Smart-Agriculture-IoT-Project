@@ -52,21 +52,12 @@ def add_nodes(land_id, node_id, addr):
         nodes[index] = dict()
         nodes[index]['addr'] = addr
         nodes[index]['host'] = new_client(addr)
+        nodes[index]['is_online'] = True
         return True
     elif (index in nodes) and nodes[index]['addr'] != addr:
         return False
     else:
         return True
-
-def show_coap_nodes():
-
-    log.log_console("+---------------------------------+")
-    log.log_console("|       CONFIGURED COAP NODES     |")
-    log.log_console("+---------------------------------+")
-    keys = [ key for key, val in nodes.items()]
-    for key in keys:
-        log.log_console(f"  index: {key} addr: {nodes[key]['addr']}")
-    log.log_console("-----------------------------------")
         
 def check_node(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
@@ -75,12 +66,38 @@ def check_node(land_id, node_id):
     else:
         return False
 
+def update_node_status(land_id, node_id, status):
+    index = "NODE/" + str(land_id) + "/" + str(node_id)
+    if index in nodes:
+        nodes[index]['is_online'] = status
+
+def set_all_node_offline():
+    for key in nodes.keys():
+        nodes[key]['is_onlie'] = False
+
+def show_coap_nodes():
+
+    log.log_console("+---------------------------------+")
+    log.log_console("|       CONFIGURED COAP NODES     |")
+    log.log_console("+---------------------------------+")
+    for key in nodes.keys():
+        log.log_console(f"  index: {key} | addr: {nodes[key]['addr']} | status: {'online' if nodes[key]['is_online'] else 'offline'}")
+    log.log_console("-----------------------------------")
+
+
 def delete_node(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)
     log.log_info(f"deleting node ({land_id}, {node_id}) from cache")
     if index in nodes:
         nodes[index]['host'].stop()
         nodes.pop(index)
+
+def get_nodes():
+    list_of_nodes = []
+    for key in nodes.keys():
+        index = (key.replace("NODE/", "")).split('/')
+        list_of_nodes.append({'land_id': index[0], 'node_id': index[1], 'protocol': 'COAP', 'addr': nodes[key]['addr']})
+    return list_of_nodes
 
 def get_node_addr(land_id, node_id):
     index = "NODE/" + str(land_id) + "/" + str(node_id)

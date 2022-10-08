@@ -93,7 +93,6 @@ def view_configurations():
     configs = get_mysql_db.get_config(land_id, node_id, False)
     print_configurations(configs)
 
-
 #---------------------------------------
 def print_measurements(measurement_list):
 

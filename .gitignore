@@ -1,8 +1,8 @@
 **/build
 __pycache__
 log.txt
-*.native
 __pycache__
+*.native
 *.cooja
-*.sky
 *.cc26x0-cc13x0
+*.nrf52840

@@ -517,25 +517,27 @@ def is_alive(broadcast):
     else:
         update_mysql_db.set_all_node_offline()
         
-        #configs = get_mysql_db.get_config('all', 'all', False)
-        #if not configs:
-        #    log.log_info("There are no configutations")
-        #    return
-        
-        list_of_nodes = coap_module.get_nodes() + mqtt_module.get_nodes()
+        #is alive form db
+        configs = get_mysql_db.get_config('all', 'all', False)
+        if not configs:
+            log.log_info("There are no configutations")
+            return
 
-        #for config in configs:
-        #    land_id = config[0]
-        #    node_id = config[1]
-        #    protocol = config[2]
-        #    address = config[3]
+        for config in configs:
+            land_id = config[0]
+            node_id = config[1]
+            protocol = config[2]
+            address = config[3]
 
-        for node in list_of_nodes:
-            land_id = node['land_id']
-            node_id = node['node_id']
-            protocol = node['protocol']
-            address = node['addr']
-
+        # is alive from cache (not used, if i lose a node, i can't recover it)
+#        list_of_nodes = coap_module.get_nodes() + mqtt_module.get_nodes()
+#
+#        for node in list_of_nodes:
+#            land_id = node['land_id']
+#            node_id = node['node_id']
+#            protocol = node['protocol']
+#            address = node['addr']
+#
             if node_id == 0:
                 continue
             topic = f"NODE/{land_id}/{node_id}"

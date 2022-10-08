@@ -117,24 +117,30 @@ void client_chunk_handler(coap_message_t *response){
         return;
     }
 
-    int len = coap_get_payload(response, &chunk);
+    coap_get_payload(response, &chunk);
     char msg[MSG_SIZE];
     sprintf(msg,"%s",(char*)chunk);
     
     printf("[!] ASSIGN_CONFIG command elaboration ...\n");
 
-    if(strcmp(msg, "error_land") == 0){
+    printf(" <  %s \n", msg);
+
+    if(strcmp(msg, "server-ok") == 0){
+        STATE = STATE_CONFIGURED;
+        return;
+    }
+    else if(strcmp(msg, "error_land") == 0){
         printf("[-] land selected doesn't exist\n");
         STATE = STATE_ERROR;
         return;
     }
-    if(strcmp(msg, "error_id") == 0){
+    else if(strcmp(msg, "error_id") == 0){
         printf("[-] node with the same id already exists\n");
         STATE = STATE_ERROR;
         return;
     }
 
-    STATE = STATE_CONFIGURED;
+    STATE = STATE_REGISTERED;
     int n_arguments = 8; 
     char arguments[n_arguments][100];
     parse_json(msg, n_arguments, arguments );
@@ -154,8 +160,6 @@ void client_chunk_handler(coap_message_t *response){
     save_tmp_timer(tmp_timer);
 
     printf("[+] ASSIGN_CONFIG command elaborated with success\n");
-
-    printf(" <  %.*s \n", len, (char *)chunk);
 }
 
 /*-------------------------------------------------------*/
@@ -313,7 +317,7 @@ PROCESS_THREAD(coap_node, ev, data){
     coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg));
     while(true){
         COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
-        if(STATE == STATE_CONFIGURED)
+        if(STATE == STATE_REGISTERED)
             break;
         else if(STATE == STATE_ERROR){
             printf("[-] configuration failed\n");
@@ -332,18 +336,26 @@ PROCESS_THREAD(coap_node, ev, data){
     }
 
     if(STATE != STATE_ERROR){
+
+        printf("[!] observing phase ...\n");
+        sprintf(msg, "{\"land_id\":%d,\"node_id\":%d}", land_id, node_id);
+        coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
+        coap_set_header_uri_path(coap_module.request, "/new_config");
+        coap_set_payload(coap_module.request, (uint8_t *)msg, strlen(msg));
+        while(true){
+            COAP_BLOCKING_REQUEST(&coap_module.server_ep, coap_module.request, client_chunk_handler);
+            if(STATE == STATE_CONFIGURED)
+                break;
+        }
         //assign_config_received_sim(); //simulation (use this and comment the while above to jump the configuration phase)
         print_config();
-        printf("[+] configuration ended\n");
-
-        printf("[!] first sensor detection ...\n");
 
         set_mst_timer();
         set_ph_timer();
         set_light_timer();
         set_tmp_timer();
 
-        printf("[!] sensors all online\n");
+        printf("[!] node  in online\n");
     }
 
     while(true){

@@ -227,13 +227,17 @@ class ConfigurationRes(Resource):
         msg = json.loads(request.payload)
         addr = extract_addr(request)
         log.log_receive(str(msg), addr, 0)
-        self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr, False)
-        if self.payload != 'error_land' and self.payload != 'error_id':
+        if (not check_node(msg['land_id'], msg['node_id']) 
+            or ( check_node(msg['land_id'], msg['node_id']) and (not add_nodes(msg['land_id'], msg['node_id'], addr) ))
+            ):
+            self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr, False)
+        else:
             client_observe(msg['land_id'], msg['node_id'], "/irrigation")
             client_observe(msg['land_id'], msg['node_id'], "/sensor/mst")
             client_observe(msg['land_id'], msg['node_id'], "/sensor/ph")
             client_observe(msg['land_id'], msg['node_id'], "/sensor/light")
             client_observe(msg['land_id'], msg['node_id'], "/sensor/tmp")
+            self.payload = "server-ok"
         return self
 
 #----------------------

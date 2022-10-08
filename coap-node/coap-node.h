@@ -21,8 +21,9 @@
 /*------------------------------------*/
 #define SERVER_EP           "coap://[fd00::1]:5683"
 #define STATE_INITIALIZED   0
-#define STATE_CONFIGURED    1
-#define STATE_ERROR         2
+#define STATE_REGISTERED    1
+#define STATE_CONFIGURED    2
+#define STATE_ERROR         3
 #define CLOCK_MINUTE        CLOCK_SECOND * 60
 #define MSG_SIZE            200
 

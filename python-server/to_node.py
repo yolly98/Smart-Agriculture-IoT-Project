@@ -257,7 +257,9 @@ def assign_config(land_id, node_id, protocol, address, cmd):
             add_mysql_db.add_configuration(land_id, node_id, protocol, address, "online", "true", config[7], config[8], config[9], config[10], config[11], config[12])
             msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': 'true', 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
     else:
+        # check if the node with the same id but different protocol exists in the db
         if config[2] != protocol or config[3] != address:
+            #check if a node with the same id exists in the network
             if (protocol == "COAP" and 
                 ((not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id))):
                 log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
@@ -272,7 +274,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
     log.log_send(json_msg, land_id, node_id)
         
     if protocol == "MQTT":
-        
+
         topic = f"NODE/{land_id}/{node_id}"
         if msg['cmd'] != 'error_land':
             msg1 = { 'cmd': 'assign_i_config', 'body': {'enabled': msg['body']['irr_config']['enabled'], 'irr_limit':  msg['body']['irr_config']['irr_limit'], 'irr_duration': msg['body']['irr_config']['irr_duration'] } }
@@ -288,6 +290,8 @@ def assign_config(land_id, node_id, protocol, address, cmd):
                 json_msg = 'error_land'
             elif msg['cmd'] == 'error_id':
                 json_msg = 'error_id'
+            else:
+                coap_module.add_nodes(land_id, node_id, address)
             return json_msg
         else:
             if msg['cmd'] == 'error_land' or msg['cmd'] == 'error_id':

@@ -74,7 +74,7 @@
 * [x] gestire caso in cui avvengono doppie misurazioni (a volte succede, fare controllo sul db)
 * [x] mettere il log nelle modalità verbose o normale
 * [x] sistemare meglio il log
-* [x] gestire broken pipeline
+* [ ] gestire broken pipeline
 		Traceback (most recent call last):
   File "/usr/lib/python3.6/multiprocessing/queues.py", line 240, in _feed
     send_bytes(obj)
@@ -86,7 +86,7 @@
     n = write(self._handle, buf)
 BrokenPipeError: [Errno 32] Broken pipe
 * [ ] il secondo nodo mqtt si disconnette dopo la configurazione (il problema si presenta al riavvio del server, ho messo una coda mqtt ed ora non si configura più il primo)
-* [ ] a volte non riesco a registrarmi come observer (probabilmente è dovuto al fatto che il nodo sta aspettando la risposta dalla risorsa del server, perciò non ascolta le richieste di observing) 
+* [x] a volte non riesco a registrarmi come observer (probabilmente è dovuto al fatto che il nodo sta aspettando la risposta dalla risorsa del server, perciò non ascolta le richieste di observing) 
 
 
 

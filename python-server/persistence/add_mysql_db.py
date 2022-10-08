@@ -153,7 +153,7 @@ def add_measurement_event(land_id, node_id, sensor, value):
         log.log_err(f"Unknown error")
  
     if is_violation:
-        log.log_err(f"Violation detected")
+        log.log_info(f"Violation detected for {sensor} from ({land_id}, {node_id})")
         sql = "INSERT INTO violation (land_id, node_id, sensor, v_value) \
             VALUES(%s, %s, %s, %s)"
         mycursor.execute(sql, (land_id, node_id, sensor, value))

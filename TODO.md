@@ -85,7 +85,8 @@
   File "/usr/lib/python3.6/multiprocessing/connection.py", line 368, in _send
     n = write(self._handle, buf)
 BrokenPipeError: [Errno 32] Broken pipe
-* [ ] il secondo nodo mqtt si disconnette dopo la configurazione (non riceve proprio il broker)
+* [ ] il secondo nodo mqtt si disconnette dopo la configurazione (il problema si presenta al riavvio del server, ho messo una coda mqtt ed ora non si configura più il primo)
+* [ ] a volte non riesco a registrarmi come observer (probabilmente è dovuto al fatto che il nodo sta aspettando la risposta dalla risorsa del server, perciò non ascolta le richieste di observing) 
 
 
 

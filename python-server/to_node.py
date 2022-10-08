@@ -269,10 +269,11 @@ def assign_config(land_id, node_id, protocol, address, cmd):
             msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
     
     json_msg = json.dumps(msg)
-    topic = f"NODE/{land_id}/{node_id}"
     log.log_send(json_msg, land_id, node_id)
         
     if protocol == "MQTT":
+        
+        topic = f"NODE/{land_id}/{node_id}"
         if msg['cmd'] != 'error_land':
             msg1 = { 'cmd': 'assign_i_config', 'body': {'enabled': msg['body']['irr_config']['enabled'], 'irr_limit':  msg['body']['irr_config']['irr_limit'], 'irr_duration': msg['body']['irr_config']['irr_duration'] } }
             msg2 = { 'cmd': 'assign_t_config', 'body': {'mst_timer': msg['body']['mst_timer'], 'ph_timer':msg['body']['ph_timer'], 'light_timer': msg['body']['light_timer'], 'tmp_timer': msg['body']['tmp_timer'] } }

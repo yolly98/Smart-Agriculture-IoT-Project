@@ -427,11 +427,11 @@ void receive_configuration_sim(){
 //PROCESS(mqtt_node, "Mqtt node");
 //AUTOSTART_PROCESSES(&mqtt_node);
 
+static unsigned int btn_count;
+static bool led_status;
+static bool land_id_setted;
+
 PROCESS_THREAD(mqtt_node, ev, data){
-    
-    static unsigned int btn_count;
-    static bool led_status;
-    static bool land_id_setted;
 
     PROCESS_BEGIN();
 

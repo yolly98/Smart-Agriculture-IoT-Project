@@ -45,7 +45,7 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
 #define BUFFER_SIZE 64
 
 // Periodic timer to check the state of the MQTT client
-#define STATE_MACHINE_PERIODIC     (CLOCK_SECOND * 1)
+#define STATE_MACHINE_PERIODIC     (CLOCK_SECOND * 5)
 
 /*---------------------------------------------------------------------------*/
 /*

@@ -14,10 +14,14 @@
 * [x] vedere se process_exit(&mqtt_node) funztiona nel mqtt_node (se no sostituire con PROCESS_EXIT())
 * [x] spezzare l'invio della configurazione in due pezzi(altrimenti crasha)
 * [x] se riavvio il server dopo che il nodo è già configurato crasha (dipende dalla dimensione dei buffer - nota alla fine)
-* [ ] se riavvio il server a volte non ricevo da un secondo nodo mqtt (troppo lontano?)
+* [x] se riavvio il server a volte non ricevo da un secondo nodo mqtt (troppo lontano?)
 	* nota che se gli invio un is_alive (o un get_config) questo risponde ma il borker non riceve,
 		ecco perchè il server non riceve
-		Se riavvio il mosquitto torna a funzionare
+		Se riavvio il mosquitto torna a funzionare (risolto mettendo il rate a 5 invece che a 1)
+* [x] abbassare il rate mqtt (aumenta timer)
+* [?] mettere una macro per limitare le stampe (lasciare solo publish e receive)
+* [x] togliere le variabili create all'interno del codice principale, devono essere globali
+* [?] cercare di ridurre il messaggio di configurazione se non si risolve il problema dell'appioppamento del tcp
 
 ### NODO COAP
 
@@ -85,9 +89,10 @@
   File "/usr/lib/python3.6/multiprocessing/connection.py", line 368, in _send
     n = write(self._handle, buf)
 BrokenPipeError: [Errno 32] Broken pipe
-* [ ] il secondo nodo mqtt si disconnette dopo la configurazione (il problema si presenta al riavvio del server o dopo un po di tempo, dopo il riavvio di mosquitto sembra andare bene per un po')
+* [x] il secondo nodo mqtt si disconnette dopo la configurazione (il problema si presenta al riavvio del server o dopo un po di tempo, dopo il riavvio di mosquitto sembra andare bene per un po'), risolto con rate a 5 invece che a 1 
 * [x] a volte non riesco a registrarmi come observer (probabilmente è dovuto al fatto che il nodo sta aspettando la risposta dalla risorsa del server, perciò non ascolta le richieste di observing) 
-* [ ] il timer_cmd causa nel coap l'invio di misurazioni multiple (succede solo se do timer 1, fa partire subito i trigger, perchè di tutti?)
+* [x] il timer_cmd causa nel coap l'invio di misurazioni multiple (succede solo se do timer 1, fa partire subito i trigger, perchè di tutti?)
+* [x] ridurre il rate mqtt 
 
 
 

@@ -9,7 +9,7 @@ configs = dict()
 nodes = dict()
 mqtt_queue = []
 MAX_MSG_QUEUE = 100
-MQTT_PUB_INTERVAL = 1 
+MQTT_PUB_INTERVAL = 5 
 
 #---------------------------------
 

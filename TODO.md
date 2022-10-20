@@ -95,12 +95,6 @@ BrokenPipeError: [Errno 32] Broken pipe
 * [x] ridurre il rate mqtt 
 
 
-
-### TEST
-* [ ] fare test con 4 nodi coap
-* [ ] rifare test mqtt (cooja)
-* [ ] fare test con 4 nodi mqtt
-
 ### TEST FINALE
 * [ ] simulazione con 2 nodi COAP e 2 nodi MQTT
 
@@ -111,5 +105,9 @@ originali (rimangono attivi i listener)
 
 ### OTTIMIZZAZIONI
 * [ ] cambiare il nome dei protocolli da stringhe a int
+
+### PROBLEMI CON I SENSORI REALI
+* [ ] il launcher si riavvia durante la configurazione mqtt (sospetto dimensione buffer)
+* [ ] il dongle non si flesha perchè manca nrfjprog.dll
 
 

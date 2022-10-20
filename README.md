@@ -45,4 +45,23 @@ To test the project it was used docker
 6. configure nodes by clicking on button in their menu (right click)
 
 7. use server, enter "help" to see command, view server log
-	
+
+# test on real node
+
+0. flash all nodes
+* for each node connected to the pc i have to know the port tty
+* cd /dev
+* ls
+* cat ttyACM0 (see serial optuput)
+* try all ttyACM?, the correct one is that respond you from serial
+* remember that in the commands to flash and get output you have to replace "ttyACMX" with the correct port and you have to assign different NODE-ID for each node.
+
+1. How to flash and get otput of launchpad
+* flash: "make TARGET=cc26x0-cc13x0 BOARD=/launchpad/cc2650 PORT=/dev/ttyACMx NODEID=0x0001 source-code-name.upload"
+* get output: "make TARGET=cc26x0-cc13x0 BOARD=/launchpad/cc2650 PORT=/dev/ttyACMx login"
+
+2. How to flash and get output of dongle
+* flash: "make TARGET=nrf52840 BOARD=dongle PORT=/dev/ttyACMx NODEID=0x0001 source-code-name.upload"
+* get output: "make TARGET=nrf52840 BOARD=dongle PORT=/dev/ttyACMx login"
+
+3. command to start the border-router server on linux machine "make TARGET=cc26x0-cc13x0 PORT=/dev/ttyACM0 connect-router" (in this case the border-router was flashed in a launcher)	

@@ -17,6 +17,8 @@ AUTOSTART_PROCESSES(&border_router);
 PROCESS_THREAD(border_router, ev, data){
   PROCESS_BEGIN();
 
+  printf("border router online");
+
 #if BORDER_ROUTER_CONF_WEBSERVER
   PROCESS_NAME(webserver_nogui_process);
   process_start(&webserver_nogui_process, NULL);

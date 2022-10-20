@@ -5,11 +5,6 @@
 #define COAP_MAX_CHUNK_SIZE 200
 #define COAP_MAX_OPEN_TRANSACTIONS 6
 
-/* for launchpad */
-//#define CCXXWARE_CONF_ROM_BOOTLOADER_ENABLE 1
-//#define IEEE802154_CONF_PANID   0xABCD
-//#define IEEE802154_CONF_DEFAULT_CHANNEL 25
-//#define RF_BLE_CONF_ENABLED 1
-/* --- */
+#define LOG_ENABLED false
 
 #endif /* PROJECT_CONF_H_ */

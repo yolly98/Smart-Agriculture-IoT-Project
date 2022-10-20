@@ -21,18 +21,18 @@ bool isNumber(char * text){
 
 void print_config(){
 
-    printf("[!] actual configuration: \n");
-    printf("land_id: %d\n", node_memory.configuration.land_id);
-    printf("node_id: %d\n", node_memory.configuration.node_id);
-    printf("irr_config: { enabled: %s, irr_limit: %d, irr_duration: %d}\n",
+    if(LOG_ENABLED) printf("[!] actual configuration: \n");
+    if(LOG_ENABLED) printf("land_id: %d\n", node_memory.configuration.land_id);
+    if(LOG_ENABLED) printf("node_id: %d\n", node_memory.configuration.node_id);
+    if(LOG_ENABLED) printf("irr_config: { enabled: %s, irr_limit: %d, irr_duration: %d}\n",
         node_memory.configuration.irr_config.enabled?"true":"false",
         node_memory.configuration.irr_config.irr_limit,
         node_memory.configuration.irr_config.irr_duration);
-    printf("mst_timer: %d\n", node_memory.configuration.mst_timer);
-    printf("ph_timer: %d\n", node_memory.configuration.ph_timer);
-    printf("light_timer: %d\n", node_memory.configuration.light_timer);
-    printf("tmp_timer: %d\n", node_memory.configuration.tmp_timer);
-    printf("-----------------------------\n");
+    if(LOG_ENABLED) printf("mst_timer: %d\n", node_memory.configuration.mst_timer);
+    if(LOG_ENABLED) printf("ph_timer: %d\n", node_memory.configuration.ph_timer);
+    if(LOG_ENABLED) printf("light_timer: %d\n", node_memory.configuration.light_timer);
+    if(LOG_ENABLED) printf("tmp_timer: %d\n", node_memory.configuration.tmp_timer);
+    if(LOG_ENABLED) printf("-----------------------------\n");
 
 }
 
@@ -70,7 +70,7 @@ void parse_json(char json[], int n_arguments, char arguments[][100]){
     }
 
     //for(i = 0; i < n_arguments;i++)
-    //    printf("[arg parsed #%d] %s \n", i, arguments[i]);        
+    //    if(LOG_ENABLED) printf("[arg parsed #%d] %s \n", i, arguments[i]);        
 
 }
 
@@ -81,7 +81,7 @@ bool elaborate_cmd(char msg[]){
     char cmd[1][100];
     parse_json(msg, 1, cmd);
     if(strcmp(cmd[0], IRR_CMD) == 0){
-        printf("[!] IRR_CMD command elaboration ...\n");
+        if(LOG_ENABLED) printf("[!] IRR_CMD command elaboration ...\n");
 
         int n_arguments = 5;
         char arguments[n_arguments][100];
@@ -97,16 +97,16 @@ bool elaborate_cmd(char msg[]){
             node_memory.configuration.irr_config.irr_duration = atoi(arguments[4]);
 
         send_irrigation();
-        printf("[+] IRR_CMD command elaborated with success\n");
+        if(LOG_ENABLED) printf("[+] IRR_CMD command elaborated with success\n");
 
     }
     else if(strcmp(cmd[0], GET_CONFIG) == 0){
-        printf("[!] GET_CONFIG command elaboration ...\n");
+        if(LOG_ENABLED) printf("[!] GET_CONFIG command elaboration ...\n");
         send_status();
-        printf("[+] GET_CONFIG command elaborated with success\n");
+        if(LOG_ENABLED) printf("[+] GET_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], TIMER_CMD) == 0){
-        printf("[!] TIMER_CMD command elaboration ...\n");
+        if(LOG_ENABLED) printf("[!] TIMER_CMD command elaboration ...\n");
         
         int n_arguments = 3;
         char arguments[n_arguments][100];
@@ -130,10 +130,10 @@ bool elaborate_cmd(char msg[]){
         }
 
         send_status();
-        printf("[+] TIMER_CMD command elaborated with success\n");
+        if(LOG_ENABLED) printf("[+] TIMER_CMD command elaborated with success\n");
     }
     else if(strcmp(cmd[0], ASSIGN_CONFIG) == 0){
-        printf("[!] ASSIGN_CONFIG command elaboration ...\n");
+        if(LOG_ENABLED) printf("[!] ASSIGN_CONFIG command elaboration ...\n");
         mqtt_module.state = STATE_CONFIGURED;
         int n_arguments = 8; 
         char arguments[n_arguments][100];
@@ -148,10 +148,10 @@ bool elaborate_cmd(char msg[]){
         node_memory.configuration.tmp_timer = atoi(arguments[7]);
 
         send_status();
-        printf("[+] ASSIGN_CONFIG command elaborated with success\n");
+        if(LOG_ENABLED) printf("[+] ASSIGN_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], ASSIGN_I_CONFIG) == 0){
-        printf("[!] ASSIGN_I_CONFIG command elaboration ...\n");
+        if(LOG_ENABLED) printf("[!] ASSIGN_I_CONFIG command elaboration ...\n");
         int n_arguments = 4; 
         char arguments[n_arguments][100];
         parse_json(msg, n_arguments, arguments );
@@ -160,10 +160,10 @@ bool elaborate_cmd(char msg[]){
         node_memory.configuration.irr_config.irr_limit = atoi(arguments[2]);
         node_memory.configuration.irr_config.irr_duration = atoi(arguments[3]);
 
-        printf("[+] ASSIGN_I_CONFIG command elaborated with success\n");
+        if(LOG_ENABLED) printf("[+] ASSIGN_I_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], ASSIGN_T_CONFIG) == 0){
-        printf("[!] ASSIGN_T_CONFIG command elaboration ...\n");
+        if(LOG_ENABLED) printf("[!] ASSIGN_T_CONFIG command elaboration ...\n");
         mqtt_module.state = STATE_CONFIGURED;
         int n_arguments = 5; 
         char arguments[n_arguments][100];
@@ -175,20 +175,20 @@ bool elaborate_cmd(char msg[]){
         node_memory.configuration.tmp_timer = atoi(arguments[4]);
 
         send_status();
-        printf("[+] ASSIGN_T_CONFIG command elaborated with success\n");
+        if(LOG_ENABLED) printf("[+] ASSIGN_T_CONFIG command elaborated with success\n");
     }
     else if(strcmp(cmd[0], ERROR_LAND) == 0){
-        printf("[!] ERROR_LAND received, reset the node\n");
+        if(LOG_ENABLED) printf("[!] ERROR_LAND received, reset the node\n");
         //process_exit(&mqtt_node);
         mqtt_module.state = STATE_ERROR;
     }
     else if(strcmp(cmd[0], ERROR_ID) == 0){
-        printf("[!] ERROR_ID received, reset the node\n");
+        if(LOG_ENABLED) printf("[!] ERROR_ID received, reset the node\n");
         //process_exit(&mqtt_node);
         mqtt_module.state = STATE_ERROR;
     }
     else if(strcmp(cmd[0], GET_SENSOR) == 0){
-        printf("[!] GET_SENSOR command elaboration ...\n");
+        if(LOG_ENABLED) printf("[!] GET_SENSOR command elaboration ...\n");
 
         int n_arguments = 2;
         char arguments[n_arguments][100];
@@ -203,15 +203,15 @@ bool elaborate_cmd(char msg[]){
         else if(strcmp(arguments[1], "tmp") == 0)
             get_soil_tmp();
 
-        printf("[+] GET_SENSOR command elaborated with success\n");
+        if(LOG_ENABLED) printf("[+] GET_SENSOR command elaborated with success\n");
     }
     else if(strcmp(cmd[0], IS_ALIVE) == 0){
-        printf("!] IS_ALIVE command elaboration ...\n");
+        if(LOG_ENABLED) printf("!] IS_ALIVE command elaboration ...\n");
         send_is_alive_ack();
-        printf("[+] IS_ALIVE command elaborated with success\n");
+        if(LOG_ENABLED) printf("[+] IS_ALIVE command elaborated with success\n");
     }
     else{
-        printf("[-] command received not correct (%s)\n", cmd[0]);
+        if(LOG_ENABLED) printf("[-] command received not correct (%s)\n", cmd[0]);
         return false;
     }
 
@@ -238,7 +238,7 @@ void send_config_request(){
         node_memory.configuration.land_id,
         node_memory.configuration.node_id
         );
-    printf(" >  %s \n", msg);
+    if(LOG_ENABLED) printf(" >  %s \n", msg);
     mqtt_publish_service(msg, CONFIG_RQST);
 }
 
@@ -266,8 +266,8 @@ void send_status(){
         node_memory.configuration.tmp_timer
         );
     
-    printf(" >  [%d] %s \n", (int)(strlen(msg_irr)), msg_irr);
-    printf(" >  [%d] %s \n", (int)(strlen(msg_timer)), msg_timer);
+    if(LOG_ENABLED) printf(" >  [%d] %s \n", (int)(strlen(msg_irr)), msg_irr);
+    if(LOG_ENABLED) printf(" >  [%d] %s \n", (int)(strlen(msg_timer)), msg_timer);
     mqtt_publish_service(msg_irr, STATUS_I);
     mqtt_publish_service(msg_timer, STATUS_T);
 }
@@ -283,7 +283,7 @@ void send_irrigation(){
         node_memory.configuration.node_id,
         node_memory.irr_status?"on":"off"
         );
-    printf(" >  %s \n", msg);
+    if(LOG_ENABLED) printf(" >  %s \n", msg);
     mqtt_publish_service(msg, IRRIGATION);
 }
 
@@ -298,7 +298,7 @@ void send_is_alive_ack(){
         node_memory.configuration.node_id
         );
     
-    printf(" >  %s \n", msg);
+    if(LOG_ENABLED) printf(" >  %s \n", msg);
     mqtt_publish_service(msg, IS_ALIVE_ACK);
 }
 
@@ -316,7 +316,7 @@ void get_soil_moisture(){
 
     short moisture = (15 + random_rand()%50);
     node_memory.measurements.soil_moisture = moisture;
-    printf("[+] soil moisture detected: %d\n", moisture);
+    if(LOG_ENABLED) printf("[+] soil moisture detected: %d\n", moisture);
 
     char msg[MSG_SIZE];
     sprintf(msg,"{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"value\":%d}}",
@@ -325,7 +325,7 @@ void get_soil_moisture(){
         node_memory.configuration.node_id,
         moisture);
 
-    printf(" >  %s\n", msg);
+    if(LOG_ENABLED) printf(" >  %s\n", msg);
     mqtt_publish_service(msg, MOISTURE);
 
     bool irr_enabled = node_memory.configuration.irr_config.enabled;
@@ -353,7 +353,7 @@ void get_ph_level(){
 
     short ph_level = (5 + random_rand()%5);
     node_memory.measurements.ph_level =  ph_level;
-    printf("[+] ph level detected: %d\n", ph_level);
+    if(LOG_ENABLED) printf("[+] ph level detected: %d\n", ph_level);
 
     char msg[MSG_SIZE];
     sprintf(msg,"{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"value\":%d}}",
@@ -363,7 +363,7 @@ void get_ph_level(){
         ph_level
         );
     
-    printf(" >  %s\n", msg);
+    if(LOG_ENABLED) printf(" >  %s\n", msg);
     mqtt_publish_service(msg, PH);
 
 }
@@ -377,7 +377,7 @@ void get_lihght_raw(){
 
     int light = random_rand()%28;
     node_memory.measurements.light_raw =  light;
-    printf("[+] light raw detected: %d\n", light);
+    if(LOG_ENABLED) printf("[+] light raw detected: %d\n", light);
 
     char msg[MSG_SIZE];
     sprintf(msg,"{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"value\":%d}}",
@@ -386,7 +386,7 @@ void get_lihght_raw(){
         node_memory.configuration.node_id,
         light
         );
-    printf(" >  %s\n", msg);
+    if(LOG_ENABLED) printf(" >  %s\n", msg);
     mqtt_publish_service(msg, LIGHT);
 } 
 
@@ -399,7 +399,7 @@ void get_soil_tmp(){
 
     int tmp = (5 + random_rand()%35);
     node_memory.measurements.soil_temperature =  tmp;
-    printf("[+] soil temperature detected: %d\n", tmp);
+    if(LOG_ENABLED) printf("[+] soil temperature detected: %d\n", tmp);
 
     char msg[MSG_SIZE];
     sprintf(msg,"{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"value\":%d}}",
@@ -408,7 +408,7 @@ void get_soil_tmp(){
         node_memory.configuration.node_id,
         tmp
         );
-    printf(" >  %s\n", msg);
+    if(LOG_ENABLED) printf(" >  %s\n", msg);
     mqtt_publish_service(msg, TMP);
 }
 /*-------------------------------------------------------------------*/
@@ -419,7 +419,7 @@ void receive_configuration_sim(){
     sprintf(msg, "{\"cmd\":\"%s\",\"body\":{\"irr_config\":{\"enabled\":\"true\",\"irr_limit\":38,\"irr_duration\":20 },\"mst_timer\":720,\"ph_timer\":720,\"light_timer\":60,\"tmp_timer\":60 }}",
         ASSIGN_CONFIG
     );
-    printf(" <  %s \n", msg);
+    if(LOG_ENABLED) printf(" <  %s \n", msg);
     elaborate_cmd(msg);
 }
 
@@ -437,8 +437,12 @@ PROCESS_THREAD(mqtt_node, ev, data){
 
     /*------------INITIALIZATION---------------*/
     printf("[!] initialization MQTT node...\n");
+    if(LOG_ENABLED)
+        printf("[!] log mode is enabled\n");
+    else
+        printf("[!] log mode is disabled\n");
 
-    printf("[!] manual land_id setting\n");
+    if(LOG_ENABLED) printf("[!] manual land_id setting\n");
 
     etimer_set(&node_timers.led_etimer,0.5 * CLOCK_SECOND);
     btn_count = 0;
@@ -465,7 +469,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
                     etimer_reset_with_new_interval(&node_timers.led_etimer, 2 * CLOCK_SECOND);
                     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&node_timers.led_etimer));
                     etimer_reset_with_new_interval(&node_timers.led_etimer, 0.5 * CLOCK_SECOND);
-                    printf("[!] manual node_id setting\n");
+                    if(LOG_ENABLED) printf("[!] manual node_id setting\n");
                     btn_count = 0;
                 }
                 else{
@@ -477,7 +481,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
         }
         if(ev == serial_line_event_message){
             char * msg = (char*)data;
-            printf("[!] recevived '%s' by serial\n", msg);
+            if(LOG_ENABLED) printf("[!] recevived '%s' by serial\n", msg);
             if(isNumber(msg) && atoi(msg) > 0){
                if(!land_id_setted){
                     node_memory.configuration.land_id = atoi(msg);
@@ -487,7 +491,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
                     etimer_reset_with_new_interval(&node_timers.led_etimer, 2 * CLOCK_SECOND);
                     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&node_timers.led_etimer));
                     etimer_reset_with_new_interval(&node_timers.led_etimer, 0.5 * CLOCK_SECOND);
-                    printf("[!] manual node_id setting\n");
+                    if(LOG_ENABLED) printf("[!] manual node_id setting\n");
                     btn_count = 0;
                 }
                 else{
@@ -496,10 +500,10 @@ PROCESS_THREAD(mqtt_node, ev, data){
                 }
             }
             else    
-                printf("[-] is not a number\n");
+                if(LOG_ENABLED) printf("[-] is not a number\n");
         }
         if(ev == button_hal_press_event){
-            printf("[!] button pressed\n");
+            if(LOG_ENABLED) printf("[!] button pressed\n");
             btn_count++;
             if(btn_count == 1 && !land_id_setted)
                 etimer_set(&node_timers.btn_etimer, 3 * CLOCK_SECOND);
@@ -513,11 +517,11 @@ PROCESS_THREAD(mqtt_node, ev, data){
     leds_single_off(LEDS_RED);
     led_status = false;
 
-    printf("[+] land %d selected \n", node_memory.configuration.land_id);
-    printf("[+] id %d selected \n", node_memory.configuration.node_id);
+    if(LOG_ENABLED) printf("[+] land %d selected \n", node_memory.configuration.land_id);
+    if(LOG_ENABLED) printf("[+] id %d selected \n", node_memory.configuration.node_id);
 
 
-    printf("[!] intialization ended\n");
+    if(LOG_ENABLED) printf("[!] intialization ended\n");
 
     mqtt_init_service();
 
@@ -531,7 +535,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
     }
     /*---------------CONFIGURATION-------------------*/
     
-    printf("[!] configuration ... \n");
+    if(LOG_ENABLED) printf("[!] configuration ... \n");
 
     send_config_request();
     // receive_configuration_sim();  //uncomment here to jump the configuration phase
@@ -546,12 +550,12 @@ PROCESS_THREAD(mqtt_node, ev, data){
             break;
     }
 
-    printf("[+] configuration ended\n");
+    if(LOG_ENABLED) printf("[+] configuration ended\n");
 
     /*------------------FIRST MEASUREMENTS------------*/
 
     if(mqtt_module.state != STATE_ERROR){
-        printf("[!] first sensor detection ...\n");
+        if(LOG_ENABLED) printf("[!] first sensor detection ...\n");
 
         node_timers.sensor_timer_are_setted = false;
         node_timers.irr_timer_is_setted = false;
@@ -591,10 +595,10 @@ PROCESS_THREAD(mqtt_node, ev, data){
             char msg[200];
         
             if(strcmp(cmd, "help") == 0){
-                printf("[!] command list:\n");
-                printf("    . is_alive\n");
-                printf("    . mqtt_status\n");
-                printf("---------------\n");
+                if(LOG_ENABLED) printf("[!] command list:\n");
+                if(LOG_ENABLED) printf("    . is_alive\n");
+                if(LOG_ENABLED) printf("    . mqtt_status\n");
+                if(LOG_ENABLED) printf("---------------\n");
                 continue;
             }
             else if(strcmp(cmd, "is_alive") == 0){
@@ -605,7 +609,7 @@ PROCESS_THREAD(mqtt_node, ev, data){
                 continue;
             }
 
-            printf(" <  [%s] %s \n",cmd, msg);
+            if(LOG_ENABLED) printf(" <  [%s] %s \n",cmd, msg);
 
             elaborate_cmd(msg);
     

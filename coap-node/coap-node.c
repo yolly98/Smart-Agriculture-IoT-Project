@@ -38,18 +38,18 @@ void print_config(){
     ph_timer = get_ph_timer();
     light_timer = get_light_timer();
     tmp_timer = get_tmp_timer();
-    printf("[!] actual configuration: \n");
-    printf("land_id: %d\n", land_id);
-    printf("node_id: %d\n", node_id);
-    printf("irr_config: { enabled: %s, irr_limit: %d, irr_duration: %d}\n",
+    if(LOG_ENABLED) printf("[!] actual configuration: \n");
+    if(LOG_ENABLED) printf("land_id: %d\n", land_id);
+    if(LOG_ENABLED) printf("node_id: %d\n", node_id);
+    if(LOG_ENABLED) printf("irr_config: { enabled: %s, irr_limit: %d, irr_duration: %d}\n",
         enabled?"true":"false",
         irr_limit,
         irr_duration);
-    printf("mst_timer: %d\n", mst_timer);
-    printf("ph_timer: %d\n", ph_timer);
-    printf("light_timer: %d\n", light_timer);
-    printf("tmp_timer: %d\n", tmp_timer);
-    printf("-----------------------------\n");
+    if(LOG_ENABLED) printf("mst_timer: %d\n", mst_timer);
+    if(LOG_ENABLED) printf("ph_timer: %d\n", ph_timer);
+    if(LOG_ENABLED) printf("light_timer: %d\n", light_timer);
+    if(LOG_ENABLED) printf("tmp_timer: %d\n", tmp_timer);
+    if(LOG_ENABLED) printf("-----------------------------\n");
 
 }
 
@@ -86,7 +86,7 @@ void parse_json(char json[], int n_arguments, char arguments[][100]){
     }
 
     //for(int i = 0; i < n_arguments;i++)
-    //    printf("[arg parsed #%d] %s \n", i, arguments[i]);        
+    //    if(LOG_ENABLED) printf("[arg parsed #%d] %s \n", i, arguments[i]);        
 
 }
 
@@ -102,7 +102,7 @@ void send_config_request(char msg[]){
         land_id,
         node_id
         );
-    printf(" >  %s \n", msg);
+    if(LOG_ENABLED) printf(" >  %s \n", msg);
 }
 
 
@@ -121,21 +121,21 @@ void client_chunk_handler(coap_message_t *response){
     char msg[MSG_SIZE];
     sprintf(msg,"%s",(char*)chunk);
     
-    printf("[!] ASSIGN_CONFIG command elaboration ...\n");
+    if(LOG_ENABLED) printf("[!] ASSIGN_CONFIG command elaboration ...\n");
 
-    printf(" <  %s \n", msg);
+    if(LOG_ENABLED) printf(" <  %s \n", msg);
 
     if(strcmp(msg, "server-ok") == 0){
         STATE = STATE_CONFIGURED;
         return;
     }
     else if(strcmp(msg, "error_land") == 0){
-        printf("[-] land selected doesn't exist\n");
+        if(LOG_ENABLED) printf("[-] land selected doesn't exist\n");
         STATE = STATE_ERROR;
         return;
     }
     else if(strcmp(msg, "error_id") == 0){
-        printf("[-] node with the same id already exists\n");
+        if(LOG_ENABLED) printf("[-] node with the same id already exists\n");
         STATE = STATE_ERROR;
         return;
     }
@@ -159,7 +159,7 @@ void client_chunk_handler(coap_message_t *response){
     save_light_timer(light_timer);
     save_tmp_timer(tmp_timer);
 
-    printf("[+] ASSIGN_CONFIG command elaborated with success\n");
+    if(LOG_ENABLED) printf("[+] ASSIGN_CONFIG command elaborated with success\n");
 }
 
 /*-------------------------------------------------------*/
@@ -168,7 +168,7 @@ void assign_config_received_sim(){ //is a simulation of a message received from 
 
     char msg[MSG_SIZE];
     sprintf(msg, "%s", "{\"land_id\":4,\"node_id\":2,\"irr_config\":{\"enabled\":\"true\",\"irr_limit\":38,\"irr_duration\":20 },\"mst_timer\":720,\"ph_timer\":720,\"light_timer\":60,\"tmp_timer\":60 }");
-    printf("[!] ASSIGN_CONFIG command elaboration ...\n");
+    if(LOG_ENABLED) printf("[!] ASSIGN_CONFIG command elaboration ...\n");
     STATE = STATE_CONFIGURED;
     int n_arguments = 9; 
     char arguments[n_arguments][100];
@@ -188,7 +188,7 @@ void assign_config_received_sim(){ //is a simulation of a message received from 
     save_light_timer(light_timer);
     save_tmp_timer(tmp_timer);
 
-    printf("[+] ASSIGN_CONFIG command elaborated with success\n");
+    if(LOG_ENABLED) printf("[+] ASSIGN_CONFIG command elaborated with success\n");
 }
 
 /*------------------------------------------------------------*/
@@ -205,10 +205,14 @@ PROCESS_THREAD(coap_node, ev, data){
 
     /*------------INITIALIZATION---------------*/
     printf("[!] initialization COAP node...\n");
+    if(LOG_ENABLED)
+        printf("[!] log mode is enabled\n");
+    else
+        printf("[!] log mode is disabled\n");
 
     //set land_id and node_id
 
-    printf("[!] manual land_id setting\n");
+    if(LOG_ENABLED) printf("[!] manual land_id setting\n");
 
     etimer_set(&led_etimer,0.5 * CLOCK_SECOND);
     btn_count = 0;
@@ -245,7 +249,7 @@ PROCESS_THREAD(coap_node, ev, data){
                     etimer_reset_with_new_interval(&led_etimer, 2 * CLOCK_SECOND);
                     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&led_etimer));
                     etimer_reset_with_new_interval(&led_etimer, 0.5 * CLOCK_SECOND);
-                    printf("[!] manual node_id setting\n");
+                    if(LOG_ENABLED) printf("[!] manual node_id setting\n");
                     btn_count = 0;
                 }
                 else{
@@ -256,7 +260,7 @@ PROCESS_THREAD(coap_node, ev, data){
         }
         if(ev == serial_line_event_message){
             char * msg = (char*)data;
-            printf("[!] recevived '%s' by serial\n", msg);
+            if(LOG_ENABLED) printf("[!] recevived '%s' by serial\n", msg);
             if(isNumber(msg) && atoi(msg) > 0){
                if(!land_id_setted){
                     land_id = atoi(msg);
@@ -266,7 +270,7 @@ PROCESS_THREAD(coap_node, ev, data){
                     etimer_reset_with_new_interval(&led_etimer, 2 * CLOCK_SECOND);
                     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&led_etimer));
                     etimer_reset_with_new_interval(&led_etimer, 0.5 * CLOCK_SECOND);
-                    printf("[!] manual node_id setting\n");
+                    if(LOG_ENABLED) printf("[!] manual node_id setting\n");
                     btn_count = 0;
                 }
                 else{
@@ -275,10 +279,10 @@ PROCESS_THREAD(coap_node, ev, data){
                 }
             }
             else    
-                printf("[-] is not a number\n");
+                if(LOG_ENABLED) printf("[-] is not a number\n");
         }
         if(ev == button_hal_press_event){
-            printf("[!] button pressed\n");
+            if(LOG_ENABLED) printf("[!] button pressed\n");
             btn_count++;
             if(btn_count == 1 && !land_id_setted)
                 etimer_set(&btn_etimer, 3 * CLOCK_SECOND);
@@ -290,12 +294,12 @@ PROCESS_THREAD(coap_node, ev, data){
     leds_single_off(LEDS_RED);
     led_status = false;
 
-    printf("[+] land %d selected \n", land_id);
-    printf("[+] id %d selected \n", node_id);
+    if(LOG_ENABLED) printf("[+] land %d selected \n", land_id);
+    if(LOG_ENABLED) printf("[+] id %d selected \n", node_id);
 
     save_config(land_id, node_id); 
     
-    printf("[!] intialization ended\n");
+    if(LOG_ENABLED) printf("[!] intialization ended\n");
     coap_endpoint_parse(SERVER_EP, strlen(SERVER_EP), &coap_module.server_ep);
     coap_activate_resource(&config_rsc, "configuration");
     coap_activate_resource(&irr_rsc, "irrigation");
@@ -307,7 +311,7 @@ PROCESS_THREAD(coap_node, ev, data){
     STATE = STATE_INITIALIZED;
     /*---------------CONFIGURATION-------------------*/
     
-    printf("[!] configuration ... \n");
+    if(LOG_ENABLED) printf("[!] configuration ... \n");
 
     char msg[MSG_SIZE];
     sprintf(msg, "{\"land_id\":%d,\"node_id\":%d}", land_id, node_id);
@@ -320,7 +324,7 @@ PROCESS_THREAD(coap_node, ev, data){
         if(STATE == STATE_REGISTERED)
             break;
         else if(STATE == STATE_ERROR){
-            printf("[-] configuration failed\n");
+            if(LOG_ENABLED) printf("[-] configuration failed\n");
             is_alive_error();
             config_error();
             irr_error();
@@ -337,7 +341,7 @@ PROCESS_THREAD(coap_node, ev, data){
 
     if(STATE != STATE_ERROR){
 
-        printf("[!] observing phase ...\n");
+        if(LOG_ENABLED) printf("[!] observing phase ...\n");
         sprintf(msg, "{\"land_id\":%d,\"node_id\":%d}", land_id, node_id);
         coap_init_message(coap_module.request, COAP_TYPE_CON, COAP_GET, 0);
         coap_set_header_uri_path(coap_module.request, "/new_config");
@@ -355,7 +359,7 @@ PROCESS_THREAD(coap_node, ev, data){
         set_light_timer();
         set_tmp_timer();
 
-        printf("[!] node  in online\n");
+        if(LOG_ENABLED) printf("[!] node  in online\n");
     }
 
     while(true){
@@ -374,10 +378,10 @@ PROCESS_THREAD(coap_node, ev, data){
         if(ev == serial_line_event_message){ //to test if the node can comunicate
             char * msg = (char*)data;
             if(strcmp(msg, "help") == 0){
-                printf("---- command list ----\n");
-                printf(". config\n");
-                printf(". trigger\n");
-                printf("----------------------\n");
+                if(LOG_ENABLED) printf("---- command list ----\n");
+                if(LOG_ENABLED) printf(". config\n");
+                if(LOG_ENABLED) printf(". trigger\n");
+                if(LOG_ENABLED) printf("----------------------\n");
             }
             else if(strcmp(msg, "config") == 0){
                 char to_send[MSG_SIZE];

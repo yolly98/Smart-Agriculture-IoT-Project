@@ -109,7 +109,7 @@ void send_irr_status(char msg[]){
       irr_mem.irr_duration,
       irr_mem.irr_status?"on":"off"
       );
-  printf(" >  %s \n", msg);
+  if(LOG_ENABLED) printf(" >  %s \n", msg);
 }
 
 /*----------------------------------------------*/
@@ -120,7 +120,7 @@ void send_irrigation(char msg[]){
         "irrigation",
         irr_mem.irr_status?"on":"off"
         );
-    printf(" >  %s \n", msg);
+    if(LOG_ENABLED) printf(" >  %s \n", msg);
 }
 
 /*------------------------------------------*/
@@ -145,7 +145,7 @@ static void irr_get_handler(
 
   char reply[MSG_SIZE];
 
-  printf(" <  get irrigation\n");
+  if(LOG_ENABLED) printf(" <  get irrigation\n");
   send_irrigation(reply);
 
   coap_set_header_content_format(response, TEXT_PLAIN);
@@ -165,25 +165,25 @@ static void irr_put_handler(
   if(irr_mem.state == STATE_ERROR)
     return;
 
-  printf(" <  put irrigation\n");
+  if(LOG_ENABLED) printf(" <  put irrigation\n");
   const uint8_t* arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
 
   int len = coap_get_payload(request, &arg);
   if (len <= 0){
-    printf("[-] no argument obteined from put request of irr_rsc\n");
+    if(LOG_ENABLED) printf("[-] no argument obteined from put request of irr_rsc\n");
     return;
   }
   sprintf(msg, "%s", (char*)arg);
   
   if(strcmp(msg, "status") == 0){
-    printf(" <  get irrigation-status\n");
+    if(LOG_ENABLED) printf(" <  get irrigation-status\n");
     send_irr_status(reply);
     coap_remove_observer_by_uri(NULL, irr_rsc.url); //remove observer
   } 
   else{
-    printf("[!] IRR_CMD command elaboration ...\n");
+    if(LOG_ENABLED) printf("[!] IRR_CMD command elaboration ...\n");
 
     int n_arguments = 4;
     char arguments[n_arguments][100];
@@ -199,7 +199,7 @@ static void irr_put_handler(
       irr_mem.irr_duration = atoi(arguments[3]);
 
     send_irr_status(reply);
-    printf("[+] IRR_CMD command elaborated with success\n");
+    if(LOG_ENABLED) printf("[+] IRR_CMD command elaborated with success\n");
   }
 
   coap_set_header_content_format(response, TEXT_PLAIN);

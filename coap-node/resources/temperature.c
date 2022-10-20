@@ -76,13 +76,13 @@ void send_soil_tmp(char msg[]){
 
   int tmp = (5 + random_rand()%35);
   tmp_mem.soil_temperature =  tmp;
-  printf("[+] soil temperature detected: %d\n", tmp);
+  if(LOG_ENABLED) printf("[+] soil temperature detected: %d\n", tmp);
 
   sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
       "tmp",
       tmp_mem.soil_temperature
       );
-  printf(" >  %s\n", msg);
+  if(LOG_ENABLED) printf(" >  %s\n", msg);
 }
 
 /*------------------------------------------*/
@@ -92,7 +92,7 @@ void send_tmp_status(char msg[]){
       "tmp-status",
       tmp_mem.tmp_timer
       );
-  printf(" >  %s\n", msg);
+  if(LOG_ENABLED) printf(" >  %s\n", msg);
 }
 
 /*------------------------------------------*/
@@ -118,7 +118,7 @@ static void tmp_get_handler(
 
   char reply[MSG_SIZE];
 
-  printf(" <  get sensor/tmp\n");
+  if(LOG_ENABLED) printf(" <  get sensor/tmp\n");
   send_soil_tmp(reply);
   
   coap_set_header_content_format(response, TEXT_PLAIN);
@@ -138,20 +138,20 @@ static void tmp_put_handler(
     if(tmp_mem.state == STATE_ERROR)
       return;
 
-    printf(" <  put sensor/tmp\n");
+    if(LOG_ENABLED) printf(" <  put sensor/tmp\n");
     const uint8_t* arg;
     char msg[MSG_SIZE];
     char reply[MSG_SIZE];
     int len = coap_get_payload(request, &arg);
     if (len <= 0){
-      printf("[-] no argument obteined from put request of tmp_rsc\n");
+      if(LOG_ENABLED) printf("[-] no argument obteined from put request of tmp_rsc\n");
       return;
     }
     
     sprintf(msg, "%s", (char*)arg);
     
     if(strcmp(msg, "status") == 0){
-      printf(" <  get sensor/tmp-status\n");
+      if(LOG_ENABLED) printf(" <  get sensor/tmp-status\n");
       send_tmp_status(reply);
       coap_remove_observer_by_uri(NULL, tmp_rsc.url); //remove observer
     } 

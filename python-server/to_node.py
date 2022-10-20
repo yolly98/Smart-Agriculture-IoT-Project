@@ -182,6 +182,8 @@ def get_config(broadcast):
                     continue
                 if (not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id):
                     log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
+                    if mqtt_module.check_node(land_id, node_id):
+                        coap_module.delete_node(land_id, node_id)
                     continue
                 result = coap_module.send_msg(land_id, node_id, "configuration", "GET", "")
                 if not result:
@@ -264,6 +266,8 @@ def assign_config(land_id, node_id, protocol, address, cmd):
                 ((not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id))):
                 log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
                 msg = {'cmd': 'error_id'}
+                if mqtt_module.check_node(land_id, node_id):
+                    coap_module.delete_node(land_id, node_id)
             else:
                 update_mysql_db.update_address_in_configuration(land_id, node_id, protocol, address)
                 msg = { 'cmd': 'assign_config', 'body': { 'irr_config': { 'enabled': config[6], 'irr_limit':  config[7], 'irr_duration': config[8]}, 'mst_timer': config[9], 'ph_timer': config[10], 'light_timer': config[11], 'tmp_timer': config[12] } }
@@ -283,6 +287,7 @@ def assign_config(land_id, node_id, protocol, address, cmd):
             mqtt_module.mqtt_publish(topic, json.dumps(msg2))
         else:
             mqtt_module.mqtt_reset_config(land_id, node_id)
+            mqtt_module.delete_node(land_id, node_id)
             mqtt_module.mqtt_publish(topic, json_msg)
     elif protocol == "COAP":
         if cmd == False:
@@ -554,6 +559,8 @@ def is_alive(broadcast):
             elif protocol == "COAP":
                 if (not coap_module.add_nodes(land_id, node_id, address)) or mqtt_module.check_node(land_id, node_id):
                     log.log_err(f"nodes ({land_id}, {node_id}) duplicated")
+                    if mqtt_module.check_node(land_id, node_id):
+                        coap_module.delete_node(land_id, node_id)
                     continue
                 result = coap_module.send_msg(land_id, node_id, "is_alive", "GET", "")
                 if not result:

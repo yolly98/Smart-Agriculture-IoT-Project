@@ -93,7 +93,8 @@ BrokenPipeError: [Errno 32] Broken pipe
 * [x] a volte non riesco a registrarmi come observer (probabilmente è dovuto al fatto che il nodo sta aspettando la risposta dalla risorsa del server, perciò non ascolta le richieste di observing) 
 * [x] il timer_cmd causa nel coap l'invio di misurazioni multiple (succede solo se do timer 1, fa partire subito i trigger, perchè di tutti?)
 * [x] ridurre il rate mqtt 
-
+* [x] quando un nodo coap è duplicato di un nodo mqtt viene rilevato ma non viene rimosso dalla cache (l'error_id viene mandato correttamente)
+* [ ] quando un nodo mqtt è un doppione di un altro nodo mqtt il server li disconnette entrambi (non risolvibile, purtroppo quando mando l'error_id rispondo necessariamente entrambi i nodi)
 
 ### TEST FINALE
 * [ ] simulazione con 2 nodi COAP e 2 nodi MQTT
@@ -106,8 +107,6 @@ originali (rimangono attivi i listener)
 ### OTTIMIZZAZIONI
 * [ ] cambiare il nome dei protocolli da stringhe a int
 
-### PROBLEMI CON I SENSORI REALI
-* [ ] il launcher si riavvia durante la configurazione mqtt (sospetto dimensione buffer)
-* [ ] il dongle non si flesha perchè manca nrfjprog.dll
+
 
 

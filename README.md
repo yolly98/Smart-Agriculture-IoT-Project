@@ -61,7 +61,7 @@ To test the project it was used docker
 * get output: "make TARGET=cc26x0-cc13x0 BOARD=/launchpad/cc2650 PORT=/dev/ttyACMx login"
 
 2. How to flash and get output of dongle
-* flash: "make TARGET=nrf52840 BOARD=dongle PORT=/dev/ttyACMx NODEID=0x0001 source-code-name.upload"
+* flash: "make TARGET=nrf52840 BOARD=dongle PORT=/dev/ttyACMx NODEID=0x0001 source-code-name.dfu-upload"
 * get output: "make TARGET=nrf52840 BOARD=dongle PORT=/dev/ttyACMx login"
 
 3. command to start the border-router server on linux machine "make TARGET=cc26x0-cc13x0 PORT=/dev/ttyACM0 connect-router" (in this case the border-router was flashed in a launcher)	

@@ -81,7 +81,7 @@ def server_console():
             while True:
                 broadcast = log.log_input("discovery mode? (y/n): ")
                 if broadcast == "cancel":
-                    return
+                    continue
                 if broadcast == "y" or broadcast == "n":
                     break
                 else:
@@ -102,7 +102,7 @@ def server_console():
             while True:
                 broadcast = log.log_input("broadcast mode? (y/n): ")
                 if broadcast == "cancel":
-                    return
+                    continue
                 if broadcast == "y" or broadcast == "n":
                     break
                 else:

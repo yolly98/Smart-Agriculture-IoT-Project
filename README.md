@@ -1,4 +1,4 @@
-# Smart Agricolture IoT project
+# Smart Agriculture IoT project
 
 
 # Software

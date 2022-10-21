@@ -74,14 +74,14 @@ bool check_ph_timer_expired(){
 void send_ph_level(char msg[]){
  
     ph_mem.ph_level = 4 + random_rand()%5;
-    printf("[+] ph level detected: %d\n", ph_mem.ph_level);
+    if(LOG_ENABLED) printf("[+] ph level detected: %d\n", ph_mem.ph_level);
 
     sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
         "ph", 
         ph_mem.ph_level
         );
     
-    printf(" >  %s\n", msg);
+    if(LOG_ENABLED) printf(" >  %s\n", msg);
 }
 
 /*------------------------------------------*/
@@ -91,7 +91,7 @@ void send_ph_status(char msg[]){
       "ph-status",
       ph_mem.ph_timer
       );
-  printf(" >  %s\n", msg);
+  if(LOG_ENABLED) printf(" >  %s\n", msg);
 }
 
 /*------------------------------------------*/
@@ -117,7 +117,7 @@ static void ph_get_handler(
 
   char reply[MSG_SIZE] = "";
 
-  printf(" <  get sensor/ph\n");
+  if(LOG_ENABLED) printf(" <  get sensor/ph\n");
   
   send_ph_level(reply);
   coap_set_header_content_format(response, TEXT_PLAIN);
@@ -138,19 +138,19 @@ static void ph_put_handler(
   if(ph_mem.state == STATE_ERROR)
       return;
 
-  printf(" <  put sensor/ph\n");
+  if(LOG_ENABLED) printf(" <  put sensor/ph\n");
   const uint8_t* arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
   int len = coap_get_payload(request, &arg);
   if (len <= 0){
-    printf("[-] no argument obteined from put request of ph_rsc\n");
+    if(LOG_ENABLED) printf("[-] no argument obteined from put request of ph_rsc\n");
     return;
   }
   sprintf(msg, "%s", (char*)arg);
   
   if(strcmp(msg, "status") == 0){
-    printf(" <  get sensor/ph-status\n");
+    if(LOG_ENABLED) printf(" <  get sensor/ph-status\n");
     send_ph_status(reply);
     coap_remove_observer_by_uri(NULL, ph_rsc.url); //remove observer
   }

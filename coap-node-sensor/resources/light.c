@@ -75,13 +75,13 @@ void send_light_raw(char msg[]){
 
     int light = random_rand()%28;
     light_mem.light_raw =  light;
-    printf("[+] light raw detected: %d\n", light);
+    if(LOG_ENABLED) printf("[+] light raw detected: %d\n", light);
 
     sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
         "light",
         light_mem.light_raw
         );
-    printf(" >  %s\n", msg);
+    if(LOG_ENABLED) printf(" >  %s\n", msg);
 } 
 
 /*------------------------------------------*/
@@ -91,7 +91,7 @@ void send_light_status(char msg[]){
       "light-status",
       light_mem.light_timer
       );
-  printf(" >  %s\n", msg);
+  if(LOG_ENABLED) printf(" >  %s\n", msg);
 }
 
 /*------------------------------------------*/
@@ -116,7 +116,7 @@ static void light_get_handler(
 
   char reply[MSG_SIZE];
 
-  printf(" <  get sensor/light\n");
+  if(LOG_ENABLED) printf(" <  get sensor/light\n");
   send_light_raw(reply);
 
   coap_set_header_content_format(response, TEXT_PLAIN);
@@ -133,18 +133,18 @@ static void light_put_handler(
   int32_t *offset
   ){
 
-  printf(" <  put sensor/light\n");
+  if(LOG_ENABLED) printf(" <  put sensor/light\n");
   const uint8_t* arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
   int len = coap_get_payload(request, &arg);
   if (len <= 0){
-    printf("[-] no argument obteined from put request of light_rsc\n");
+    if(LOG_ENABLED) printf("[-] no argument obteined from put request of light_rsc\n");
     return;
   }
   sprintf(msg, "%s", (char*)arg);  
   if(strcmp(msg, "status") == 0){
-    printf(" <  get sensor/light-satus\n");
+    if(LOG_ENABLED) printf(" <  get sensor/light-satus\n");
     send_light_status(reply);
     coap_remove_observer_by_uri(NULL, light_rsc.url); //remove observer
   }   

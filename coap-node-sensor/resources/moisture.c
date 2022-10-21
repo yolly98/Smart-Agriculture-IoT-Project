@@ -80,14 +80,14 @@ void send_soil_moisture(char msg[]){
 
     int moisture = (15 + random_rand()%50);
     mst_mem.soil_moisture = moisture;
-    printf("[+] soil moisture detected: %d\n", moisture);
+    if(LOG_ENABLED) printf("[+] soil moisture detected: %d\n", moisture);
 
     sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
         "mst",
         mst_mem.soil_moisture
       );
 
-    printf(" >  %s\n", msg);
+    if(LOG_ENABLED) printf(" >  %s\n", msg);
 
 }
 
@@ -98,7 +98,7 @@ void send_mst_status(char msg[]){
       "mst-status",
       mst_mem.mst_timer
       );
-  printf(" >  %s\n", msg);
+  if(LOG_ENABLED) printf(" >  %s\n", msg);
 }
 
 /*------------------------------------------*/
@@ -123,7 +123,7 @@ static void mst_get_handler(
 
   char reply[MSG_SIZE];
 
-  printf(" <  get sensor/mst\n");
+  if(LOG_ENABLED) printf(" <  get sensor/mst\n");
   send_soil_moisture(reply);
 
   coap_set_header_content_format(response, TEXT_PLAIN);
@@ -141,19 +141,19 @@ static void mst_put_handler(
   int32_t *offset
   ){
 
-  printf(" <  get sensor/put\n");
+  if(LOG_ENABLED) printf(" <  get sensor/put\n");
   const uint8_t* arg;
   char msg[MSG_SIZE];
   char reply[MSG_SIZE];
   int len = coap_get_payload(request, &arg);
   if (len <= 0){
-    printf("[-] no argument obteined from put request of mst_rsc\n");
+    if(LOG_ENABLED) printf("[-] no argument obteined from put request of mst_rsc\n");
     return;
   }
 
   sprintf(msg, "%s", (char*)arg);
   if(strcmp(msg, "status") == 0){
-    printf(" <  get sensor/mst-status\n");
+    if(LOG_ENABLED) printf(" <  get sensor/mst-status\n");
     send_mst_status(reply);
     coap_remove_observer_by_uri(NULL, mst_rsc.url); //remove observer
   } 

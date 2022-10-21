@@ -63,7 +63,7 @@ void send_config_status(char msg[]){
         configuration.node_id
         );
     
-    printf(" >  %s \n", msg);
+    if(LOG_ENABLED) printf(" >  %s \n", msg);
 }
 
 /*----------------------------------------------*/
@@ -79,7 +79,7 @@ static void config_get_handler(
 
     if(configuration.state == STATE_ERROR)
       return;
-    printf(" <  get config\n");
+    if(LOG_ENABLED) printf(" <  get config\n");
     char msg[MSG_SIZE];
     send_config_status(msg); 
     coap_set_header_content_format(response, TEXT_PLAIN);
@@ -100,13 +100,13 @@ static void config_put_handler(
     if(configuration.state == STATE_ERROR)
       return;
 
-    printf(" <  put config\n");
+    if(LOG_ENABLED) printf(" <  put config\n");
     const uint8_t* arg;
     char msg[MSG_SIZE];
     char reply[MSG_SIZE];
     int len = coap_get_payload(request, &arg);
     if (len <= 0){
-      printf("[-] no argument obteined from put request of config_rsc");
+      if(LOG_ENABLED) printf("[-] no argument obteined from put request of config_rsc");
       return;
     }
     sprintf(msg, "%s", (char*)arg);

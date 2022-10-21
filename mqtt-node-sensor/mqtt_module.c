@@ -81,16 +81,16 @@ static struct mqtt_module_str{
 
 void print_mqtt_status(){
 
-    printf("state: %d\n", mqtt_module.state);
-    printf("-----BUFFER MQTT--------\n");
+    if(LOG_ENABLED) printf("state: %d\n", mqtt_module.state);
+    if(LOG_ENABLED) printf("-----BUFFER MQTT--------\n");
     struct mqtt_publish_list *p = mqtt_module.plist_head;
     int i;
     for(i = 0; i < mqtt_module.messages; i++){
-        printf("[ %s, len: %ld]->", p->cmd, (long int)(strlen(p->msg)));
+        if(LOG_ENABLED) printf("[ %s, len: %ld]->", p->cmd, (long int)(strlen(p->msg)));
         p = p->ptr;
     }
-    printf("\n");
-    printf("------------------\n");
+    if(LOG_ENABLED) printf("\n");
+    if(LOG_ENABLED) printf("------------------\n");
 
 }
 
@@ -100,11 +100,11 @@ void print_mqtt_status(){
 bool mqtt_publish_service(char msg[], char cmd[]){ //add to list
 
   if(mqtt_module.messages == MAX_MSGS){
-    printf("[-] buffer for msg to publish is full\n");
+    if(LOG_ENABLED) printf("[-] buffer for msg to publish is full\n");
     return false;
   }
 
-  printf("[!] adding message to mqtt list\n");
+  if(LOG_ENABLED) printf("[!] adding message to mqtt list\n");
   
   struct mqtt_publish_list *new_msg = (struct mqtt_publish_list*)malloc(sizeof(struct mqtt_publish_list));
   sprintf(new_msg->msg, "%s", msg);
@@ -137,7 +137,7 @@ bool get_msg_to_publish(char msg[], char topic[]){ //remove from list
   sprintf(cmd, "%s",  mqtt_module.plist_tail->cmd);
   sprintf(topic, "%s", "SERVER");
 
-  printf("[!] Publishing [ %s, len: %ld]\n", cmd, (long int)(strlen(msg)));
+  if(LOG_ENABLED) printf("[!] Publishing [ %s, len: %ld]\n", cmd, (long int)(strlen(msg)));
 
   if(mqtt_module.messages == 1){
     mqtt_module.plist_head = NULL;
@@ -174,7 +174,7 @@ static void pub_handler(
   if (mqtt_module.state == STATE_ERROR)
     return;
 
-  printf("[!] received: topic='%s' (len=%u), chunk_len=%u\n", topic,
+  if(LOG_ENABLED) printf("[!] received: topic='%s' (len=%u), chunk_len=%u\n", topic,
           topic_len, chunk_len);
 
   elaborate_cmd((char*)chunk);
@@ -189,13 +189,13 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
 
   switch(event) {
     case MQTT_EVENT_CONNECTED: {
-        printf("[+] Application has a MQTT connection\n");
+        if(LOG_ENABLED) printf("[+] Application has a MQTT connection\n");
 
         mqtt_module.state = STATE_CONNECTED;
         break;
     }
     case MQTT_EVENT_DISCONNECTED: {
-      printf("[-] MQTT Disconnect. Reason %u\n", *((mqtt_event_t *)data));
+      if(LOG_ENABLED) printf("[-] MQTT Disconnect. Reason %u\n", *((mqtt_event_t *)data));
 
       mqtt_module.state = STATE_DISCONNECTED;
       process_poll(&mqtt_node);
@@ -213,28 +213,28 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
       mqtt_suback_event_t *suback_event = (mqtt_suback_event_t *)data;
 
       if(suback_event->success) {
-        printf("[+] Application is subscribed to topic successfully\n");
+        if(LOG_ENABLED) printf("[+] Application is subscribed to topic successfully\n");
         mqtt_module.state = STATE_SUBSCRIBED;
 
       } else {
-        printf("[-] Application failed to subscribe to topic (ret code %x)\n", suback_event->return_code);
+        if(LOG_ENABLED) printf("[-] Application failed to subscribe to topic (ret code %x)\n", suback_event->return_code);
       }
 #else
-      printf("[+] Application is subscribed to topic successfully\n");
+      if(LOG_ENABLED) printf("[+] Application is subscribed to topic successfully\n");
       mqtt_module.state = STATE_SUBSCRIBED;
 #endif
       break;
     }
     case MQTT_EVENT_UNSUBACK: {
-      printf("[+] Application is unsubscribed to topic successfully\n");
+      if(LOG_ENABLED) printf("[+] Application is unsubscribed to topic successfully\n");
       break;
     }
     case MQTT_EVENT_PUBACK: {
-      printf("[+] Publishing complete.\n");
+      if(LOG_ENABLED) printf("[+] Publishing complete.\n");
       break;
     }
     default:
-      printf("[-] Application got a unhandled MQTT event: %i\n", event);
+      if(LOG_ENABLED) printf("[-] Application got a unhandled MQTT event: %i\n", event);
       break;
   }
 }
@@ -253,7 +253,7 @@ static bool have_connectivity(void){
 
 void mqtt_init_service(){
 
-  printf("MQTT Service\n");
+  if(LOG_ENABLED) printf("MQTT Service\n");
 
   mqtt_module.msg_ptr = 0;
   mqtt_module.plist_head = NULL;
@@ -287,7 +287,7 @@ void mqtt_connection_service(){
   
   if(mqtt_module.state == STATE_NET_OK){
     // Connect to MQTT server
-    printf("[!] Connecting!\n");
+    if(LOG_ENABLED) printf("[!] Connecting!\n");
     
     memcpy(mqtt_module.broker_address, broker_ip, strlen(broker_ip));
     
@@ -308,10 +308,10 @@ void mqtt_connection_service(){
 
     mqtt_module.status = mqtt_subscribe(&mqtt_module.conn, NULL, mqtt_module.sub_topic, MQTT_QOS_LEVEL_0);
 
-    printf("[!] Subscribing for topic %s\n", mqtt_module.sub_topic);
+    if(LOG_ENABLED) printf("[!] Subscribing for topic %s\n", mqtt_module.sub_topic);
 
     if(mqtt_module.status == MQTT_STATUS_OUT_QUEUE_FULL) {
-      printf("[-] Tried to subscribe but command queue was full!\n");
+      if(LOG_ENABLED) printf("[-] Tried to subscribe but command queue was full!\n");
       mqtt_module.state = STATE_INIT;
     }
     mqtt_module.state = STATE_SUBSCRIBING;
@@ -329,7 +329,7 @@ void mqtt_connection_service(){
 
   }
   else if ( mqtt_module.state == STATE_DISCONNECTED ){
-    printf("[-] Disconnected form MQTT broker\n");	
+    if(LOG_ENABLED) printf("[-] Disconnected form MQTT broker\n");	
     mqtt_module.state = STATE_INIT;
   }
 

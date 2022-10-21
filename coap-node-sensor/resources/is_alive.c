@@ -35,7 +35,7 @@ void is_alive_error(){
 void send_is_alive_ack(char msg[]){
 
     sprintf(msg, "{\"cmd\":\"%s\"}", "is_alive_ack");  
-    printf(" >  %s \n", msg);
+    if(LOG_ENABLED) printf(" >  %s \n", msg);
 }
 
 /*----------------------------------------------*/
@@ -52,7 +52,7 @@ static void is_alive_get_handler(
     if(is_alive_state == STATE_ERROR)
       return;
 
-    printf(" <  get is alive\n");
+    if(LOG_ENABLED) printf(" <  get is alive\n");
     char msg[MSG_SIZE];
     send_is_alive_ack(msg); 
     coap_set_header_content_format(response, TEXT_PLAIN);

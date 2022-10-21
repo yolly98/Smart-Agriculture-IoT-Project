@@ -65,3 +65,11 @@ To test the project it was used docker
 * get output: "make TARGET=nrf52840 BOARD=dongle PORT=/dev/ttyACMx login"
 
 3. command to start the border-router server on linux machine "make TARGET=cc26x0-cc13x0 PORT=/dev/ttyACM0 connect-router" (in this case the border-router was flashed in a launcher)	
+
+
+* example commands to flash 2 launcher and 3 dongle:
+* make TARGET=cc26x0-cc13x0 BOARD=/launchpad/cc2650 PORT=/dev/ttyACM0 NODEID=0x0001 border-router.upload
+* make TARGET=cc26x0-cc13x0 BOARD=/launchpad/cc2650 PORT=/dev/ttyACM2 NODEID=0x0002 coap-node.upload 
+* make TARGET=nrf52840 BOARD=dongle PORT=/dev/ttyACM4 NODEID=0x0003 coap-node.dfu-upload
+* make TARGET=nrf52840 BOARD=dongle PORT=/dev/ttyACM5 NODEID=0x0004 mqtt-node.dfu-upload
+* make TARGET=nrf52840 BOARD=dongle PORT=/dev/ttyACM6 NODEID=0x0005 mqtt-node.dfu-upload

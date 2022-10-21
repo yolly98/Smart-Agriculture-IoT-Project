@@ -122,7 +122,7 @@ bool elaborate_cmd(char msg[]){
         }
         else if(strcmp(arguments[1], "light") == 0 && isNumber(arguments[2])){
             node_memory.configuration.light_timer = atoi(arguments[2]);
-            ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_raw, NULL);
+            ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_ray, NULL);
         }
         else if(strcmp(arguments[1], "tmp") == 0 && isNumber(arguments[2])){
             node_memory.configuration.tmp_timer = atoi(arguments[2]);
@@ -199,7 +199,7 @@ bool elaborate_cmd(char msg[]){
         else if(strcmp(arguments[1], "ph") == 0)
             get_ph_level();
         else if(strcmp(arguments[1], "light") == 0)
-            get_lihght_raw();
+            get_lihght_ray();
         else if(strcmp(arguments[1], "tmp") == 0)
             get_soil_tmp();
 
@@ -370,14 +370,14 @@ void get_ph_level(){
 
 /*--------*/
 
-void get_lihght_raw(){
+void get_lihght_ray(){
 
     if(node_timers.sensor_timer_are_setted)
         ctimer_restart(&node_timers.light_ctimer);
 
     int light = random_rand()%28;
-    node_memory.measurements.light_raw =  light;
-    if(LOG_ENABLED) printf("[+] light raw detected: %d\n", light);
+    node_memory.measurements.light_ray =  light;
+    if(LOG_ENABLED) printf("[+] light ray detected: %d\n", light);
 
     char msg[MSG_SIZE];
     sprintf(msg,"{\"cmd\":\"%s\",\"body\":{\"land_id\":%d,\"node_id\":%d,\"value\":%d}}",
@@ -566,12 +566,12 @@ PROCESS_THREAD(mqtt_node, ev, data){
         node_timers.irr_timer_is_setted = false;
         get_soil_moisture();
         get_ph_level();
-        get_lihght_raw();
+        get_lihght_ray();
         get_soil_tmp();
 
         ctimer_set(&node_timers.mst_ctimer, node_memory.configuration.mst_timer * CLOCK_MINUTE, get_soil_moisture, NULL);
         ctimer_set(&node_timers.ph_ctimer, node_memory.configuration.ph_timer * CLOCK_MINUTE, get_ph_level, NULL);
-        ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_raw, NULL);
+        ctimer_set(&node_timers.light_ctimer, node_memory.configuration.light_timer * CLOCK_MINUTE, get_lihght_ray, NULL);
         ctimer_set(&node_timers.tmp_ctimer, node_memory.configuration.tmp_timer * CLOCK_MINUTE, get_soil_tmp, NULL);
 
         node_timers.sensor_timer_are_setted = true;

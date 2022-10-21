@@ -71,7 +71,7 @@ struct measurements_str{
 
     unsigned short soil_moisture;
     short soil_temperature;
-    unsigned int light_raw;
+    unsigned int light_ray;
     unsigned short ph_level;
 };
 
@@ -113,7 +113,7 @@ void send_is_alive_ack();
 void irr_stopping();
 void get_soil_moisture();
 void get_ph_level();
-void get_lihght_raw();
+void get_lihght_ray();
 void get_soil_tmp();
 
 void receive_configuration();

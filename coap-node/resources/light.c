@@ -21,7 +21,7 @@ static void light_event_handler(void);
 /*--------------------------------------------*/
 
 static struct light_str{
-  unsigned int light_raw;
+  unsigned int light_ray;
   unsigned int light_timer;
   struct etimer light_etimer;
   int state;
@@ -71,15 +71,15 @@ bool check_light_timer_expired(){
 }
 /*-----------------------------------------*/
 
-void send_light_raw(char msg[]){
+void send_light_ray(char msg[]){
 
     int light = random_rand()%28;
-    light_mem.light_raw =  light;
-    if(LOG_ENABLED) printf("[+] light raw detected: %d\n", light);
+    light_mem.light_ray =  light;
+    if(LOG_ENABLED) printf("[+] light ray detected: %d\n", light);
 
     sprintf(msg,"{\"cmd\":\"%s\",\"value\":%d}",
         "light",
-        light_mem.light_raw
+        light_mem.light_ray
         );
     if(LOG_ENABLED) printf(" >  %s\n", msg);
 } 
@@ -117,7 +117,7 @@ static void light_get_handler(
   char reply[MSG_SIZE];
 
   if(LOG_ENABLED) printf(" <  get sensor/light\n");
-  send_light_raw(reply);
+  send_light_ray(reply);
 
   coap_set_header_content_format(response, TEXT_PLAIN);
   coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%s", reply));

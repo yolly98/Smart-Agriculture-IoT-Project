@@ -1046,7 +1046,7 @@
           ]
         }
       ],
-      "title": "moisture levels",
+      "title": "Moisture Levels",
       "type": "timeseries"
     },
     {
@@ -1292,7 +1292,7 @@
           ]
         }
       ],
-      "title": "Light Raw Levels",
+      "title": "Light Ray Levels",
       "type": "timeseries"
     },
     {

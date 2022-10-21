@@ -113,15 +113,24 @@ def coap_status(land_id, node_id, doc):
         configs[index] = dict()
         configs[index]['observed'] = False
 
-    if doc['cmd'] == 'assign-config':
-        log.log_success("entrato yea")
+    if doc['cmd'] == 'assign_config':
         configs[index]['observed'] = True
-        configs[index]['irr-status'] = { 'cmd': 'irr-status', 'body': doc['body']['irr-config']}
+        configs[index]['config-status'] = { 'cmd': 'config-status', 'body': { 'land_id': land_id, 'node_id': node_id}}
+        configs[index]['irr-status'] = { 'cmd': 'irr-status', 'body': doc['body']['irr_config']}
         configs[index]['mst-status'] = { 'cmd': 'mst-status', 'timer': doc['body']['mst_timer']}
         configs[index]['ph-status'] = { 'cmd': 'ph-status', 'timer': doc['body']['ph_timer']}
         configs[index]['light-status'] = { 'cmd': 'light-status', 'timer': doc['body']['light_timer']}
         configs[index]['tmp-status'] = { 'cmd': 'tmp-status', 'timer': doc['body']['tmp_timer']}
-        log.log_success(configs[index])
+
+        irr_config = configs[index]['irr-status']['body']
+        mst_timer = configs[index]['mst-status']['timer']
+        ph_timer = configs[index]['ph-status']['timer']
+        light_timer = configs[index]['light-status']['timer']
+        tmp_timer = configs[index]['tmp-status']['timer']
+
+        msg = { 'cmd': 'status', 'body': { 'land_id': land_id, 'node_id': node_id, 'irr_config': { 'enabled': irr_config['enabled'], 'irr_limit': irr_config['irr_limit'], 'irr_duration': irr_config['irr_duration'] }, 'mst_timer': mst_timer, 'ph_timer': ph_timer, 'light_timer': light_timer, 'tmp_timer': tmp_timer } } 
+        from_node.status("COAP", nodes[index]['addr'], msg)
+
         return
 
     configs[index][doc['cmd']] = doc

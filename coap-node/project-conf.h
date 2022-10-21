@@ -5,6 +5,6 @@
 #define COAP_MAX_CHUNK_SIZE 200
 #define COAP_MAX_OPEN_TRANSACTIONS 6
 
-#define LOG_ENABLED false
+#define LOG_ENABLED true
 
 #endif /* PROJECT_CONF_H_ */

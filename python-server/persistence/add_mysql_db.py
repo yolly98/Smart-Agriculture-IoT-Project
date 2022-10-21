@@ -90,8 +90,13 @@ def add_irrigation_event(land_id, node_id, status):
 
     sql = "INSERT INTO irrigation (land_id, node_id, irr_status) \
         VALUES (%s, %s, %s)"
-    mycursor.execute(sql, (land_id, node_id, status))
-    mydb.commit()
+    
+    try:
+        mycursor.execute(sql, (land_id, node_id, status))
+        mydb.commit()
+    except mysql.connector.Error as e:
+        log.log_info(f"Mysql error [{e.args[0]}]: {e.args[1]}")
+        return
 
 #----------------------------------
 

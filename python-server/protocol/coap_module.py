@@ -113,6 +113,17 @@ def coap_status(land_id, node_id, doc):
         configs[index] = dict()
         configs[index]['observed'] = False
 
+    if doc['cmd'] == 'assign-config':
+        log.log_success("entrato yea")
+        configs[index]['observed'] = True
+        configs[index]['irr-status'] = { 'cmd': 'irr-status', 'body': doc['body']['irr-config']}
+        configs[index]['mst-status'] = { 'cmd': 'mst-status', 'timer': doc['body']['mst_timer']}
+        configs[index]['ph-status'] = { 'cmd': 'ph-status', 'timer': doc['body']['ph_timer']}
+        configs[index]['light-status'] = { 'cmd': 'light-status', 'timer': doc['body']['light_timer']}
+        configs[index]['tmp-status'] = { 'cmd': 'tmp-status', 'timer': doc['body']['tmp_timer']}
+        log.log_success(configs[index])
+        return
+
     configs[index][doc['cmd']] = doc
     if ('config-status' in configs[index] and
         'irr-status' in configs[index] and
@@ -236,6 +247,8 @@ class ConfigurationRes(Resource):
             or ( check_node(msg['land_id'], msg['node_id']) and (not add_nodes(msg['land_id'], msg['node_id'], addr) ))
             ):
             self.payload = to_node.assign_config(msg['land_id'], msg['node_id'], "COAP", addr, False)
+            coap_status(msg['land_id'], msg['node_id'], json.loads(self.payload))
+            
         else:
             client_observe(msg['land_id'], msg['node_id'], "/irrigation")
             client_observe(msg['land_id'], msg['node_id'], "/sensor/mst")
